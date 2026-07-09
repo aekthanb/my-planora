@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, type ReactNode } from "react";
-import { PlusIcon } from "lucide-react";
+import { CheckIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -128,6 +128,126 @@ const hskLevels = ["1", "2", "3", "4", "5", "6"];
 
 const vehicleOptions = ["รถยนต์", "รถจักรยานยนต์", "ไม่มี"];
 
+type DocumentKey =
+  | "idCard"
+  | "bankbook"
+  | "houseRegistration"
+  | "educationCert"
+  | "otherGovDoc"
+  | "workReference"
+  | "otherSupport"
+  | "driverLicense"
+  | "parentalConsent";
+
+type DocumentFile = { name: string; sizeLabel: string };
+
+const requiredDocuments: { key: DocumentKey; label: string; emptyHint: string }[] = [
+  {
+    key: "idCard",
+    label: "สำเนาบัตรประชาชน",
+    emptyHint: "ยังไม่ได้อัปโหลด — ปิดบังศาสนา/หมู่เลือดได้",
+  },
+  { key: "bankbook", label: "หน้าสมุดบัญชีธนาคาร", emptyHint: "ยังไม่ได้อัปโหลด" },
+  {
+    key: "houseRegistration",
+    label: "สำเนาทะเบียนบ้าน",
+    emptyHint: "ยังไม่ได้อัปโหลด — ปิดบังศาสนา/หมู่เลือดได้",
+  },
+  { key: "educationCert", label: "สำเนาวุฒิการศึกษา", emptyHint: "ยังไม่ได้อัปโหลด" },
+];
+
+const optionalDocuments: { key: DocumentKey; label: string }[] = [
+  { key: "otherGovDoc", label: "สำเนาเอกสารราชการอื่น" },
+  { key: "workReference", label: "เอกสารใบผ่านงาน" },
+  { key: "otherSupport", label: "เอกสารประกอบอื่น" },
+  { key: "driverLicense", label: "สำเนาใบขับขี่" },
+  { key: "parentalConsent", label: "ใบยินยอมผู้ปกครอง (กรณีอายุต่ำกว่า 20 ปี)" },
+];
+
+const thaiMonthsShort = [
+  "ม.ค.",
+  "ก.พ.",
+  "มี.ค.",
+  "เม.ย.",
+  "พ.ค.",
+  "มิ.ย.",
+  "ก.ค.",
+  "ส.ค.",
+  "ก.ย.",
+  "ต.ค.",
+  "พ.ย.",
+  "ธ.ค.",
+];
+
+function formatThaiDate(date: Date) {
+  return `${date.getDate()} ${thaiMonthsShort[date.getMonth()]} ${date.getFullYear() + 543}`;
+}
+
+function formatFileSize(bytes: number) {
+  return bytes >= 1024 * 1024
+    ? `${(bytes / (1024 * 1024)).toFixed(1)}MB`
+    : `${Math.round(bytes / 1024)}KB`;
+}
+
+function DocumentUploadCard({
+  label,
+  required,
+  file,
+  emptyHint,
+  onSelect,
+}: {
+  label: string;
+  required?: boolean;
+  file: DocumentFile | null;
+  emptyHint: string;
+  onSelect: (file: File) => void;
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <button
+      type="button"
+      onClick={() => inputRef.current?.click()}
+      className={cn(
+        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-3",
+        file ? "border-border" : "border-border hover:border-foreground/30 border-dashed",
+      )}
+    >
+      <span
+        className={cn(
+          "flex size-6 shrink-0 items-center justify-center rounded-full",
+          file ? "bg-neutral-950 text-white" : "border-border text-muted-foreground border",
+        )}
+      >
+        {file ? <CheckIcon className="size-3.5" /> : <PlusIcon className="size-3.5" />}
+      </span>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium">
+          {label}
+          {required && <span className="text-destructive">*</span>}
+        </p>
+        <p className="text-muted-foreground truncate text-xs">
+          {file ? `${file.name} · ${file.sizeLabel}` : emptyHint}
+        </p>
+      </div>
+
+      {file && <span className="text-primary shrink-0 text-xs font-medium">เปลี่ยน</span>}
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/pdf,image/jpeg,image/png"
+        className="hidden"
+        onChange={(event) => {
+          const selected = event.target.files?.[0];
+          if (selected) onSelect(selected);
+        }}
+      />
+    </button>
+  );
+}
+
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
 const provinces = ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่"];
@@ -202,6 +322,7 @@ function Section({
   required,
   note,
   noteTone = "info",
+  headerExtra,
   children,
 }: {
   number: number;
@@ -209,6 +330,7 @@ function Section({
   required?: boolean;
   note?: string;
   noteTone?: "info" | "warning";
+  headerExtra?: ReactNode;
   children: ReactNode;
 }) {
   return (
@@ -233,6 +355,7 @@ function Section({
             {note}
           </span>
         )}
+        {headerExtra}
       </div>
       <div className="space-y-4 p-5">{children}</div>
     </div>
@@ -293,6 +416,12 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
   const [vehicles, setVehicles] = useState<string[]>(["รถยนต์", "รถจักรยานยนต์"]);
   const [canUseOfficeEquipment, setCanUseOfficeEquipment] = useState(true);
   const [canRelocate, setCanRelocate] = useState(true);
+
+  const [documents, setDocuments] = useState<Partial<Record<DocumentKey, DocumentFile>>>({
+    idCard: { name: "kbank-copy.pdf", sizeLabel: "1.2MB" },
+    bankbook: { name: "bookbank.jpg", sizeLabel: "860KB" },
+  });
+  const submissionDate = useMemo(() => formatThaiDate(new Date()), []);
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
@@ -398,6 +527,13 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
         ? withoutNone.filter((item) => item !== option)
         : [...withoutNone, option];
     });
+  }
+
+  function handleDocumentSelect(key: DocumentKey, file: File) {
+    setDocuments((prev) => ({
+      ...prev,
+      [key]: { name: file.name, sizeLabel: formatFileSize(file.size) },
+    }));
   }
 
   return (
@@ -1287,6 +1423,58 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
             <Field label="ความสามารถพิเศษ">
               <Input name="specialAbility" placeholder="เช่น ถ่ายภาพ ตัดต่อวิดีโอ" />
             </Field>
+          </div>
+        </Section>
+
+        <Section
+          number={14}
+          title="เอกสารประกอบการสมัคร"
+          headerExtra={
+            <div className="ml-auto flex items-center gap-3 text-xs">
+              <span className="text-muted-foreground">วันที่ยื่นสมัคร: {submissionDate}</span>
+              <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
+                สถานะ: ฉบับร่าง
+              </span>
+            </div>
+          }
+        >
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
+            ก่อนอัปโหลดสำเนาเอกสารทุกฉบับหรือเซ็นเอกสารบนกระดาษ
+            คุณสามารถขีดฆ่าหรือปิดบังข้อมูลอ่อนไหว (ศาสนา หมู่เลือด) บนเอกสารได้
+            โดยไม่มีผลต่อการพิจารณา — รองรับ PDF/JPG/PNG ≤ 10MB ต่อไฟล์
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold">
+              เอกสารบังคับ <span className="text-destructive">*</span>
+            </p>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {requiredDocuments.map((doc) => (
+                <DocumentUploadCard
+                  key={doc.key}
+                  label={doc.label}
+                  required
+                  file={documents[doc.key] ?? null}
+                  emptyHint={doc.emptyHint}
+                  onSelect={(file) => handleDocumentSelect(doc.key, file)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <p className="text-sm font-semibold">เอกสารไม่บังคับ (ถ้ามี)</p>
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {optionalDocuments.map((doc) => (
+                <DocumentUploadCard
+                  key={doc.key}
+                  label={doc.label}
+                  file={documents[doc.key] ?? null}
+                  emptyHint="ยังไม่ได้อัปโหลด"
+                  onSelect={(file) => handleDocumentSelect(doc.key, file)}
+                />
+              ))}
+            </div>
           </div>
         </Section>
       </div>
