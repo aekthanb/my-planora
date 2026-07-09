@@ -14,7 +14,7 @@ export function SignupWizard() {
       <RegisterSidebar currentStep={step} onStepClick={setStep} />
       <main className="flex-1 px-6 py-10 sm:px-12 sm:py-14">
         {step === 1 && <ApplicantTypeStep onNext={() => setStep(2)} />}
-        {step === 2 && <PersonalInfoStep onNext={() => setStep(3)} />}
+        {step === 2 && <PersonalInfoStep onNext={() => setStep(3)} onBack={() => setStep(1)} />}
         {step > 2 && <ComingSoonStep step={step} onBack={() => setStep(1)} />}
       </main>
     </div>

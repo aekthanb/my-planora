@@ -183,6 +183,12 @@ function formatThaiDate(date: Date) {
   return `${date.getDate()} ${thaiMonthsShort[date.getMonth()]} ${date.getFullYear() + 543}`;
 }
 
+function formatThaiTime(date: Date) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes} น.`;
+}
+
 function formatFileSize(bytes: number) {
   return bytes >= 1024 * 1024
     ? `${(bytes / (1024 * 1024)).toFixed(1)}MB`
@@ -377,7 +383,7 @@ function calculateAge(birthDate: string) {
   return age;
 }
 
-export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
+export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState("");
@@ -422,6 +428,7 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
     bankbook: { name: "bookbank.jpg", sizeLabel: "860KB" },
   });
   const submissionDate = useMemo(() => formatThaiDate(new Date()), []);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(() => new Date());
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
@@ -534,6 +541,10 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
       ...prev,
       [key]: { name: file.name, sizeLabel: formatFileSize(file.size) },
     }));
+  }
+
+  function handleSaveDraft() {
+    setLastSavedAt(new Date());
   }
 
   return (
@@ -1479,10 +1490,25 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
         </Section>
       </div>
 
-      <div className="mt-6 flex items-center justify-end">
-        <Button type="button" size="lg" onClick={onNext}>
-          ถัดไป →
-        </Button>
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="button" variant="outline" size="lg" onClick={onBack}>
+            ← ย้อนกลับ
+          </Button>
+          {lastSavedAt && (
+            <span className="text-muted-foreground text-xs">
+              บันทึกฉบับล่าสุด {formatThaiTime(lastSavedAt)}
+            </span>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button type="button" variant="outline" size="lg" onClick={handleSaveDraft}>
+            บันทึกฉบับร่าง
+          </Button>
+          <Button type="button" size="lg" onClick={onNext}>
+            ถัดไป: ความยินยอม PDPA →
+          </Button>
+        </div>
       </div>
     </div>
   );
