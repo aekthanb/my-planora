@@ -38,6 +38,37 @@ const militaryStatusOptions = [
   "ยังไม่ผ่านการเกณฑ์",
   "อยู่ระหว่างรับราชการทหาร",
 ];
+const educationLevelOptions = ["มัธยมศึกษา", "ปวช./ปวส.", "ปริญญาตรี", "ปริญญาโท", "ปริญญาเอก"];
+
+const MAX_EDUCATION_ENTRIES = 3;
+const MAX_WORK_ENTRIES = 3;
+
+type EducationEntry = {
+  id: number;
+  level: string;
+  schoolName: string;
+  major: string;
+  years: string;
+  gpa: string;
+  note: string;
+};
+
+type WorkEntry = {
+  id: number;
+  companyName: string;
+  branch: string;
+  position: string;
+  duration: string;
+  other: string;
+};
+
+function createEducationEntry(id: number, level = ""): EducationEntry {
+  return { id, level, schoolName: "", major: "", years: "", gpa: "", note: "" };
+}
+
+function createWorkEntry(id: number): WorkEntry {
+  return { id, companyName: "", branch: "", position: "", duration: "", other: "" };
+}
 
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
@@ -174,6 +205,11 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
 
   const [maritalStatus, setMaritalStatus] = useState(maritalStatusOptions[0]);
 
+  const [educationEntries, setEducationEntries] = useState<EducationEntry[]>([
+    createEducationEntry(1, "ปริญญาตรี"),
+  ]);
+  const [workEntries, setWorkEntries] = useState<WorkEntry[]>([createWorkEntry(1)]);
+
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -210,6 +246,38 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
       setEmergencyDistrict(match.district);
       setEmergencyProvince(match.province);
     }
+  }
+
+  function addEducationEntry() {
+    setEducationEntries((prev) =>
+      prev.length >= MAX_EDUCATION_ENTRIES ? prev : [...prev, createEducationEntry(Date.now())],
+    );
+  }
+
+  function removeEducationEntry(id: number) {
+    setEducationEntries((prev) => prev.filter((entry) => entry.id !== id));
+  }
+
+  function updateEducationEntry(id: number, patch: Partial<EducationEntry>) {
+    setEducationEntries((prev) =>
+      prev.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)),
+    );
+  }
+
+  function addWorkEntry() {
+    setWorkEntries((prev) =>
+      prev.length >= MAX_WORK_ENTRIES ? prev : [...prev, createWorkEntry(Date.now())],
+    );
+  }
+
+  function removeWorkEntry(id: number) {
+    setWorkEntries((prev) => prev.filter((entry) => entry.id !== id));
+  }
+
+  function updateWorkEntry(id: number, patch: Partial<WorkEntry>) {
+    setWorkEntries((prev) =>
+      prev.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)),
+    );
   }
 
   return (
@@ -706,6 +774,158 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
               <Input name="militaryRemark" placeholder="เช่น จบ รด. ปี 3 / ได้รับการยกเว้น" />
             </Field>
           </div>
+        </Section>
+
+        <Section number={8} title="ประวัติการศึกษา" note="สูงสุด 3 ระดับ">
+          {educationEntries.map((entry) => (
+            <div key={entry.id} className="relative rounded-lg border p-4">
+              <button
+                type="button"
+                onClick={() => removeEducationEntry(entry.id)}
+                className="text-muted-foreground hover:text-destructive absolute top-3 right-3 text-xs"
+              >
+                ลบ
+              </button>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="ระดับการศึกษา" required>
+                  <OptionSelect
+                    placeholder="เลือกระดับการศึกษา"
+                    value={entry.level}
+                    onValueChange={(value) => updateEducationEntry(entry.id, { level: value })}
+                    options={educationLevelOptions}
+                  />
+                </Field>
+                <Field label="ชื่อสถานศึกษา" required>
+                  <Input
+                    value={entry.schoolName}
+                    onChange={(event) =>
+                      updateEducationEntry(entry.id, { schoolName: event.target.value })
+                    }
+                    placeholder="มหาวิทยาลัยธรรมศาสตร์"
+                  />
+                </Field>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
+                <Field label="คณะ/สาขา">
+                  <Input
+                    value={entry.major}
+                    onChange={(event) =>
+                      updateEducationEntry(entry.id, { major: event.target.value })
+                    }
+                    placeholder="บริหารธุรกิจ / การจัดการ"
+                  />
+                </Field>
+                <Field label="ช่วงเวลาศึกษา">
+                  <Input
+                    value={entry.years}
+                    onChange={(event) =>
+                      updateEducationEntry(entry.id, { years: event.target.value })
+                    }
+                    placeholder="2560 - 2564"
+                  />
+                </Field>
+                <Field label="เกรดเฉลี่ย">
+                  <Input
+                    value={entry.gpa}
+                    onChange={(event) =>
+                      updateEducationEntry(entry.id, { gpa: event.target.value })
+                    }
+                    placeholder="3.42"
+                  />
+                </Field>
+                <Field label="หมายเหตุ">
+                  <Input
+                    value={entry.note}
+                    onChange={(event) =>
+                      updateEducationEntry(entry.id, { note: event.target.value })
+                    }
+                    placeholder="ถ้ามี"
+                  />
+                </Field>
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={addEducationEntry}
+            disabled={educationEntries.length >= MAX_EDUCATION_ENTRIES}
+            className="border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground w-full rounded-lg border border-dashed py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            + เพิ่มระดับการศึกษา ({educationEntries.length}/{MAX_EDUCATION_ENTRIES})
+          </button>
+        </Section>
+
+        <Section number={9} title="ประวัติการทำงาน" note="สูงสุด 3 บริษัท เรียงจากล่าสุด">
+          {workEntries.map((entry) => (
+            <div key={entry.id} className="relative rounded-lg border p-4">
+              <button
+                type="button"
+                onClick={() => removeWorkEntry(entry.id)}
+                className="text-muted-foreground hover:text-destructive absolute top-3 right-3 text-xs"
+              >
+                ลบ
+              </button>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="ชื่อบริษัท" required>
+                  <Input
+                    value={entry.companyName}
+                    onChange={(event) =>
+                      updateWorkEntry(entry.id, { companyName: event.target.value })
+                    }
+                    placeholder="บริษัท เอบีซี เซอร์วิส จำกัด"
+                  />
+                </Field>
+                <Field label="สาขา">
+                  <Input
+                    value={entry.branch}
+                    onChange={(event) => updateWorkEntry(entry.id, { branch: event.target.value })}
+                    placeholder="สำนักงานใหญ่"
+                  />
+                </Field>
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="ตำแหน่ง" required>
+                  <Input
+                    value={entry.position}
+                    onChange={(event) =>
+                      updateWorkEntry(entry.id, { position: event.target.value })
+                    }
+                    placeholder="พนักงานบริการลูกค้า"
+                  />
+                </Field>
+                <Field label="ระยะเวลา">
+                  <Input
+                    value={entry.duration}
+                    onChange={(event) =>
+                      updateWorkEntry(entry.id, { duration: event.target.value })
+                    }
+                    placeholder="ม.ค. 2565 - ปัจจุบัน"
+                  />
+                </Field>
+                <Field label="อื่นๆ">
+                  <Input
+                    value={entry.other}
+                    onChange={(event) => updateWorkEntry(entry.id, { other: event.target.value })}
+                    placeholder="เงินเดือน / เหตุผลที่ลาออก"
+                  />
+                </Field>
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={addWorkEntry}
+            disabled={workEntries.length >= MAX_WORK_ENTRIES}
+            className="border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground w-full rounded-lg border border-dashed py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            + เพิ่มบริษัท ({workEntries.length}/{MAX_WORK_ENTRIES})
+          </button>
         </Section>
       </div>
 
