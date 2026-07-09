@@ -30,6 +30,8 @@ const banks = [
 
 const lifeStatusOptions = ["มีชีวิตอยู่", "เสียชีวิต"];
 const relationshipOptions = ["บิดา", "มารดา", "คู่สมรส", "บุตร", "พี่น้อง", "ญาติ", "เพื่อน"];
+const maritalStatusOptions = ["โสด", "สมรส", "หย่าร้าง", "หม้าย"];
+const childGenderOptions = ["ชาย", "หญิง", "คละ"];
 
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
@@ -156,6 +158,11 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
   const [currentDistrict, setCurrentDistrict] = useState("");
   const [currentProvince, setCurrentProvince] = useState("");
 
+  const [emergencyPostalCode, setEmergencyPostalCode] = useState("");
+  const [emergencySubDistrict, setEmergencySubDistrict] = useState("");
+  const [emergencyDistrict, setEmergencyDistrict] = useState("");
+  const [emergencyProvince, setEmergencyProvince] = useState("");
+
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -181,6 +188,16 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
       setCurrentSubDistrict(match.subDistrict);
       setCurrentDistrict(match.district);
       setCurrentProvince(match.province);
+    }
+  }
+
+  function handleEmergencyPostalCodeChange(value: string) {
+    setEmergencyPostalCode(value);
+    const match = postalCodeLookup[value];
+    if (match) {
+      setEmergencySubDistrict(match.subDistrict);
+      setEmergencyDistrict(match.district);
+      setEmergencyProvince(match.province);
     }
   }
 
@@ -530,6 +547,72 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
                 <Input name="youngerSisters" type="number" placeholder="1" />
               </Field>
             </div>
+          </div>
+        </Section>
+
+        <Section number={5} title="บุคคลติดต่อฉุกเฉิน" required>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="ชื่อ" required>
+              <Input name="emergencyFirstName" placeholder="ชื่อ" />
+            </Field>
+            <Field label="นามสกุล" required>
+              <Input name="emergencyLastName" placeholder="นามสกุล" />
+            </Field>
+            <Field label="เบอร์โทรศัพท์" required>
+              <Input name="emergencyPhone" placeholder="08x-xxx-xxxx" />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="ความสัมพันธ์" required>
+              <OptionSelect placeholder="เลือก" options={relationshipOptions} />
+            </Field>
+            <Field label="บ้านเลขที่/หมู่ที่" required>
+              <Input name="emergencyHouseNo" placeholder="บ้านเลขที่" />
+            </Field>
+            <Field label="หมู่บ้าน/คอนโด">
+              <Input name="emergencyVillage" placeholder="ถ้ามี" />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="รหัสไปรษณีย์" required>
+              <Input
+                name="emergencyPostalCode"
+                inputMode="numeric"
+                maxLength={5}
+                value={emergencyPostalCode}
+                onChange={(event) => handleEmergencyPostalCodeChange(event.target.value)}
+                placeholder="10xxx"
+              />
+            </Field>
+            <Field label="แขวง/ตำบล" required>
+              <OptionSelect
+                placeholder="เลือก"
+                value={emergencySubDistrict}
+                onValueChange={setEmergencySubDistrict}
+                options={subDistricts}
+              />
+            </Field>
+            <Field label="เขต/อำเภอ" required>
+              <OptionSelect
+                placeholder="เลือก"
+                value={emergencyDistrict}
+                onValueChange={setEmergencyDistrict}
+                options={districts}
+              />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="จังหวัด" required>
+              <OptionSelect
+                placeholder="เลือก"
+                value={emergencyProvince}
+                onValueChange={setEmergencyProvince}
+                options={provinces}
+              />
+            </Field>
           </div>
         </Section>
       </div>
