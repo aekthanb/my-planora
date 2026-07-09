@@ -32,6 +32,12 @@ const lifeStatusOptions = ["มีชีวิตอยู่", "เสียช
 const relationshipOptions = ["บิดา", "มารดา", "คู่สมรส", "บุตร", "พี่น้อง", "ญาติ", "เพื่อน"];
 const maritalStatusOptions = ["โสด", "สมรส", "หย่าร้าง", "หม้าย"];
 const childGenderOptions = ["ชาย", "หญิง", "คละ"];
+const militaryStatusOptions = [
+  "ผ่านการเกณฑ์ทหารแล้ว",
+  "ได้รับการยกเว้น",
+  "ยังไม่ผ่านการเกณฑ์",
+  "อยู่ระหว่างรับราชการทหาร",
+];
 
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
@@ -124,7 +130,7 @@ function Section({
           {title}
           {required && <span className="text-destructive">*</span>}
         </p>
-        {note && <span className="text-primary ml-auto text-xs">{note}</span>}
+        {note && <span className="ml-auto text-xs text-blue-600 dark:text-blue-400">{note}</span>}
       </div>
       <div className="space-y-4 p-5">{children}</div>
     </div>
@@ -685,6 +691,21 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
               </div>
             </>
           )}
+        </Section>
+
+        <Section number={7} title="สถานภาพทางทหาร" note="เฉพาะเพศชาย">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field label="สถานะทหาร" required>
+              <OptionSelect
+                placeholder="เลือก"
+                defaultValue={militaryStatusOptions[0]}
+                options={militaryStatusOptions}
+              />
+            </Field>
+            <Field label="หมายเหตุ">
+              <Input name="militaryRemark" placeholder="เช่น จบ รด. ปี 3 / ได้รับการยกเว้น" />
+            </Field>
+          </div>
         </Section>
       </div>
 
