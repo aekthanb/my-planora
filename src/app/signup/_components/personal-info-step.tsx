@@ -28,6 +28,9 @@ const banks = [
   "ออมสิน",
 ];
 
+const lifeStatusOptions = ["มีชีวิตอยู่", "เสียชีวิต"];
+const relationshipOptions = ["บิดา", "มารดา", "คู่สมรส", "บุตร", "พี่น้อง", "ญาติ", "เพื่อน"];
+
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
 const provinces = ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่"];
@@ -446,6 +449,88 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
               </div>
             </>
           )}
+        </Section>
+
+        <Section number={4} title="ประวัติครอบครัว">
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">บิดา</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="ชื่อ">
+                <Input name="fatherFirstName" placeholder="สมศักดิ์" />
+              </Field>
+              <Field label="นามสกุล">
+                <Input name="fatherLastName" placeholder="ใจดี" />
+              </Field>
+              <Field label="อายุ">
+                <Input name="fatherAge" type="number" placeholder="58" />
+              </Field>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="อาชีพ">
+                <Input name="fatherOccupation" placeholder="ค้าขาย" />
+              </Field>
+              <Field label="เบอร์โทรศัพท์">
+                <Input name="fatherPhone" placeholder="08x-xxx-xxxx" />
+              </Field>
+              <Field label="สถานภาพ">
+                <OptionSelect
+                  placeholder="เลือก"
+                  defaultValue={lifeStatusOptions[0]}
+                  options={lifeStatusOptions}
+                />
+              </Field>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">มารดา</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="ชื่อ">
+                <Input name="motherFirstName" placeholder="ชื่อมารดา" />
+              </Field>
+              <Field label="นามสกุล">
+                <Input name="motherLastName" placeholder="นามสกุล" />
+              </Field>
+              <Field label="อายุ">
+                <Input name="motherAge" type="number" placeholder="ปี" />
+              </Field>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="อาชีพ">
+                <Input name="motherOccupation" placeholder="อาชีพ" />
+              </Field>
+              <Field label="เบอร์โทรศัพท์">
+                <Input name="motherPhone" placeholder="08x-xxx-xxxx" />
+              </Field>
+              <Field label="สถานภาพ">
+                <OptionSelect placeholder="เลือก" options={lifeStatusOptions} />
+              </Field>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-sm font-semibold">พี่น้อง</p>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+              <Field label="พี่น้องรวมตัวเอง">
+                <Input name="siblingsTotal" type="number" placeholder="3" />
+              </Field>
+              <Field label="เป็นคนที่">
+                <Input name="siblingsOrder" type="number" placeholder="2" />
+              </Field>
+              <Field label="พี่ชาย">
+                <Input name="olderBrothers" type="number" placeholder="1" />
+              </Field>
+              <Field label="พี่สาว">
+                <Input name="olderSisters" type="number" placeholder="0" />
+              </Field>
+              <Field label="น้องชาย">
+                <Input name="youngerBrothers" type="number" placeholder="0" />
+              </Field>
+              <Field label="น้องสาว">
+                <Input name="youngerSisters" type="number" placeholder="1" />
+              </Field>
+            </div>
+          </div>
         </Section>
       </div>
 
