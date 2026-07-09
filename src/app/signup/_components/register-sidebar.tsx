@@ -1,21 +1,48 @@
+import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+const personalInfoSubSteps = [
+  { id: 1, label: "ข้อมูลส่วนตัว", done: true },
+  { id: 2, label: "ที่อยู่ทะเบียนบ้าน", done: true },
+  { id: 3, label: "ที่อยู่ปัจจุบัน", done: true },
+  { id: 4, label: "ครอบครัว", done: true },
+  { id: 5, label: "ติดต่อฉุกเฉิน", done: true },
+  { id: 6, label: "สถานะสมรส", done: true },
+  { id: 7, label: "สถานภาพทางทหาร", done: false },
+  { id: 8, label: "การศึกษา", done: false },
+  { id: 9, label: "การทำงาน", done: false },
+  { id: 10, label: "สุขภาพ", done: false },
+  { id: 11, label: "ฝึกอบรม", done: false },
+  { id: 12, label: "ภาษา", done: false },
+  { id: 13, label: "ข้อมูลเพิ่มเติม", done: false },
+  { id: 14, label: "เอกสารแนบ", done: false },
+];
 
 const steps = [
   { number: 1, title: "ประเภทผู้สมัคร", description: "เลือกประเภทที่ตรงกับคุณ" },
-  { number: 2, title: "ข้อมูลส่วนบุคคล", description: "ข้อมูลติดต่อและเอกสาร" },
+  {
+    number: 2,
+    title: "ข้อมูลผู้สมัคร",
+    description: "ข้อมูลติดต่อและเอกสาร",
+    subSteps: personalInfoSubSteps,
+  },
   { number: 3, title: "ความยินยอม PDPA", description: "นโยบายคุ้มครองข้อมูล" },
   { number: 4, title: "ยืนยันและส่งใบสมัคร", description: "ตรวจสอบและยืนยัน OTP" },
 ];
 
-export function RegisterSidebar({ currentStep }: { currentStep: number }) {
+export function RegisterSidebar({
+  currentStep,
+  onStepClick,
+}: {
+  currentStep: number;
+  onStepClick?: (step: number) => void;
+}) {
   return (
     <aside className="bg-background flex w-full shrink-0 flex-col justify-between border-r p-8 md:w-72">
       <div>
         <div className="flex items-center gap-2.5">
-          <span className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-950 text-sm font-bold text-white">
-            <span className="absolute -top-3 -right-3 size-6 rounded-full bg-linear-to-br from-orange-500 via-rose-500 to-transparent opacity-70 blur-md" />
-            <span className="absolute -bottom-3 -left-3 size-6 rounded-full bg-linear-to-tr from-indigo-600 via-blue-500 to-transparent opacity-60 blur-md" />
-            <span className="relative">RN</span>
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-sm font-bold text-white">
+            RN
           </span>
           <div>
             <p className="text-sm leading-tight font-semibold">Right Now</p>
@@ -28,27 +55,71 @@ export function RegisterSidebar({ currentStep }: { currentStep: number }) {
         <ol className="mt-10 space-y-6">
           {steps.map((step) => {
             const isActive = step.number === currentStep;
+            const isExpanded = isActive && !!step.subSteps;
+            const doneCount = step.subSteps?.filter((sub) => sub.done).length ?? 0;
+
             return (
-              <li key={step.number} className="flex items-start gap-3">
-                <span
-                  className={cn(
-                    "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
-                    isActive ? "bg-neutral-950 text-white" : "bg-muted text-muted-foreground",
-                  )}
+              <li key={step.number}>
+                <button
+                  type="button"
+                  onClick={() => onStepClick?.(step.number)}
+                  disabled={!onStepClick}
+                  className="flex w-full items-start gap-3 text-left disabled:cursor-default"
                 >
-                  {step.number}
-                </span>
-                <div>
-                  <p
+                  <span
                     className={cn(
-                      "text-sm font-medium",
-                      isActive ? "text-foreground" : "text-muted-foreground",
+                      "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                      isActive ? "bg-neutral-950 text-white" : "bg-muted text-muted-foreground",
                     )}
                   >
-                    {step.title}
-                  </p>
-                  <p className="text-muted-foreground text-xs">{step.description}</p>
-                </div>
+                    {step.number}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <p
+                        className={cn(
+                          "text-sm font-medium",
+                          isActive ? "text-foreground" : "text-muted-foreground",
+                        )}
+                      >
+                        {step.title}
+                      </p>
+                      {isExpanded && (
+                        <span className="bg-muted text-muted-foreground shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium">
+                          {doneCount}/{step.subSteps!.length}
+                        </span>
+                      )}
+                    </div>
+                    {!isExpanded && (
+                      <p className="text-muted-foreground text-xs">{step.description}</p>
+                    )}
+                  </div>
+                </button>
+
+                {isExpanded && (
+                  <ul className="mt-3 ml-3.5 space-y-2 border-l pl-6">
+                    {step.subSteps!.map((sub) => (
+                      <li key={sub.id} className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "flex size-4 shrink-0 items-center justify-center rounded-full",
+                            sub.done ? "bg-neutral-950 text-white" : "border-border border",
+                          )}
+                        >
+                          {sub.done && <CheckIcon className="size-2.5" />}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-xs",
+                            sub.done ? "text-foreground" : "text-muted-foreground",
+                          )}
+                        >
+                          {sub.id} {sub.label}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}
