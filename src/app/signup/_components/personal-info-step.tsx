@@ -14,8 +14,6 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-const departments = ["ปฏิบัติการ", "ขาย", "การตลาด", "บัญชีและการเงิน", "ทรัพยากรบุคคล", "ไอที"];
-const positions = ["เจ้าหน้าที่บริการลูกค้า", "หัวหน้างาน", "ผู้จัดการ", "พนักงานทั่วไป"];
 const prefixes = ["นาย", "นาง", "นางสาว"];
 const titleNames = ["Mr.", "Mrs.", "Ms."];
 const genders = ["ชาย", "หญิง", "ไม่ระบุ"];
@@ -28,16 +26,21 @@ const banks = [
   "ทหารไทยธนชาต",
   "ออมสิน",
 ];
-const taxTypes = [
-  "ภ.ง.ด.1",
-  "ภ.ง.ด.1 ก.พิเศษ",
-  "ภ.ง.ด.2",
-  "ภ.ง.ด.2ก",
-  "ภ.ง.ด.3",
-  "ภ.ง.ด.3ก",
-  "ภ.ง.ด.53",
-  "ภ.ง.ด.54",
-];
+
+const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
+const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
+const provinces = ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่"];
+
+const postalCodeLookup: Record<
+  string,
+  { subDistrict: string; district: string; province: string }
+> = {
+  "10400": { subDistrict: "สามเสนใน", district: "พญาไท", province: "กรุงเทพมหานคร" },
+  "10110": { subDistrict: "คลองตันเหนือ", district: "วัฒนา", province: "กรุงเทพมหานคร" },
+  "10900": { subDistrict: "ลาดยาว", district: "จตุจักร", province: "กรุงเทพมหานคร" },
+  "10500": { subDistrict: "สี่พระยา", district: "บางรัก", province: "กรุงเทพมหานคร" },
+  "11000": { subDistrict: "ตลาดขวัญ", district: "เมืองนนทบุรี", province: "นนทบุรี" },
+};
 
 function Field({
   label,
@@ -62,14 +65,22 @@ function Field({
 function OptionSelect({
   placeholder,
   defaultValue,
+  value,
+  onValueChange,
   options,
 }: {
   placeholder: string;
   defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
   options: string[];
 }) {
   return (
-    <Select defaultValue={defaultValue}>
+    <Select
+      defaultValue={defaultValue}
+      value={value}
+      onValueChange={onValueChange ? (next) => onValueChange(next as string) : undefined}
+    >
       <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -81,6 +92,33 @@ function OptionSelect({
         ))}
       </SelectContent>
     </Select>
+  );
+}
+
+function Section({
+  number,
+  title,
+  required,
+  children,
+}: {
+  number: number;
+  title: string;
+  required?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-xl border">
+      <div className="bg-muted/50 flex items-center gap-2 border-b px-5 py-3">
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-xs font-semibold text-white">
+          {number}
+        </span>
+        <p className="text-sm font-semibold">
+          {title}
+          {required && <span className="text-destructive">*</span>}
+        </p>
+      </div>
+      <div className="space-y-4 p-5">{children}</div>
+    </div>
   );
 }
 
@@ -103,7 +141,10 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState("");
-  const [selectedTaxType, setSelectedTaxType] = useState(taxTypes[0]);
+  const [postalCode, setPostalCode] = useState("");
+  const [subDistrict, setSubDistrict] = useState("");
+  const [district, setDistrict] = useState("");
+  const [province, setProvince] = useState("");
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
@@ -113,23 +154,26 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
     setPhotoUrl(URL.createObjectURL(file));
   }
 
+  function handlePostalCodeChange(value: string) {
+    setPostalCode(value);
+    const match = postalCodeLookup[value];
+    if (match) {
+      setSubDistrict(match.subDistrict);
+      setDistrict(match.district);
+      setProvince(match.province);
+    }
+  }
+
   return (
-    <div className="w-full">
+    <div className="mx-auto w-full max-w-5xl">
       <p className="text-muted-foreground text-sm">ขั้นตอนที่ 2 จาก 4</p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight">ข้อมูลผู้สมัคร</h1>
       <p className="text-muted-foreground mt-2 text-sm">
         กรอกให้ครบทุกหมวดที่มีเครื่องหมาย * — ระบบบันทึกฉบับร่างให้อัตโนมัติ กลับมากรอกต่อภายหลังได้
       </p>
 
-      <div className="mt-8 overflow-hidden rounded-xl border">
-        <div className="bg-muted/50 flex items-center gap-2 border-b px-5 py-3">
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-xs font-semibold text-white">
-            1
-          </span>
-          <p className="text-sm font-semibold">ข้อมูลส่วนตัว</p>
-        </div>
-
-        <div className="space-y-6 p-5">
+      <div className="mt-8 space-y-6">
+        <Section number={1} title="ข้อมูลส่วนตัว">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -174,20 +218,6 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
 
           <div className="space-y-4">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Field label="แผนก" required>
-                <OptionSelect
-                  placeholder="เลือกแผนก"
-                  defaultValue={departments[0]}
-                  options={departments}
-                />
-              </Field>
-              <Field label="ตำแหน่ง" required>
-                <OptionSelect
-                  placeholder="เลือกตำแหน่ง"
-                  defaultValue={positions[0]}
-                  options={positions}
-                />
-              </Field>
               <Field label="คำนำหน้า" required>
                 <OptionSelect
                   placeholder="เลือกคำนำหน้า"
@@ -195,21 +225,18 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
                   options={prefixes}
                 />
               </Field>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Field label="ชื่อ" required>
                 <Input name="firstName" placeholder="สมชาย" />
               </Field>
               <Field label="นามสกุล" required>
                 <Input name="lastName" placeholder="ใจดี" />
               </Field>
-              <Field label="ชื่อเล่น">
-                <Input name="nickname" placeholder="ชาย" />
-              </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="ชื่อเล่น">
+                <Input name="nickname" placeholder="ชาย" />
+              </Field>
               <Field label="Title Name">
                 <OptionSelect
                   placeholder="Title"
@@ -220,24 +247,24 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
               <Field label="ชื่อภาษาอังกฤษ" required>
                 <Input name="firstNameEn" placeholder="Somchai" />
               </Field>
-              <Field label="นามสกุลภาษาอังกฤษ" required>
-                <Input name="lastNameEn" placeholder="Jaidee" />
-              </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="นามสกุลภาษาอังกฤษ" required>
+                <Input name="lastNameEn" placeholder="Jaidee" />
+              </Field>
               <Field label="Line ID">
                 <Input name="lineId" placeholder="เช่น somchai.j" />
               </Field>
               <Field label="เพศ" required>
                 <OptionSelect placeholder="เลือกเพศ" defaultValue={genders[0]} options={genders} />
               </Field>
-              <Field label="เลขบัตรประชาชน" required>
-                <Input name="nationalId" placeholder="1-1014-56789-01-2" />
-              </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <Field label="เลขบัตรประชาชน" required>
+                <Input name="nationalId" placeholder="1-1014-56789-01-2" />
+              </Field>
               <Field label="วันเดือนปีเกิด" required>
                 <Input
                   type="date"
@@ -253,12 +280,12 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
                   placeholder="คำนวณอัตโนมัติ"
                 />
               </Field>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Field label="น้ำหนัก (กก.)">
                 <Input name="weight" type="number" placeholder="68" />
               </Field>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="ส่วนสูง (ซม.)">
                 <Input name="height" type="number" placeholder="174" />
               </Field>
@@ -284,32 +311,60 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
                 <Input name="bankAccount" placeholder="012-3-45678-9" />
               </Field>
             </div>
+          </div>
+        </Section>
 
-            <Field label="ประเภทภาษี (Tax Type)" required>
-              <div className="flex flex-wrap gap-2">
-                {taxTypes.map((type) => {
-                  const isSelected = type === selectedTaxType;
-                  return (
-                    <button
-                      key={type}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => setSelectedTaxType(type)}
-                      className={cn(
-                        "focus-visible:border-ring focus-visible:ring-ring/50 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-3",
-                        isSelected
-                          ? "border-neutral-950 bg-neutral-950 text-white"
-                          : "border-border hover:border-foreground/30",
-                      )}
-                    >
-                      {type}
-                    </button>
-                  );
-                })}
-              </div>
+        <Section number={2} title="ที่อยู่ตามทะเบียนบ้าน" required>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="บ้านเลขที่/หมู่ที่" required>
+              <Input name="houseNo" placeholder="88/12 หมู่ 4" />
+            </Field>
+            <Field label="หมู่บ้าน/คอนโด">
+              <Input name="village" placeholder="ถ้ามี" />
+            </Field>
+            <Field label="รหัสไปรษณีย์" required>
+              <Input
+                name="postalCode"
+                inputMode="numeric"
+                maxLength={5}
+                value={postalCode}
+                onChange={(event) => handlePostalCodeChange(event.target.value)}
+                placeholder="10400"
+              />
             </Field>
           </div>
-        </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="แขวง/ตำบล" required>
+              <OptionSelect
+                placeholder="เลือกแขวง/ตำบล"
+                value={subDistrict}
+                onValueChange={setSubDistrict}
+                options={subDistricts}
+              />
+            </Field>
+            <Field label="เขต/อำเภอ" required>
+              <OptionSelect
+                placeholder="เลือกเขต/อำเภอ"
+                value={district}
+                onValueChange={setDistrict}
+                options={districts}
+              />
+            </Field>
+            <Field label="จังหวัด" required>
+              <OptionSelect
+                placeholder="เลือกจังหวัด"
+                value={province}
+                onValueChange={setProvince}
+                options={provinces}
+              />
+            </Field>
+          </div>
+
+          <p className="text-muted-foreground text-xs">
+            กรอกรหัสไปรษณีย์แล้วระบบจะเติมแขวง/เขต/จังหวัดให้อัตโนมัติ
+          </p>
+        </Section>
       </div>
 
       <div className="mt-6 flex items-center justify-end">
