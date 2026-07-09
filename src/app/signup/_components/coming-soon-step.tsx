@@ -19,7 +19,7 @@ export function ComingSoonStep({ step, onBack }: { step: number; onBack: () => v
   const info = stepInfo[step];
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="mx-auto w-full max-w-5xl">
       <p className="text-muted-foreground text-sm">ขั้นตอนที่ {step} จาก 4</p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight">{info?.title}</h1>
       <p className="text-muted-foreground mt-2 text-sm">{info?.description}</p>

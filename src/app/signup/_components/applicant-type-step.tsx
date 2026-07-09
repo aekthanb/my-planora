@@ -44,7 +44,7 @@ export function ApplicantTypeStep({ onNext }: { onNext: () => void }) {
   const selectedType = applicantTypes.find((type) => type.code === selected)!;
 
   return (
-    <div className="w-full max-w-3xl">
+    <div className="mx-auto w-full max-w-5xl">
       <p className="text-muted-foreground text-sm">ขั้นตอนที่ 1 จาก 4</p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight">คุณสมัครในฐานะอะไร?</h1>
       <p className="text-muted-foreground mt-2 text-sm">
