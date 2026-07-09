@@ -105,11 +105,13 @@ function Section({
   number,
   title,
   required,
+  note,
   children,
 }: {
   number: number;
   title: string;
   required?: boolean;
+  note?: string;
   children: ReactNode;
 }) {
   return (
@@ -122,6 +124,7 @@ function Section({
           {title}
           {required && <span className="text-destructive">*</span>}
         </p>
+        {note && <span className="text-primary ml-auto text-xs">{note}</span>}
       </div>
       <div className="space-y-4 p-5">{children}</div>
     </div>
@@ -162,6 +165,8 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
   const [emergencySubDistrict, setEmergencySubDistrict] = useState("");
   const [emergencyDistrict, setEmergencyDistrict] = useState("");
   const [emergencyProvince, setEmergencyProvince] = useState("");
+
+  const [maritalStatus, setMaritalStatus] = useState(maritalStatusOptions[0]);
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
@@ -614,6 +619,72 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
               />
             </Field>
           </div>
+        </Section>
+
+        <Section number={6} title="สถานะสมรส">
+          <div className="flex flex-wrap gap-2">
+            {maritalStatusOptions.map((status) => {
+              const isSelected = status === maritalStatus;
+              return (
+                <button
+                  key={status}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => setMaritalStatus(status)}
+                  className={cn(
+                    "focus-visible:border-ring focus-visible:ring-ring/50 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-3",
+                    isSelected
+                      ? "border-neutral-950 bg-neutral-950 text-white"
+                      : "border-border hover:border-foreground/30",
+                  )}
+                >
+                  {status}
+                </button>
+              );
+            })}
+          </div>
+
+          <p className="text-muted-foreground text-xs">
+            หากเลือก &quot;สมรส&quot; ระบบจะแสดงช่องข้อมูลคู่สมรส: ชื่อ นามสกุล อายุ สถานที่ทำงาน
+            เบอร์โทรศัพท์ และข้อมูลบุตร (จำนวน อายุ เพศ)
+          </p>
+
+          {maritalStatus === "สมรส" && (
+            <>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="ชื่อคู่สมรส">
+                  <Input name="spouseFirstName" placeholder="ชื่อ" />
+                </Field>
+                <Field label="นามสกุลคู่สมรส">
+                  <Input name="spouseLastName" placeholder="นามสกุล" />
+                </Field>
+                <Field label="อายุคู่สมรส">
+                  <Input name="spouseAge" type="number" placeholder="ปี" />
+                </Field>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <Field label="สถานที่ทำงานคู่สมรส">
+                  <Input name="spouseWorkplace" placeholder="สถานที่ทำงาน" />
+                </Field>
+                <Field label="เบอร์โทรศัพท์คู่สมรส">
+                  <Input name="spousePhone" placeholder="08x-xxx-xxxx" />
+                </Field>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="จำนวนบุตร">
+                  <Input name="childrenCount" type="number" placeholder="0" />
+                </Field>
+                <Field label="อายุบุตร">
+                  <Input name="childrenAge" placeholder="เช่น 5, 8" />
+                </Field>
+                <Field label="เพศบุตร">
+                  <OptionSelect placeholder="เลือก" options={childGenderOptions} />
+                </Field>
+              </div>
+            </>
+          )}
         </Section>
       </div>
 
