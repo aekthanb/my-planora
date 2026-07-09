@@ -70,6 +70,62 @@ function createWorkEntry(id: number): WorkEntry {
   return { id, companyName: "", branch: "", position: "", duration: "", other: "" };
 }
 
+const MAX_TRAINING_ENTRIES = 3;
+
+type TrainingEntry = {
+  id: number;
+  topic: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+};
+
+function createTrainingEntry(id: number): TrainingEntry {
+  return { id, topic: "", location: "", startDate: "", endDate: "" };
+}
+
+type HealthQuestionConfig = {
+  id: "seriousDisease" | "chronicDisease" | "medicalOrder" | "disability";
+  question: string;
+  noLabel: string;
+  yesLabel: string;
+  detailPlaceholder: string;
+};
+
+const healthQuestions: HealthQuestionConfig[] = [
+  {
+    id: "seriousDisease",
+    question: "เคยป่วยเป็นโรคติดต่อร้ายแรงหรือไม่",
+    noLabel: "ไม่เคย",
+    yesLabel: "เคย",
+    detailPlaceholder: 'รายละเอียด (กรอกถ้าเลือก "เคย")',
+  },
+  {
+    id: "chronicDisease",
+    question: "มีโรคประจำตัวหรือไม่",
+    noLabel: "ไม่มี",
+    yesLabel: "มี",
+    detailPlaceholder: "ภูมิแพ้อากาศ",
+  },
+  {
+    id: "medicalOrder",
+    question: "เคยได้รับคำสั่งจากแพทย์หรือไม่",
+    noLabel: "ไม่เคย",
+    yesLabel: "เคย",
+    detailPlaceholder: 'รายละเอียด (กรอกถ้าเลือก "เคย")',
+  },
+  {
+    id: "disability",
+    question: "มีความพิการหรือไม่",
+    noLabel: "ไม่มี",
+    yesLabel: "มี",
+    detailPlaceholder: 'รายละเอียด (กรอกถ้าเลือก "มี")',
+  },
+];
+
+const cefrLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
+const hskLevels = ["1", "2", "3", "4", "5", "6"];
+
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
 const provinces = ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่"];
@@ -143,12 +199,14 @@ function Section({
   title,
   required,
   note,
+  noteTone = "info",
   children,
 }: {
   number: number;
   title: string;
   required?: boolean;
   note?: string;
+  noteTone?: "info" | "warning";
   children: ReactNode;
 }) {
   return (
@@ -161,7 +219,18 @@ function Section({
           {title}
           {required && <span className="text-destructive">*</span>}
         </p>
-        {note && <span className="ml-auto text-xs text-blue-600 dark:text-blue-400">{note}</span>}
+        {note && (
+          <span
+            className={cn(
+              "ml-auto text-xs",
+              noteTone === "warning"
+                ? "rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
+                : "text-blue-600 dark:text-blue-400",
+            )}
+          >
+            {note}
+          </span>
+        )}
       </div>
       <div className="space-y-4 p-5">{children}</div>
     </div>
@@ -209,6 +278,15 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
     createEducationEntry(1, "ปริญญาตรี"),
   ]);
   const [workEntries, setWorkEntries] = useState<WorkEntry[]>([createWorkEntry(1)]);
+  const [trainingEntries, setTrainingEntries] = useState<TrainingEntry[]>([createTrainingEntry(1)]);
+
+  const [healthAnswers, setHealthAnswers] = useState<Record<string, boolean>>({
+    seriousDisease: false,
+    chronicDisease: true,
+    medicalOrder: false,
+    disability: false,
+  });
+  const [healthDetails, setHealthDetails] = useState<Record<string, string>>({});
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
@@ -278,6 +356,30 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
     setWorkEntries((prev) =>
       prev.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)),
     );
+  }
+
+  function addTrainingEntry() {
+    setTrainingEntries((prev) =>
+      prev.length >= MAX_TRAINING_ENTRIES ? prev : [...prev, createTrainingEntry(Date.now())],
+    );
+  }
+
+  function removeTrainingEntry(id: number) {
+    setTrainingEntries((prev) => prev.filter((entry) => entry.id !== id));
+  }
+
+  function updateTrainingEntry(id: number, patch: Partial<TrainingEntry>) {
+    setTrainingEntries((prev) =>
+      prev.map((entry) => (entry.id === id ? { ...entry, ...patch } : entry)),
+    );
+  }
+
+  function setHealthAnswer(id: string, value: boolean) {
+    setHealthAnswers((prev) => ({ ...prev, [id]: value }));
+  }
+
+  function setHealthDetail(id: string, value: string) {
+    setHealthDetails((prev) => ({ ...prev, [id]: value }));
   }
 
   return (
@@ -926,6 +1028,147 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
           >
             + เพิ่มบริษัท ({workEntries.length}/{MAX_WORK_ENTRIES})
           </button>
+        </Section>
+
+        <Section
+          number={10}
+          title="ประวัติสุขภาพ"
+          note="ข้อมูลอ่อนไหว — ใช้ยินยอมใน Step 3"
+          noteTone="warning"
+        >
+          {healthQuestions.map((item, index) => {
+            const answer = healthAnswers[item.id] ?? false;
+            return (
+              <div
+                key={item.id}
+                className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[1fr_auto_1fr]"
+              >
+                <p className="text-sm">
+                  {index + 1}. {item.question}
+                </p>
+                <div className="flex overflow-hidden rounded-lg border">
+                  <button
+                    type="button"
+                    onClick={() => setHealthAnswer(item.id, false)}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium transition-colors",
+                      !answer
+                        ? "bg-neutral-950 text-white"
+                        : "bg-background text-muted-foreground hover:bg-muted",
+                    )}
+                  >
+                    {item.noLabel}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHealthAnswer(item.id, true)}
+                    className={cn(
+                      "border-l px-3 py-1.5 text-sm font-medium transition-colors",
+                      answer
+                        ? "bg-neutral-950 text-white"
+                        : "bg-background text-muted-foreground hover:bg-muted",
+                    )}
+                  >
+                    {item.yesLabel}
+                  </button>
+                </div>
+                <Input
+                  disabled={!answer}
+                  value={healthDetails[item.id] ?? ""}
+                  onChange={(event) => setHealthDetail(item.id, event.target.value)}
+                  placeholder={item.detailPlaceholder}
+                />
+              </div>
+            );
+          })}
+        </Section>
+
+        <Section number={11} title="ประวัติฝึกอบรม" note="สูงสุด 3 รายการ · ถ้ามี">
+          {trainingEntries.map((entry) => (
+            <div key={entry.id} className="relative rounded-lg border p-4">
+              <button
+                type="button"
+                onClick={() => removeTrainingEntry(entry.id)}
+                className="text-muted-foreground hover:text-destructive absolute top-3 right-3 text-xs"
+              >
+                ลบ
+              </button>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
+                <Field label="เรื่อง/หัวข้อ">
+                  <Input
+                    value={entry.topic}
+                    onChange={(event) =>
+                      updateTrainingEntry(entry.id, { topic: event.target.value })
+                    }
+                    placeholder="การบริการลูกค้าอย่างมืออาชีพ"
+                  />
+                </Field>
+                <Field label="สถานที่ฝึกอบรม">
+                  <Input
+                    value={entry.location}
+                    onChange={(event) =>
+                      updateTrainingEntry(entry.id, { location: event.target.value })
+                    }
+                    placeholder="สถาบันเพิ่มผลผลิตแห่งชาติ"
+                  />
+                </Field>
+                <Field label="วันที่เริ่ม">
+                  <Input
+                    value={entry.startDate}
+                    onChange={(event) =>
+                      updateTrainingEntry(entry.id, { startDate: event.target.value })
+                    }
+                    placeholder="12 ม.ค. 2567"
+                  />
+                </Field>
+                <Field label="วันที่สิ้นสุด">
+                  <Input
+                    value={entry.endDate}
+                    onChange={(event) =>
+                      updateTrainingEntry(entry.id, { endDate: event.target.value })
+                    }
+                    placeholder="14 ม.ค. 2567"
+                  />
+                </Field>
+              </div>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={addTrainingEntry}
+            disabled={trainingEntries.length >= MAX_TRAINING_ENTRIES}
+            className="border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground w-full rounded-lg border border-dashed py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            + เพิ่มรายการฝึกอบรม ({trainingEntries.length}/{MAX_TRAINING_ENTRIES})
+          </button>
+        </Section>
+
+        <Section number={12} title="ความสามารถทางภาษา" note="ถ้ามี">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="ระดับ CEFR">
+              <OptionSelect placeholder="เลือก" defaultValue={cefrLevels[3]} options={cefrLevels} />
+            </Field>
+            <Field label="ระดับ HSK">
+              <OptionSelect placeholder="เลือก" options={hskLevels} />
+            </Field>
+            <Field label="TOEIC">
+              <Input name="toeic" type="number" placeholder="720" />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <Field label="IELTS">
+              <Input name="ielts" placeholder="คะแนน" />
+            </Field>
+            <Field label="TOEFL">
+              <Input name="toefl" placeholder="คะแนน" />
+            </Field>
+            <Field label="ภาษาอื่น">
+              <Input name="otherLanguage" placeholder="เช่น ญี่ปุ่น N3" />
+            </Field>
+          </div>
         </Section>
       </div>
 
