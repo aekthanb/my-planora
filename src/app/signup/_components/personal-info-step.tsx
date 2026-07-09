@@ -126,6 +126,8 @@ const healthQuestions: HealthQuestionConfig[] = [
 const cefrLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
 const hskLevels = ["1", "2", "3", "4", "5", "6"];
 
+const vehicleOptions = ["รถยนต์", "รถจักรยานยนต์", "ไม่มี"];
+
 const subDistricts = ["สามเสนใน", "คลองตันเหนือ", "ลาดยาว", "สี่พระยา", "ตลาดขวัญ"];
 const districts = ["พญาไท", "วัฒนา", "จตุจักร", "บางรัก", "เมืองนนทบุรี"];
 const provinces = ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่"];
@@ -288,6 +290,10 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
   });
   const [healthDetails, setHealthDetails] = useState<Record<string, string>>({});
 
+  const [vehicles, setVehicles] = useState<string[]>(["รถยนต์", "รถจักรยานยนต์"]);
+  const [canUseOfficeEquipment, setCanUseOfficeEquipment] = useState(true);
+  const [canRelocate, setCanRelocate] = useState(true);
+
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -380,6 +386,18 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
 
   function setHealthDetail(id: string, value: string) {
     setHealthDetails((prev) => ({ ...prev, [id]: value }));
+  }
+
+  function toggleVehicle(option: string) {
+    setVehicles((prev) => {
+      if (option === "ไม่มี") {
+        return prev.includes("ไม่มี") ? [] : ["ไม่มี"];
+      }
+      const withoutNone = prev.filter((item) => item !== "ไม่มี");
+      return withoutNone.includes(option)
+        ? withoutNone.filter((item) => item !== option)
+        : [...withoutNone, option];
+    });
   }
 
   return (
@@ -1167,6 +1185,107 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
             </Field>
             <Field label="ภาษาอื่น">
               <Input name="otherLanguage" placeholder="เช่น ญี่ปุ่น N3" />
+            </Field>
+          </div>
+        </Section>
+
+        <Section number={13} title="ข้อมูลเพิ่มเติม">
+          <div className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[220px_auto]">
+            <p className="text-sm">มีพาหนะเป็นของตัวเอง</p>
+            <div className="flex flex-wrap gap-2">
+              {vehicleOptions.map((option) => {
+                const isSelected = vehicles.includes(option);
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => toggleVehicle(option)}
+                    className={cn(
+                      "focus-visible:border-ring focus-visible:ring-ring/50 rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-3",
+                      isSelected
+                        ? "border-neutral-950 bg-neutral-950 text-white"
+                        : "border-border hover:border-foreground/30",
+                    )}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[220px_auto]">
+            <p className="text-sm">ใช้เครื่องสำนักงาน</p>
+            <div className="flex w-fit overflow-hidden rounded-lg border">
+              <button
+                type="button"
+                onClick={() => setCanUseOfficeEquipment(true)}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
+                  canUseOfficeEquipment
+                    ? "bg-neutral-950 text-white"
+                    : "bg-background text-muted-foreground hover:bg-muted",
+                )}
+              >
+                ใช้ได้
+              </button>
+              <button
+                type="button"
+                onClick={() => setCanUseOfficeEquipment(false)}
+                className={cn(
+                  "border-l px-3 py-1.5 text-sm font-medium transition-colors",
+                  !canUseOfficeEquipment
+                    ? "bg-neutral-950 text-white"
+                    : "bg-background text-muted-foreground hover:bg-muted",
+                )}
+              >
+                ใช้ไม่ได้
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[220px_auto_1fr]">
+            <p className="text-sm">ไปปฏิบัติงานต่างจังหวัด</p>
+            <div className="flex w-fit overflow-hidden rounded-lg border">
+              <button
+                type="button"
+                onClick={() => setCanRelocate(true)}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
+                  canRelocate
+                    ? "bg-neutral-950 text-white"
+                    : "bg-background text-muted-foreground hover:bg-muted",
+                )}
+              >
+                ได้
+              </button>
+              <button
+                type="button"
+                onClick={() => setCanRelocate(false)}
+                className={cn(
+                  "border-l px-3 py-1.5 text-sm font-medium transition-colors",
+                  !canRelocate
+                    ? "bg-neutral-950 text-white"
+                    : "bg-background text-muted-foreground hover:bg-muted",
+                )}
+              >
+                ไม่ได้
+              </button>
+            </div>
+            <Input
+              name="relocateProvince"
+              disabled={!canRelocate}
+              placeholder="ระบุจังหวัดที่สะดวก (ถ้ามี)"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <Field label="ความสามารถอื่น">
+              <Input name="otherAbility" placeholder="เช่น ขับรถยนต์ โปรแกรมบัญชี" />
+            </Field>
+            <Field label="ความสามารถพิเศษ">
+              <Input name="specialAbility" placeholder="เช่น ถ่ายภาพ ตัดต่อวิดีโอ" />
             </Field>
           </div>
         </Section>
