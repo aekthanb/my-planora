@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, type ReactNode } from "react";
 import { PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -146,6 +147,12 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
   const [district, setDistrict] = useState("");
   const [province, setProvince] = useState("");
 
+  const [sameAsRegistered, setSameAsRegistered] = useState(true);
+  const [currentPostalCode, setCurrentPostalCode] = useState("");
+  const [currentSubDistrict, setCurrentSubDistrict] = useState("");
+  const [currentDistrict, setCurrentDistrict] = useState("");
+  const [currentProvince, setCurrentProvince] = useState("");
+
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -161,6 +168,16 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
       setSubDistrict(match.subDistrict);
       setDistrict(match.district);
       setProvince(match.province);
+    }
+  }
+
+  function handleCurrentPostalCodeChange(value: string) {
+    setCurrentPostalCode(value);
+    const match = postalCodeLookup[value];
+    if (match) {
+      setCurrentSubDistrict(match.subDistrict);
+      setCurrentDistrict(match.district);
+      setCurrentProvince(match.province);
     }
   }
 
@@ -364,6 +381,71 @@ export function PersonalInfoStep({ onNext }: { onNext: () => void }) {
           <p className="text-muted-foreground text-xs">
             กรอกรหัสไปรษณีย์แล้วระบบจะเติมแขวง/เขต/จังหวัดให้อัตโนมัติ
           </p>
+        </Section>
+
+        <Section number={3} title="ที่อยู่ปัจจุบัน" required>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="sameAsRegistered"
+              checked={sameAsRegistered}
+              onCheckedChange={(checked) => setSameAsRegistered(checked === true)}
+            />
+            <Label htmlFor="sameAsRegistered">ที่อยู่ปัจจุบันตรงกับทะเบียนบ้าน</Label>
+          </div>
+          <p className="text-muted-foreground text-xs">
+            ระบบใช้ที่อยู่จากขั้นตอน 2 — หากไม่ตรง ให้ยกเลิกติ๊กแล้วกรอกที่อยู่ปัจจุบัน (บ้านเลขที่
+            รหัสไปรษณีย์ แขวง เขต จังหวัด ฯลฯ)
+          </p>
+
+          {!sameAsRegistered && (
+            <>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="บ้านเลขที่/หมู่ที่" required>
+                  <Input name="currentHouseNo" placeholder="88/12 หมู่ 4" />
+                </Field>
+                <Field label="หมู่บ้าน/คอนโด">
+                  <Input name="currentVillage" placeholder="ถ้ามี" />
+                </Field>
+                <Field label="รหัสไปรษณีย์" required>
+                  <Input
+                    name="currentPostalCode"
+                    inputMode="numeric"
+                    maxLength={5}
+                    value={currentPostalCode}
+                    onChange={(event) => handleCurrentPostalCodeChange(event.target.value)}
+                    placeholder="10400"
+                  />
+                </Field>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <Field label="แขวง/ตำบล" required>
+                  <OptionSelect
+                    placeholder="เลือกแขวง/ตำบล"
+                    value={currentSubDistrict}
+                    onValueChange={setCurrentSubDistrict}
+                    options={subDistricts}
+                  />
+                </Field>
+                <Field label="เขต/อำเภอ" required>
+                  <OptionSelect
+                    placeholder="เลือกเขต/อำเภอ"
+                    value={currentDistrict}
+                    onValueChange={setCurrentDistrict}
+                    options={districts}
+                  />
+                </Field>
+                <Field label="จังหวัด" required>
+                  <OptionSelect
+                    placeholder="เลือกจังหวัด"
+                    value={currentProvince}
+                    onValueChange={setCurrentProvince}
+                    options={provinces}
+                  />
+                </Field>
+              </div>
+            </>
+          )}
         </Section>
       </div>
 
