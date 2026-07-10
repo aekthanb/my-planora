@@ -4,10 +4,12 @@ import { useState } from "react";
 import { RegisterSidebar } from "./register-sidebar";
 import { ApplicantTypeStep } from "./applicant-type-step";
 import { PersonalInfoStep } from "./personal-info-step";
+import { PdpaConsentStep } from "./pdpa-consent-step";
 import { ComingSoonStep } from "./coming-soon-step";
 
 export function SignupWizard() {
   const [step, setStep] = useState(1);
+  const [applicantType, setApplicantType] = useState("E11");
   const [subStepCompletion, setSubStepCompletion] = useState<Record<number, boolean>>({});
 
   return (
@@ -18,7 +20,14 @@ export function SignupWizard() {
         subStepCompletion={subStepCompletion}
       />
       <main className="flex-1 px-6 py-10 sm:px-12 sm:py-14">
-        {step === 1 && <ApplicantTypeStep onNext={() => setStep(2)} />}
+        {step === 1 && (
+          <ApplicantTypeStep
+            onNext={(code) => {
+              setApplicantType(code);
+              setStep(2);
+            }}
+          />
+        )}
         {step === 2 && (
           <PersonalInfoStep
             onNext={() => setStep(3)}
@@ -26,7 +35,14 @@ export function SignupWizard() {
             onProgressChange={setSubStepCompletion}
           />
         )}
-        {step > 2 && <ComingSoonStep step={step} onBack={() => setStep(1)} />}
+        {step === 3 && (
+          <PdpaConsentStep
+            applicantType={applicantType}
+            onNext={() => setStep(4)}
+            onBack={() => setStep(2)}
+          />
+        )}
+        {step > 3 && <ComingSoonStep step={step} onBack={() => setStep(1)} />}
       </main>
     </div>
   );

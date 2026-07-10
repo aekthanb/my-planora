@@ -39,7 +39,7 @@ const applicantTypes = [
   },
 ];
 
-export function ApplicantTypeStep({ onNext }: { onNext: () => void }) {
+export function ApplicantTypeStep({ onNext }: { onNext: (code: string) => void }) {
   const [selected, setSelected] = useState(applicantTypes[0]!.code);
   const selectedType = applicantTypes.find((type) => type.code === selected)!;
 
@@ -89,7 +89,7 @@ export function ApplicantTypeStep({ onNext }: { onNext: () => void }) {
             {selectedType.code} {selectedType.title}
           </span>
         </p>
-        <Button type="button" size="lg" onClick={onNext}>
+        <Button type="button" size="lg" onClick={() => onNext(selected)}>
           ถัดไป →
         </Button>
       </div>
