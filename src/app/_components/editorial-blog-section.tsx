@@ -16,23 +16,23 @@ const posts: BlogPost[] = [
     title: "แนวคิดการออกแบบระบบบริหารจัดการองค์กร",
     excerpt:
       "เราออกแบบทุกฟีเจอร์ให้ใช้งานง่ายตั้งแต่แรกเห็น พร้อมรองรับการเติบโตของทีมในทุกขนาดองค์กร",
-    image: "https://images.pexels.com/photos/5466238/pexels-photo-5466238.jpeg",
+    image: "https://images.pexels.com/photos/10922370/pexels-photo-10922370.jpeg",
   },
   {
     title: "คู่มือฉบับสมบูรณ์สำหรับการเริ่มต้นใช้งาน Planora",
     excerpt: "ตั้งแต่การตั้งค่าทีมแรก ไปจนถึงการออกรายงานสรุปผลการทำงานแบบเรียลไทม์",
-    image: "https://images.pexels.com/photos/31525131/pexels-photo-31525131.jpeg",
+    image: "https://images.pexels.com/photos/22711217/pexels-photo-22711217.jpeg",
   },
   {
     title: "5 วิธีบริหารเวลาให้ทีมทำงานอย่างมีประสิทธิภาพ",
     excerpt:
       "แนวทางจัดลำดับความสำคัญของงาน ลดการประชุมที่ไม่จำเป็น และสร้างจังหวะการทำงานที่ยั่งยืน",
-    image: "https://images.pexels.com/photos/10922370/pexels-photo-10922370.jpeg",
+    image: "https://images.pexels.com/photos/5466238/pexels-photo-5466238.jpeg",
   },
   {
     title: "วิธีออกแบบผังโครงสร้างองค์กรให้รองรับการเติบโต",
     excerpt: "หลักการจัดชั้นบังคับบัญชาและแบ่งฝ่ายงานที่ช่วยให้องค์กรขยายทีมได้โดยไม่สะดุด",
-    image: "https://images.pexels.com/photos/22711217/pexels-photo-22711217.jpeg",
+    image: "https://images.pexels.com/photos/31525131/pexels-photo-31525131.jpeg",
   },
 ];
 
@@ -63,6 +63,8 @@ export function EditorialBlogSection() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 right-8 border-r sm:right-16 lg:right-24 xl:right-32"
       />
+
+      <div className="relative left-1/2 w-screen -translate-x-1/2 border-t" />
 
       <div className="mx-auto max-w-6xl px-8 py-10 sm:py-14">
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
