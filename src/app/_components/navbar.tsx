@@ -2,58 +2,29 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import Link from "next/link";
-import {
-  ArrowLeftRight,
-  ArrowRight,
-  BarChart3,
-  ChevronDown,
-  ClipboardList,
-  ListTodo,
-  Menu,
-  Puzzle,
-  RefreshCw,
-  Store,
-  UserRound,
-  Users,
-  X,
-} from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, UserRound, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type DropdownItem = {
   icon: ComponentType<{ className?: string }>;
   title: string;
-  description: string;
+  description?: string;
 };
-
-const productItems: DropdownItem[] = [
-  { icon: ListTodo, title: "Task Management", description: "Plan and track tasks in one place" },
-  { icon: Users, title: "Team Collaboration", description: "Work together in real time" },
-  { icon: BarChart3, title: "Reporting", description: "Visualize progress and workload" },
-  { icon: Puzzle, title: "Integrations", description: "Connect the tools you already use" },
-];
-
-const solutionItems: DropdownItem[] = [
-  { icon: Store, title: "Marketplace", description: "Find and buy AI tools" },
-  { icon: ClipboardList, title: "Guides", description: "Learn how to use AI tools" },
-  { icon: RefreshCw, title: "Backup", description: "Keep your data backed up" },
-  {
-    icon: ArrowLeftRight,
-    title: "API Integration",
-    description: "Integrate AI tools into your app",
-  },
-];
 
 const navLinks: {
   label: string;
   href: string;
   dropdownLabel?: string;
   dropdown?: DropdownItem[];
+  columns?: 1 | 2;
 }[] = [
-  { label: "Products", href: "#", dropdownLabel: "Features", dropdown: productItems },
-  { label: "Services", href: "#" },
-  { label: "Solution", href: "#", dropdownLabel: "Use cases", dropdown: solutionItems },
-  { label: "Support", href: "#" },
-  { label: "Career", href: "#" },
+  { label: "HRM", href: "#" },
+  { label: "AMT", href: "#" },
+  { label: "FST", href: "#" },
+  { label: "AST", href: "#" },
+  { label: "Master Setup", href: "#" },
+  { label: "System Permission", href: "#" },
+  { label: "Report", href: "#" },
 ];
 
 export function Navbar() {
@@ -123,10 +94,18 @@ export function Navbar() {
               {link.dropdown && openMenu === link.label && (
                 <div className="absolute top-full left-0 w-100 pt-4">
                   <div className="bg-background rounded-xl border p-3 shadow-md">
-                    <p className="text-muted-foreground border-b px-2 pb-2 text-xs">
-                      {link.dropdownLabel}
-                    </p>
-                    <div className="mt-2 grid grid-cols-2 gap-1">
+                    {link.dropdownLabel && (
+                      <p className="text-muted-foreground border-b px-2 pb-2 text-xs">
+                        {link.dropdownLabel}
+                      </p>
+                    )}
+                    <div
+                      className={cn(
+                        "grid gap-1",
+                        link.dropdownLabel && "mt-2",
+                        link.columns === 1 ? "grid-cols-1" : "grid-cols-2",
+                      )}
+                    >
                       {link.dropdown.map((item) => (
                         <Link
                           key={item.title}
@@ -142,9 +121,11 @@ export function Navbar() {
                               {item.title}
                               <ArrowRight className="size-3.5 -translate-x-1 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
                             </span>
-                            <span className="text-muted-foreground block text-xs">
-                              {item.description}
-                            </span>
+                            {item.description && (
+                              <span className="text-muted-foreground block text-xs">
+                                {item.description}
+                              </span>
+                            )}
                           </span>
                         </Link>
                       ))}
