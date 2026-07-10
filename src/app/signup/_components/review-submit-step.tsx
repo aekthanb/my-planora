@@ -70,15 +70,16 @@ export function ReviewSubmitStep({
   consent,
   onBack,
   onEditStep,
+  onSubmit,
 }: {
   applicantType: string;
   consent: ConsentSummary | null;
   onBack: () => void;
   onEditStep: (step: number) => void;
+  onSubmit: () => void;
 }) {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
-  const [submitted, setSubmitted] = useState(false);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
@@ -264,16 +265,10 @@ export function ReviewSubmitStep({
             size="lg"
             className="mt-4 w-full"
             disabled={!otpComplete}
-            onClick={() => setSubmitted(true)}
+            onClick={onSubmit}
           >
             ยืนยันและส่งใบสมัคร
           </Button>
-
-          {submitted && (
-            <p className="mt-3 text-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              ส่งใบสมัครเรียบร้อยแล้ว
-            </p>
-          )}
 
           <p className="text-muted-foreground mt-3 text-xs">
             ระบบจะบันทึกวันเวลา หมายเลขเครื่อง และ IP address เป็นหลักฐานการยืนยัน
