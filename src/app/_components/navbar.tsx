@@ -9,6 +9,7 @@ type DropdownItem = {
   icon: ComponentType<{ className?: string }>;
   title: string;
   description?: string;
+  href: string;
 };
 
 const employeeItems: DropdownItem[] = [
@@ -16,8 +17,14 @@ const employeeItems: DropdownItem[] = [
     icon: Network,
     title: "โครงสร้างองค์กร",
     description: "ดูและจัดการผังโครงสร้างองค์กร",
+    href: "/employees/structure",
   },
-  { icon: Users, title: "พนักงานทั้งหมด", description: "ดูและจัดการข้อมูลพนักงาน" },
+  {
+    icon: Users,
+    title: "พนักงานทั้งหมด",
+    description: "ดูและจัดการข้อมูลพนักงาน",
+    href: "#",
+  },
 ];
 
 const navLinks: {
@@ -116,7 +123,7 @@ export function Navbar() {
                       {link.dropdown.map((item) => (
                         <Link
                           key={item.title}
-                          href="#"
+                          href={item.href}
                           onClick={() => setOpenMenu(null)}
                           className="group hover:bg-muted flex items-start gap-2.5 rounded-lg p-2 transition-colors"
                         >
