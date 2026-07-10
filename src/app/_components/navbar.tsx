@@ -1,0 +1,177 @@
+"use client";
+
+import { useEffect, useRef, useState, type ComponentType } from "react";
+import Link from "next/link";
+import {
+  ArrowLeftRight,
+  BarChart3,
+  ChevronDown,
+  ClipboardList,
+  ListTodo,
+  Menu,
+  Puzzle,
+  RefreshCw,
+  Store,
+  Users,
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+type DropdownItem = {
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+};
+
+const productItems: DropdownItem[] = [
+  { icon: ListTodo, title: "Task Management", description: "Plan and track tasks in one place" },
+  { icon: Users, title: "Team Collaboration", description: "Work together in real time" },
+  { icon: BarChart3, title: "Reporting", description: "Visualize progress and workload" },
+  { icon: Puzzle, title: "Integrations", description: "Connect the tools you already use" },
+];
+
+const solutionItems: DropdownItem[] = [
+  { icon: Store, title: "Marketplace", description: "Find and buy AI tools" },
+  { icon: ClipboardList, title: "Guides", description: "Learn how to use AI tools" },
+  { icon: RefreshCw, title: "Backup", description: "Keep your data backed up" },
+  {
+    icon: ArrowLeftRight,
+    title: "API Integration",
+    description: "Integrate AI tools into your app",
+  },
+];
+
+const navLinks: {
+  label: string;
+  href: string;
+  dropdownLabel?: string;
+  dropdown?: DropdownItem[];
+}[] = [
+  { label: "Products", href: "#", dropdownLabel: "Features", dropdown: productItems },
+  { label: "Services", href: "#" },
+  { label: "Solution", href: "#", dropdownLabel: "Use cases", dropdown: solutionItems },
+  { label: "Support", href: "#" },
+  { label: "Career", href: "#" },
+];
+
+export function Navbar() {
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setOpenMenu(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <header ref={navRef} className="bg-background sticky top-0 z-50 w-full">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-8 py-3">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-sm font-semibold text-white">
+            P
+          </span>
+          <span className="text-base font-medium">Planora</span>
+        </Link>
+
+        <div className="hidden items-center gap-6 md:flex">
+          {navLinks.map((link) => (
+            <div key={link.label} className="relative">
+              {link.dropdown ? (
+                <button
+                  type="button"
+                  onClick={() => setOpenMenu((prev) => (prev === link.label ? null : link.label))}
+                  className={cn(
+                    "inline-flex items-center gap-1 py-2 text-sm leading-none transition-colors",
+                    openMenu === link.label
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {link.label}
+                  <ChevronDown
+                    className={cn(
+                      "size-3.5 transition-transform",
+                      openMenu === link.label && "rotate-180",
+                    )}
+                  />
+                </button>
+              ) : (
+                <Link
+                  href={link.href}
+                  className="text-muted-foreground hover:text-foreground inline-flex items-center py-2 text-sm leading-none transition-colors"
+                >
+                  {link.label}
+                </Link>
+              )}
+
+              {link.dropdown && openMenu === link.label && (
+                <div className="bg-background absolute top-full left-0 mt-4 w-100 rounded-xl border p-3 shadow-md">
+                  <p className="text-muted-foreground px-2 text-xs">{link.dropdownLabel}</p>
+                  <div className="mt-1 grid grid-cols-2 gap-1">
+                    {link.dropdown.map((item) => (
+                      <Link
+                        key={item.title}
+                        href="#"
+                        onClick={() => setOpenMenu(null)}
+                        className="hover:bg-muted flex items-start gap-2.5 rounded-lg p-2 transition-colors"
+                      >
+                        <span className="border-border text-muted-foreground mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-md border">
+                          <item.icon className="size-3.5" />
+                        </span>
+                        <span>
+                          <span className="block text-sm font-medium">{item.title}</span>
+                          <span className="text-muted-foreground block text-xs">
+                            {item.description}
+                          </span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden md:block">
+          <Button size="sm">Contact us</Button>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setMobileOpen((prev) => !prev)}
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+          className="flex size-8 items-center justify-center md:hidden"
+        >
+          {mobileOpen ? <X className="size-4.5" /> : <Menu className="size-4.5" />}
+        </button>
+      </nav>
+
+      {mobileOpen && (
+        <div className="space-y-1 border-t px-8 py-4 md:hidden">
+          {navLinks.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
+              className="text-muted-foreground hover:text-foreground block py-2 text-sm transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Button size="sm" className="mt-2 w-full">
+            Contact us
+          </Button>
+        </div>
+      )}
+    </header>
+  );
+}
