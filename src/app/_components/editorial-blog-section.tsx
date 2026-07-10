@@ -1,12 +1,14 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Newspaper } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 type BlogPost = {
   title: string;
   excerpt: string;
+  image: string;
 };
 
 const posts: BlogPost[] = [
@@ -14,19 +16,23 @@ const posts: BlogPost[] = [
     title: "แนวคิดการออกแบบระบบบริหารจัดการองค์กร",
     excerpt:
       "เราออกแบบทุกฟีเจอร์ให้ใช้งานง่ายตั้งแต่แรกเห็น พร้อมรองรับการเติบโตของทีมในทุกขนาดองค์กร",
+    image: "https://images.pexels.com/photos/5466238/pexels-photo-5466238.jpeg",
   },
   {
     title: "คู่มือฉบับสมบูรณ์สำหรับการเริ่มต้นใช้งาน Planora",
     excerpt: "ตั้งแต่การตั้งค่าทีมแรก ไปจนถึงการออกรายงานสรุปผลการทำงานแบบเรียลไทม์",
+    image: "https://images.pexels.com/photos/31525131/pexels-photo-31525131.jpeg",
   },
   {
     title: "5 วิธีบริหารเวลาให้ทีมทำงานอย่างมีประสิทธิภาพ",
     excerpt:
       "แนวทางจัดลำดับความสำคัญของงาน ลดการประชุมที่ไม่จำเป็น และสร้างจังหวะการทำงานที่ยั่งยืน",
+    image: "https://images.pexels.com/photos/10922370/pexels-photo-10922370.jpeg",
   },
   {
     title: "วิธีออกแบบผังโครงสร้างองค์กรให้รองรับการเติบโต",
     excerpt: "หลักการจัดชั้นบังคับบัญชาและแบ่งฝ่ายงานที่ช่วยให้องค์กรขยายทีมได้โดยไม่สะดุด",
+    image: "https://images.pexels.com/photos/22711217/pexels-photo-22711217.jpeg",
   },
 ];
 
@@ -93,8 +99,14 @@ export function EditorialBlogSection() {
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{post.excerpt}</p>
             </div>
-            <div className="from-muted to-muted/40 relative w-1/2 shrink-0 bg-linear-to-br sm:w-[55%]">
-              <Newspaper className="text-muted-foreground/20 absolute inset-0 m-auto size-10" />
+            <div className="bg-muted relative w-1/2 shrink-0 overflow-hidden sm:w-[55%]">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                sizes="(min-width: 640px) 30vw, 50vw"
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+              />
             </div>
           </Link>
         ))}
