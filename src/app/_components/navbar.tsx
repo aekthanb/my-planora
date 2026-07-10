@@ -81,7 +81,7 @@ export function Navbar() {
           <span className="text-base font-medium">Planora</span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
             <div
               key={link.label}
@@ -94,9 +94,10 @@ export function Navbar() {
               {link.dropdown ? (
                 <button
                   type="button"
+                  aria-expanded={openMenu === link.label}
                   onClick={() => setOpenMenu((prev) => (prev === link.label ? null : link.label))}
                   className={cn(
-                    "inline-flex items-center gap-1.5 py-2 text-base leading-none transition-colors",
+                    "hover:bg-muted aria-expanded:bg-muted inline-flex items-center gap-1.5 rounded-lg px-4 py-2.5 text-base leading-none transition-colors",
                     openMenu === link.label
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground",
@@ -113,7 +114,7 @@ export function Navbar() {
               ) : (
                 <Link
                   href={link.href}
-                  className="text-muted-foreground hover:text-foreground inline-flex items-center py-2 text-base leading-none transition-colors"
+                  className="text-muted-foreground hover:text-foreground hover:bg-muted inline-flex items-center rounded-lg px-4 py-2.5 text-base leading-none transition-colors"
                 >
                   {link.label}
                 </Link>
