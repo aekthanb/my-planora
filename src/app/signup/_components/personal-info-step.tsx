@@ -430,7 +430,7 @@ export function PersonalInfoStep({
   const [emergencyDistrict, setEmergencyDistrict] = useState("");
   const [emergencyProvince, setEmergencyProvince] = useState("");
 
-  const [maritalStatus, setMaritalStatus] = useState(maritalStatusOptions[0]);
+  const [maritalStatus, setMaritalStatus] = useState<string | null>(null);
 
   const [educationEntries, setEducationEntries] = useState<EducationEntry[]>([
     createEducationEntry(1),
@@ -438,17 +438,12 @@ export function PersonalInfoStep({
   const [workEntries, setWorkEntries] = useState<WorkEntry[]>([createWorkEntry(1)]);
   const [trainingEntries, setTrainingEntries] = useState<TrainingEntry[]>([createTrainingEntry(1)]);
 
-  const [healthAnswers, setHealthAnswers] = useState<Record<string, boolean>>({
-    seriousDisease: false,
-    chronicDisease: false,
-    medicalOrder: false,
-    disability: false,
-  });
+  const [healthAnswers, setHealthAnswers] = useState<Record<string, boolean | undefined>>({});
   const [healthDetails, setHealthDetails] = useState<Record<string, string>>({});
 
   const [vehicles, setVehicles] = useState<string[]>([]);
-  const [canUseOfficeEquipment, setCanUseOfficeEquipment] = useState(true);
-  const [canRelocate, setCanRelocate] = useState(true);
+  const [canUseOfficeEquipment, setCanUseOfficeEquipment] = useState<boolean | null>(null);
+  const [canRelocate, setCanRelocate] = useState<boolean | null>(null);
 
   const [documents, setDocuments] = useState<Partial<Record<DocumentKey, DocumentFile>>>({});
   const submissionDate = useMemo(() => formatThaiDate(new Date()), []);
@@ -1392,7 +1387,7 @@ export function PersonalInfoStep({
           onInteract={() => markTouched(10)}
         >
           {healthQuestions.map((item, index) => {
-            const answer = healthAnswers[item.id] ?? false;
+            const answer = healthAnswers[item.id];
             return (
               <div
                 key={item.id}
@@ -1407,7 +1402,7 @@ export function PersonalInfoStep({
                     onClick={() => setHealthAnswer(item.id, false)}
                     className={cn(
                       "px-3 py-1.5 text-sm font-medium transition-colors",
-                      !answer
+                      answer === false
                         ? "bg-neutral-950 text-white"
                         : "bg-background text-muted-foreground hover:bg-muted",
                     )}
@@ -1419,7 +1414,7 @@ export function PersonalInfoStep({
                     onClick={() => setHealthAnswer(item.id, true)}
                     className={cn(
                       "border-l px-3 py-1.5 text-sm font-medium transition-colors",
-                      answer
+                      answer === true
                         ? "bg-neutral-950 text-white"
                         : "bg-background text-muted-foreground hover:bg-muted",
                     )}
@@ -1428,7 +1423,7 @@ export function PersonalInfoStep({
                   </button>
                 </div>
                 <Input
-                  disabled={!answer}
+                  disabled={answer !== true}
                   value={healthDetails[item.id] ?? ""}
                   onChange={(event) => setHealthDetail(item.id, event.target.value)}
                   placeholder={item.detailPlaceholder}
@@ -1565,7 +1560,7 @@ export function PersonalInfoStep({
                 onClick={() => setCanUseOfficeEquipment(true)}
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium transition-colors",
-                  canUseOfficeEquipment
+                  canUseOfficeEquipment === true
                     ? "bg-neutral-950 text-white"
                     : "bg-background text-muted-foreground hover:bg-muted",
                 )}
@@ -1577,7 +1572,7 @@ export function PersonalInfoStep({
                 onClick={() => setCanUseOfficeEquipment(false)}
                 className={cn(
                   "border-l px-3 py-1.5 text-sm font-medium transition-colors",
-                  !canUseOfficeEquipment
+                  canUseOfficeEquipment === false
                     ? "bg-neutral-950 text-white"
                     : "bg-background text-muted-foreground hover:bg-muted",
                 )}
@@ -1595,7 +1590,7 @@ export function PersonalInfoStep({
                 onClick={() => setCanRelocate(true)}
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium transition-colors",
-                  canRelocate
+                  canRelocate === true
                     ? "bg-neutral-950 text-white"
                     : "bg-background text-muted-foreground hover:bg-muted",
                 )}
@@ -1607,7 +1602,7 @@ export function PersonalInfoStep({
                 onClick={() => setCanRelocate(false)}
                 className={cn(
                   "border-l px-3 py-1.5 text-sm font-medium transition-colors",
-                  !canRelocate
+                  canRelocate === false
                     ? "bg-neutral-950 text-white"
                     : "bg-background text-muted-foreground hover:bg-muted",
                 )}
@@ -1617,7 +1612,7 @@ export function PersonalInfoStep({
             </div>
             <Input
               name="relocateProvince"
-              disabled={!canRelocate}
+              disabled={canRelocate !== true}
               placeholder="ระบุจังหวัดที่สะดวก (ถ้ามี)"
             />
           </div>
