@@ -673,7 +673,7 @@ export function PersonalInfoStep({
         กรอกให้ครบทุกหมวดที่มีเครื่องหมาย * — ระบบบันทึกฉบับร่างให้อัตโนมัติ กลับมากรอกต่อภายหลังได้
       </p>
 
-      <div className="mt-8 space-y-6">
+      <div className="mt-8 space-y-6 [&_input:not([type=date]):not(:disabled):not(:placeholder-shown)]:bg-blue-50 dark:[&_input:not([type=date]):not(:disabled):not(:placeholder-shown)]:bg-blue-500/10">
         <Section number={1} title="ข้อมูลส่วนตัว">
           <div className="flex items-center gap-4">
             <button
@@ -792,6 +792,7 @@ export function PersonalInfoStep({
                   name="birthDate"
                   value={birthDate}
                   onChange={(event) => setBirthDate(event.target.value)}
+                  className={birthDate ? "bg-blue-50 dark:bg-blue-500/10" : undefined}
                 />
               </Field>
               <Field label="อายุ">
