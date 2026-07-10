@@ -48,73 +48,76 @@ export function EditorialBlogSection() {
   }
 
   return (
-    <section className="w-full py-20">
-      <div className="mx-8 border-x sm:mx-16 lg:mx-24 xl:mx-32">
-        <div className="mx-auto max-w-6xl px-8 py-10 sm:py-14">
-          <p className="text-muted-foreground flex items-center gap-2 text-sm">
-            <span className="bg-foreground size-1.5 rounded-full" aria-hidden="true" />
-            มีอะไรใหม่?
-          </p>
-          <h2 className="mt-4 text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
-            บทความ<span className="text-muted-foreground">.</span>
-          </h2>
-        </div>
-      </div>
-      <div className="border-t" />
+    <section className="relative w-full flex-1 py-20">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-8 border-l sm:left-16 lg:left-24 xl:left-32"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 right-8 border-r sm:right-16 lg:right-24 xl:right-32"
+      />
 
-      <div className="mx-8 border-x sm:mx-16 lg:mx-24 xl:mx-32">
-        <div
-          ref={scrollRef}
-          onScroll={updateProgress}
-          className="divide-border mx-auto flex max-w-6xl snap-x snap-mandatory scrollbar-none divide-x overflow-x-auto scroll-smooth"
-        >
-          {posts.map((post) => (
-            <Link
-              key={post.title}
-              href="#"
-              className="group flex w-full shrink-0 snap-start sm:w-1/2"
-            >
-              <div className="flex flex-1 flex-col justify-center gap-4 p-8 sm:p-10">
-                <h3 className="group-hover:text-primary text-xl font-semibold transition-colors sm:text-2xl">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{post.excerpt}</p>
-              </div>
-              <div className="from-muted to-muted/40 relative w-2/5 shrink-0 bg-linear-to-br sm:w-[45%]">
-                <Newspaper className="text-muted-foreground/20 absolute inset-0 m-auto size-10" />
-              </div>
-            </Link>
-          ))}
-        </div>
+      <div className="mx-auto max-w-6xl px-8 py-10 sm:py-14">
+        <p className="text-muted-foreground flex items-center gap-2 text-sm">
+          <span className="bg-foreground size-1.5 rounded-full" aria-hidden="true" />
+          มีอะไรใหม่?
+        </p>
+        <h2 className="mt-4 text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
+          บทความ<span className="text-muted-foreground">.</span>
+        </h2>
       </div>
-      <div className="border-t" />
+      <div className="mx-8 border-t sm:mx-16 lg:mx-24 xl:mx-32" />
 
-      <div className="mx-8 border-x sm:mx-16 lg:mx-24 xl:mx-32">
-        <div className="mx-auto flex max-w-6xl items-center gap-6 px-8 py-6 sm:py-8">
-          <div className="bg-border relative h-px flex-1 overflow-hidden rounded-full">
-            <div
-              className="bg-foreground absolute inset-y-0 left-0 transition-[width]"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="flex shrink-0 gap-2">
-            <button
-              type="button"
-              onClick={() => scrollByPage(-1)}
-              aria-label="ก่อนหน้า"
-              className="hover:bg-muted flex size-9 items-center justify-center rounded-full border transition-colors"
-            >
-              <ArrowLeft className="size-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollByPage(1)}
-              aria-label="ถัดไป"
-              className="hover:bg-muted flex size-9 items-center justify-center rounded-full border transition-colors"
-            >
-              <ArrowRight className="size-4" />
-            </button>
-          </div>
+      <div
+        ref={scrollRef}
+        onScroll={updateProgress}
+        className="divide-border mx-auto flex max-w-6xl snap-x snap-mandatory scrollbar-none divide-x overflow-x-auto scroll-smooth"
+      >
+        {posts.map((post) => (
+          <Link
+            key={post.title}
+            href="#"
+            className="group flex w-full shrink-0 snap-start sm:w-1/2"
+          >
+            <div className="flex flex-1 flex-col justify-center gap-4 p-8 sm:p-10">
+              <h3 className="group-hover:text-primary text-xl font-semibold transition-colors sm:text-2xl">
+                {post.title}
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">{post.excerpt}</p>
+            </div>
+            <div className="from-muted to-muted/40 relative w-2/5 shrink-0 bg-linear-to-br sm:w-[45%]">
+              <Newspaper className="text-muted-foreground/20 absolute inset-0 m-auto size-10" />
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div className="mx-8 border-t sm:mx-16 lg:mx-24 xl:mx-32" />
+
+      <div className="mx-auto flex max-w-6xl items-center gap-6 px-8 py-6 sm:py-8">
+        <div className="bg-border relative h-px flex-1 overflow-hidden rounded-full">
+          <div
+            className="bg-foreground absolute inset-y-0 left-0 transition-[width]"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="button"
+            onClick={() => scrollByPage(-1)}
+            aria-label="ก่อนหน้า"
+            className="hover:bg-muted flex size-9 items-center justify-center rounded-full border transition-colors"
+          >
+            <ArrowLeft className="size-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByPage(1)}
+            aria-label="ถัดไป"
+            className="hover:bg-muted flex size-9 items-center justify-center rounded-full border transition-colors"
+          >
+            <ArrowRight className="size-4" />
+          </button>
         </div>
       </div>
     </section>
