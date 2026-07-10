@@ -183,7 +183,7 @@ export function Navbar() {
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white">
               <UserRound className="size-4" />
             </span>
-            Profile
+            โปรไฟล์
           </Link>
         </div>
       )}
