@@ -59,13 +59,20 @@ export function EditorialBlogSection() {
       />
 
       <div className="mx-auto max-w-6xl px-8 py-10 sm:py-14">
-        <p className="text-muted-foreground flex items-center gap-2 text-sm">
-          <span className="bg-foreground size-1.5 rounded-full" aria-hidden="true" />
-          มีอะไรใหม่?
-        </p>
-        <h2 className="mt-4 text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
-          บทความ<span className="text-muted-foreground">.</span>
-        </h2>
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-muted-foreground flex items-center gap-2 text-sm">
+              <span className="bg-foreground size-1.5 rounded-full" aria-hidden="true" />
+              มีอะไรใหม่?
+            </p>
+            <h2 className="mt-4 text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
+              บทความ<span className="text-muted-foreground">.</span>
+            </h2>
+          </div>
+          <p className="text-muted-foreground max-w-xs text-sm leading-relaxed sm:text-right">
+            เรื่องราว แนวคิด และอัปเดตความเคลื่อนไหวในการบริหารจัดการองค์กร คัดสรรโดยทีมงาน Planora
+          </p>
+        </div>
       </div>
       <div className="mx-8 border-t sm:mx-16 lg:mx-24 xl:mx-32" />
 
@@ -80,13 +87,13 @@ export function EditorialBlogSection() {
             href="#"
             className="group flex w-full shrink-0 snap-start sm:w-1/2"
           >
-            <div className="flex flex-1 flex-col justify-center gap-4 p-8 sm:p-10">
+            <div className="flex flex-1 flex-col justify-center gap-4 p-10 sm:p-16">
               <h3 className="group-hover:text-primary text-xl font-semibold transition-colors sm:text-2xl">
                 {post.title}
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{post.excerpt}</p>
             </div>
-            <div className="from-muted to-muted/40 relative w-2/5 shrink-0 bg-linear-to-br sm:w-[45%]">
+            <div className="from-muted to-muted/40 relative w-1/2 shrink-0 bg-linear-to-br sm:w-[55%]">
               <Newspaper className="text-muted-foreground/20 absolute inset-0 m-auto size-10" />
             </div>
           </Link>
