@@ -2,20 +2,20 @@ import { CheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const personalInfoSubSteps = [
-  { id: 1, label: "ข้อมูลส่วนตัว", done: true },
-  { id: 2, label: "ที่อยู่ทะเบียนบ้าน", done: true },
-  { id: 3, label: "ที่อยู่ปัจจุบัน", done: true },
-  { id: 4, label: "ครอบครัว", done: true },
-  { id: 5, label: "ติดต่อฉุกเฉิน", done: true },
-  { id: 6, label: "สถานะสมรส", done: true },
-  { id: 7, label: "สถานภาพทางทหาร", done: false },
-  { id: 8, label: "การศึกษา", done: false },
-  { id: 9, label: "การทำงาน", done: false },
-  { id: 10, label: "สุขภาพ", done: false },
-  { id: 11, label: "ฝึกอบรม", done: false },
-  { id: 12, label: "ภาษา", done: false },
-  { id: 13, label: "ข้อมูลเพิ่มเติม", done: false },
-  { id: 14, label: "เอกสารแนบ", done: false },
+  { id: 1, label: "ข้อมูลส่วนตัว" },
+  { id: 2, label: "ที่อยู่ทะเบียนบ้าน" },
+  { id: 3, label: "ที่อยู่ปัจจุบัน" },
+  { id: 4, label: "ครอบครัว" },
+  { id: 5, label: "ติดต่อฉุกเฉิน" },
+  { id: 6, label: "สถานะสมรส" },
+  { id: 7, label: "สถานภาพทางทหาร" },
+  { id: 8, label: "การศึกษา" },
+  { id: 9, label: "การทำงาน" },
+  { id: 10, label: "สุขภาพ" },
+  { id: 11, label: "ฝึกอบรม" },
+  { id: 12, label: "ภาษา" },
+  { id: 13, label: "ข้อมูลเพิ่มเติม" },
+  { id: 14, label: "เอกสารแนบ" },
 ];
 
 const steps = [
@@ -33,9 +33,11 @@ const steps = [
 export function RegisterSidebar({
   currentStep,
   onStepClick,
+  subStepCompletion,
 }: {
   currentStep: number;
   onStepClick?: (step: number) => void;
+  subStepCompletion?: Record<number, boolean>;
 }) {
   return (
     <aside className="bg-background sticky top-0 flex h-svh w-full shrink-0 flex-col justify-between overflow-y-auto border-r p-8 md:w-72">
@@ -56,7 +58,11 @@ export function RegisterSidebar({
           {steps.map((step) => {
             const isActive = step.number === currentStep;
             const isExpanded = isActive && !!step.subSteps;
-            const doneCount = step.subSteps?.filter((sub) => sub.done).length ?? 0;
+            const subSteps = step.subSteps?.map((sub) => ({
+              ...sub,
+              done: subStepCompletion?.[sub.id] ?? false,
+            }));
+            const doneCount = subSteps?.filter((sub) => sub.done).length ?? 0;
 
             return (
               <li key={step.number}>
@@ -86,7 +92,7 @@ export function RegisterSidebar({
                       </p>
                       {isExpanded && (
                         <span className="bg-muted text-muted-foreground shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium">
-                          {doneCount}/{step.subSteps!.length}
+                          {doneCount}/{subSteps!.length}
                         </span>
                       )}
                     </div>
@@ -98,7 +104,7 @@ export function RegisterSidebar({
 
                 {isExpanded && (
                   <ul className="mt-3 ml-3.5 space-y-2 border-l pl-6">
-                    {step.subSteps!.map((sub) => (
+                    {subSteps!.map((sub) => (
                       <li key={sub.id} className="flex items-center gap-2">
                         <span
                           className={cn(

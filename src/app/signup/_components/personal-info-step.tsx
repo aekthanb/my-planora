@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -323,6 +323,7 @@ function Section({
   note,
   noteTone = "info",
   headerExtra,
+  onInteract,
   children,
 }: {
   number: number;
@@ -331,6 +332,7 @@ function Section({
   note?: string;
   noteTone?: "info" | "warning";
   headerExtra?: ReactNode;
+  onInteract?: () => void;
   children: ReactNode;
 }) {
   return (
@@ -357,7 +359,19 @@ function Section({
         )}
         {headerExtra}
       </div>
-      <div className="space-y-4 p-5">{children}</div>
+      <div
+        className="space-y-4 p-5"
+        onChange={onInteract}
+        onClick={
+          onInteract
+            ? (event) => {
+                if ((event.target as HTMLElement).closest("button")) onInteract();
+              }
+            : undefined
+        }
+      >
+        {children}
+      </div>
     </div>
   );
 }
@@ -377,16 +391,35 @@ function calculateAge(birthDate: string) {
   return age;
 }
 
-export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBack: () => void }) {
+export function PersonalInfoStep({
+  onNext,
+  onBack,
+  onProgressChange,
+}: {
+  onNext: () => void;
+  onBack: () => void;
+  onProgressChange?: (completion: Record<number, boolean>) => void;
+}) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState("");
+  const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
+
+  function trackField(key: string, value: string) {
+    setFieldValues((prev) => (prev[key] === value ? prev : { ...prev, [key]: value }));
+  }
+
+  const [touchedSections, setTouchedSections] = useState<Set<number>>(new Set());
+
+  function markTouched(section: number) {
+    setTouchedSections((prev) => (prev.has(section) ? prev : new Set(prev).add(section)));
+  }
   const [postalCode, setPostalCode] = useState("");
   const [subDistrict, setSubDistrict] = useState("");
   const [district, setDistrict] = useState("");
   const [province, setProvince] = useState("");
 
-  const [sameAsRegistered, setSameAsRegistered] = useState(true);
+  const [sameAsRegistered, setSameAsRegistered] = useState(false);
   const [currentPostalCode, setCurrentPostalCode] = useState("");
   const [currentSubDistrict, setCurrentSubDistrict] = useState("");
   const [currentDistrict, setCurrentDistrict] = useState("");
@@ -400,30 +433,131 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
   const [maritalStatus, setMaritalStatus] = useState(maritalStatusOptions[0]);
 
   const [educationEntries, setEducationEntries] = useState<EducationEntry[]>([
-    createEducationEntry(1, "ปริญญาตรี"),
+    createEducationEntry(1),
   ]);
   const [workEntries, setWorkEntries] = useState<WorkEntry[]>([createWorkEntry(1)]);
   const [trainingEntries, setTrainingEntries] = useState<TrainingEntry[]>([createTrainingEntry(1)]);
 
   const [healthAnswers, setHealthAnswers] = useState<Record<string, boolean>>({
     seriousDisease: false,
-    chronicDisease: true,
+    chronicDisease: false,
     medicalOrder: false,
     disability: false,
   });
   const [healthDetails, setHealthDetails] = useState<Record<string, string>>({});
 
-  const [vehicles, setVehicles] = useState<string[]>(["รถยนต์", "รถจักรยานยนต์"]);
+  const [vehicles, setVehicles] = useState<string[]>([]);
   const [canUseOfficeEquipment, setCanUseOfficeEquipment] = useState(true);
   const [canRelocate, setCanRelocate] = useState(true);
 
-  const [documents, setDocuments] = useState<Partial<Record<DocumentKey, DocumentFile>>>({
-    idCard: { name: "kbank-copy.pdf", sizeLabel: "1.2MB" },
-    bankbook: { name: "bookbank.jpg", sizeLabel: "860KB" },
-  });
+  const [documents, setDocuments] = useState<Partial<Record<DocumentKey, DocumentFile>>>({});
   const submissionDate = useMemo(() => formatThaiDate(new Date()), []);
 
   const age = useMemo(() => calculateAge(birthDate), [birthDate]);
+
+  const isFilled = (key: string) => !!fieldValues[key]?.trim();
+
+  const subStepCompletion = useMemo<Record<number, boolean>>(() => {
+    const section1Complete =
+      !!photoUrl &&
+      isFilled("prefix") &&
+      isFilled("firstName") &&
+      isFilled("lastName") &&
+      isFilled("firstNameEn") &&
+      isFilled("lastNameEn") &&
+      isFilled("gender") &&
+      isFilled("nationalId") &&
+      !!birthDate &&
+      isFilled("phone") &&
+      isFilled("email") &&
+      isFilled("bank") &&
+      isFilled("bankBranch") &&
+      isFilled("bankAccount");
+
+    const section2Complete =
+      isFilled("houseNo") && !!postalCode && !!subDistrict && !!district && !!province;
+
+    const section3Complete =
+      sameAsRegistered ||
+      (isFilled("currentHouseNo") &&
+        !!currentPostalCode &&
+        !!currentSubDistrict &&
+        !!currentDistrict &&
+        !!currentProvince);
+
+    const section5Complete =
+      isFilled("emergencyFirstName") &&
+      isFilled("emergencyLastName") &&
+      isFilled("emergencyPhone") &&
+      isFilled("emergencyRelationship") &&
+      isFilled("emergencyHouseNo") &&
+      !!emergencyPostalCode &&
+      !!emergencySubDistrict &&
+      !!emergencyDistrict &&
+      !!emergencyProvince;
+
+    const section8Complete = educationEntries.every(
+      (entry) => entry.level.trim() !== "" && entry.schoolName.trim() !== "",
+    );
+
+    const section9Complete = workEntries.every(
+      (entry) => entry.companyName.trim() !== "" && entry.position.trim() !== "",
+    );
+
+    const section11Complete = trainingEntries.some(
+      (entry) =>
+        entry.topic.trim() !== "" ||
+        entry.location.trim() !== "" ||
+        entry.startDate.trim() !== "" ||
+        entry.endDate.trim() !== "",
+    );
+
+    const section14Complete = requiredDocuments.every((doc) => !!documents[doc.key]);
+
+    return {
+      1: section1Complete,
+      2: section2Complete,
+      3: section3Complete,
+      4: touchedSections.has(4),
+      5: section5Complete,
+      6: touchedSections.has(6),
+      7: touchedSections.has(7),
+      8: section8Complete,
+      9: section9Complete,
+      10: touchedSections.has(10),
+      11: section11Complete,
+      12: touchedSections.has(12),
+      13: touchedSections.has(13),
+      14: section14Complete,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    photoUrl,
+    fieldValues,
+    birthDate,
+    postalCode,
+    subDistrict,
+    district,
+    province,
+    sameAsRegistered,
+    currentPostalCode,
+    currentSubDistrict,
+    currentDistrict,
+    currentProvince,
+    emergencyPostalCode,
+    emergencySubDistrict,
+    emergencyDistrict,
+    emergencyProvince,
+    educationEntries,
+    workEntries,
+    trainingEntries,
+    documents,
+    touchedSections,
+  ]);
+
+  useEffect(() => {
+    onProgressChange?.(subStepCompletion);
+  }, [subStepCompletion, onProgressChange]);
 
   function handlePhotoChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -593,15 +727,23 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
               <Field label="คำนำหน้า" required>
                 <OptionSelect
                   placeholder="เลือกคำนำหน้า"
-                  defaultValue={prefixes[0]}
                   options={prefixes}
+                  onValueChange={() => trackField("prefix", "set")}
                 />
               </Field>
               <Field label="ชื่อ" required>
-                <Input name="firstName" placeholder="สมชาย" />
+                <Input
+                  name="firstName"
+                  placeholder="สมชาย"
+                  onChange={(event) => trackField("firstName", event.target.value)}
+                />
               </Field>
               <Field label="นามสกุล" required>
-                <Input name="lastName" placeholder="ใจดี" />
+                <Input
+                  name="lastName"
+                  placeholder="ใจดี"
+                  onChange={(event) => trackField("lastName", event.target.value)}
+                />
               </Field>
             </div>
 
@@ -610,32 +752,44 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
                 <Input name="nickname" placeholder="ชาย" />
               </Field>
               <Field label="Title Name">
-                <OptionSelect
-                  placeholder="Title"
-                  defaultValue={titleNames[0]}
-                  options={titleNames}
-                />
+                <OptionSelect placeholder="Title" options={titleNames} />
               </Field>
               <Field label="ชื่อภาษาอังกฤษ" required>
-                <Input name="firstNameEn" placeholder="Somchai" />
+                <Input
+                  name="firstNameEn"
+                  placeholder="Somchai"
+                  onChange={(event) => trackField("firstNameEn", event.target.value)}
+                />
               </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Field label="นามสกุลภาษาอังกฤษ" required>
-                <Input name="lastNameEn" placeholder="Jaidee" />
+                <Input
+                  name="lastNameEn"
+                  placeholder="Jaidee"
+                  onChange={(event) => trackField("lastNameEn", event.target.value)}
+                />
               </Field>
               <Field label="Line ID">
                 <Input name="lineId" placeholder="เช่น somchai.j" />
               </Field>
               <Field label="เพศ" required>
-                <OptionSelect placeholder="เลือกเพศ" defaultValue={genders[0]} options={genders} />
+                <OptionSelect
+                  placeholder="เลือกเพศ"
+                  options={genders}
+                  onValueChange={() => trackField("gender", "set")}
+                />
               </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <Field label="เลขบัตรประชาชน" required>
-                <Input name="nationalId" placeholder="1-1014-56789-01-2" />
+                <Input
+                  name="nationalId"
+                  placeholder="1-1014-56789-01-2"
+                  onChange={(event) => trackField("nationalId", event.target.value)}
+                />
               </Field>
               <Field label="วันเดือนปีเกิด" required>
                 <Input
@@ -662,25 +816,46 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
                 <Input name="height" type="number" placeholder="174" />
               </Field>
               <Field label="เบอร์โทรศัพท์" required>
-                <Input name="phone" placeholder="081-234-5678" />
+                <Input
+                  name="phone"
+                  placeholder="081-234-5678"
+                  onChange={(event) => trackField("phone", event.target.value)}
+                />
               </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="E-mail" required>
-                <Input name="email" type="email" placeholder="somchai.j@email.com" />
+                <Input
+                  name="email"
+                  type="email"
+                  placeholder="somchai.j@email.com"
+                  onChange={(event) => trackField("email", event.target.value)}
+                />
               </Field>
               <Field label="ธนาคาร" required>
-                <OptionSelect placeholder="เลือกธนาคาร" defaultValue={banks[0]} options={banks} />
+                <OptionSelect
+                  placeholder="เลือกธนาคาร"
+                  options={banks}
+                  onValueChange={() => trackField("bank", "set")}
+                />
               </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="สาขาธนาคาร" required>
-                <Input name="bankBranch" placeholder="สีลม" />
+                <Input
+                  name="bankBranch"
+                  placeholder="สีลม"
+                  onChange={(event) => trackField("bankBranch", event.target.value)}
+                />
               </Field>
               <Field label="เลขบัญชีธนาคาร" required>
-                <Input name="bankAccount" placeholder="012-3-45678-9" />
+                <Input
+                  name="bankAccount"
+                  placeholder="012-3-45678-9"
+                  onChange={(event) => trackField("bankAccount", event.target.value)}
+                />
               </Field>
             </div>
           </div>
@@ -689,7 +864,11 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
         <Section number={2} title="ที่อยู่ตามทะเบียนบ้าน" required>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="บ้านเลขที่/หมู่ที่" required>
-              <Input name="houseNo" placeholder="88/12 หมู่ 4" />
+              <Input
+                name="houseNo"
+                placeholder="88/12 หมู่ 4"
+                onChange={(event) => trackField("houseNo", event.target.value)}
+              />
             </Field>
             <Field label="หมู่บ้าน/คอนโด">
               <Input name="village" placeholder="ถ้ามี" />
@@ -756,7 +935,11 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <Field label="บ้านเลขที่/หมู่ที่" required>
-                  <Input name="currentHouseNo" placeholder="88/12 หมู่ 4" />
+                  <Input
+                    name="currentHouseNo"
+                    placeholder="88/12 หมู่ 4"
+                    onChange={(event) => trackField("currentHouseNo", event.target.value)}
+                  />
                 </Field>
                 <Field label="หมู่บ้าน/คอนโด">
                   <Input name="currentVillage" placeholder="ถ้ามี" />
@@ -803,7 +986,7 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
           )}
         </Section>
 
-        <Section number={4} title="ประวัติครอบครัว">
+        <Section number={4} title="ประวัติครอบครัว" onInteract={() => markTouched(4)}>
           <div className="space-y-3">
             <p className="text-sm font-semibold">บิดา</p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -825,11 +1008,7 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
                 <Input name="fatherPhone" placeholder="08x-xxx-xxxx" />
               </Field>
               <Field label="สถานภาพ">
-                <OptionSelect
-                  placeholder="เลือก"
-                  defaultValue={lifeStatusOptions[0]}
-                  options={lifeStatusOptions}
-                />
+                <OptionSelect placeholder="เลือก" options={lifeStatusOptions} />
               </Field>
             </div>
           </div>
@@ -888,22 +1067,42 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
         <Section number={5} title="บุคคลติดต่อฉุกเฉิน" required>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="ชื่อ" required>
-              <Input name="emergencyFirstName" placeholder="ชื่อ" />
+              <Input
+                name="emergencyFirstName"
+                placeholder="ชื่อ"
+                onChange={(event) => trackField("emergencyFirstName", event.target.value)}
+              />
             </Field>
             <Field label="นามสกุล" required>
-              <Input name="emergencyLastName" placeholder="นามสกุล" />
+              <Input
+                name="emergencyLastName"
+                placeholder="นามสกุล"
+                onChange={(event) => trackField("emergencyLastName", event.target.value)}
+              />
             </Field>
             <Field label="เบอร์โทรศัพท์" required>
-              <Input name="emergencyPhone" placeholder="08x-xxx-xxxx" />
+              <Input
+                name="emergencyPhone"
+                placeholder="08x-xxx-xxxx"
+                onChange={(event) => trackField("emergencyPhone", event.target.value)}
+              />
             </Field>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="ความสัมพันธ์" required>
-              <OptionSelect placeholder="เลือก" options={relationshipOptions} />
+              <OptionSelect
+                placeholder="เลือก"
+                options={relationshipOptions}
+                onValueChange={(value) => trackField("emergencyRelationship", value)}
+              />
             </Field>
             <Field label="บ้านเลขที่/หมู่ที่" required>
-              <Input name="emergencyHouseNo" placeholder="บ้านเลขที่" />
+              <Input
+                name="emergencyHouseNo"
+                placeholder="บ้านเลขที่"
+                onChange={(event) => trackField("emergencyHouseNo", event.target.value)}
+              />
             </Field>
             <Field label="หมู่บ้าน/คอนโด">
               <Input name="emergencyVillage" placeholder="ถ้ามี" />
@@ -951,7 +1150,7 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
           </div>
         </Section>
 
-        <Section number={6} title="สถานะสมรส">
+        <Section number={6} title="สถานะสมรส" onInteract={() => markTouched(6)}>
           <div className="flex flex-wrap gap-2">
             {maritalStatusOptions.map((status) => {
               const isSelected = status === maritalStatus;
@@ -1017,14 +1216,15 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
           )}
         </Section>
 
-        <Section number={7} title="สถานภาพทางทหาร" note="เฉพาะเพศชาย">
+        <Section
+          number={7}
+          title="สถานภาพทางทหาร"
+          note="เฉพาะเพศชาย"
+          onInteract={() => markTouched(7)}
+        >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field label="สถานะทหาร" required>
-              <OptionSelect
-                placeholder="เลือก"
-                defaultValue={militaryStatusOptions[0]}
-                options={militaryStatusOptions}
-              />
+              <OptionSelect placeholder="เลือก" options={militaryStatusOptions} />
             </Field>
             <Field label="หมายเหตุ">
               <Input name="militaryRemark" placeholder="เช่น จบ รด. ปี 3 / ได้รับการยกเว้น" />
@@ -1189,6 +1389,7 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
           title="ประวัติสุขภาพ"
           note="ข้อมูลอ่อนไหว — ใช้ยินยอมใน Step 3"
           noteTone="warning"
+          onInteract={() => markTouched(10)}
         >
           {healthQuestions.map((item, index) => {
             const answer = healthAnswers[item.id] ?? false;
@@ -1299,10 +1500,15 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
           </button>
         </Section>
 
-        <Section number={12} title="ความสามารถทางภาษา" note="ถ้ามี">
+        <Section
+          number={12}
+          title="ความสามารถทางภาษา"
+          note="ถ้ามี"
+          onInteract={() => markTouched(12)}
+        >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Field label="ระดับ CEFR">
-              <OptionSelect placeholder="เลือก" defaultValue={cefrLevels[3]} options={cefrLevels} />
+              <OptionSelect placeholder="เลือก" options={cefrLevels} />
             </Field>
             <Field label="ระดับ HSK">
               <OptionSelect placeholder="เลือก" options={hskLevels} />
@@ -1325,7 +1531,7 @@ export function PersonalInfoStep({ onNext, onBack }: { onNext: () => void; onBac
           </div>
         </Section>
 
-        <Section number={13} title="ข้อมูลเพิ่มเติม">
+        <Section number={13} title="ข้อมูลเพิ่มเติม" onInteract={() => markTouched(13)}>
           <div className="grid grid-cols-1 items-center gap-3 lg:grid-cols-[220px_auto]">
             <p className="text-sm">มีพาหนะเป็นของตัวเอง</p>
             <div className="flex flex-wrap gap-2">
