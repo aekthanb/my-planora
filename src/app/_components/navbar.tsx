@@ -18,12 +18,10 @@ const navLinks: {
   dropdown?: DropdownItem[];
   columns?: 1 | 2;
 }[] = [
-  { label: "HRM", href: "#" },
-  { label: "AMT", href: "#" },
-  { label: "FST", href: "#" },
-  { label: "AST", href: "#" },
+  { label: "Employee", href: "#" },
+  { label: "Plan", href: "#" },
   { label: "Master Setup", href: "#" },
-  { label: "System Permission", href: "#" },
+  { label: "Permission", href: "#" },
   { label: "Report", href: "#" },
 ];
 
