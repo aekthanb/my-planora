@@ -1631,12 +1631,9 @@ export function PersonalInfoStep({
           number={14}
           title="เอกสารประกอบการสมัคร"
           headerExtra={
-            <div className="ml-auto flex items-center gap-3 text-xs">
-              <span className="text-muted-foreground">วันที่ยื่นสมัคร: {submissionDate}</span>
-              <span className="rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-700 dark:bg-amber-500/15 dark:text-amber-400">
-                สถานะ: ฉบับร่าง
-              </span>
-            </div>
+            <span className="text-muted-foreground ml-auto text-xs">
+              วันที่ยื่นสมัคร: {submissionDate}
+            </span>
           }
         >
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300">
