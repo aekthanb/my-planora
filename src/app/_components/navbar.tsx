@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Menu, UserRound, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Menu, Network, UserRound, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type DropdownItem = {
@@ -11,6 +11,15 @@ type DropdownItem = {
   description?: string;
 };
 
+const employeeItems: DropdownItem[] = [
+  {
+    icon: Network,
+    title: "โครงสร้างองค์กร",
+    description: "ดูและจัดการผังโครงสร้างองค์กร",
+  },
+  { icon: Users, title: "พนักงานทั้งหมด", description: "ดูและจัดการข้อมูลพนักงาน" },
+];
+
 const navLinks: {
   label: string;
   href: string;
@@ -18,11 +27,11 @@ const navLinks: {
   dropdown?: DropdownItem[];
   columns?: 1 | 2;
 }[] = [
-  { label: "Employee", href: "#" },
-  { label: "Plan", href: "#" },
-  { label: "Master Setup", href: "#" },
-  { label: "Permission", href: "#" },
-  { label: "Report", href: "#" },
+  { label: "พนักงาน", href: "#", dropdown: employeeItems, columns: 2 },
+  { label: "แผนงาน", href: "#" },
+  { label: "ตั้งค่าหลัก", href: "#" },
+  { label: "สิทธิ์การใช้งาน", href: "#" },
+  { label: "รายงาน", href: "#" },
 ];
 
 export function Navbar() {
@@ -137,7 +146,7 @@ export function Navbar() {
 
         <Link
           href="/login"
-          aria-label="Profile"
+          aria-label="โปรไฟล์"
           className="hidden size-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white transition-opacity hover:opacity-80 md:flex"
         >
           <UserRound className="size-4.5" />
@@ -146,7 +155,7 @@ export function Navbar() {
         <button
           type="button"
           onClick={() => setMobileOpen((prev) => !prev)}
-          aria-label="Toggle menu"
+          aria-label="สลับเมนู"
           aria-expanded={mobileOpen}
           className="flex size-8 items-center justify-center md:hidden"
         >
