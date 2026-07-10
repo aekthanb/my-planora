@@ -4,13 +4,14 @@ import { useState } from "react";
 import { RegisterSidebar } from "./register-sidebar";
 import { ApplicantTypeStep } from "./applicant-type-step";
 import { PersonalInfoStep } from "./personal-info-step";
-import { PdpaConsentStep } from "./pdpa-consent-step";
-import { ComingSoonStep } from "./coming-soon-step";
+import { PdpaConsentStep, type ConsentSummary } from "./pdpa-consent-step";
+import { ReviewSubmitStep } from "./review-submit-step";
 
 export function SignupWizard() {
   const [step, setStep] = useState(1);
   const [applicantType, setApplicantType] = useState("E11");
   const [subStepCompletion, setSubStepCompletion] = useState<Record<number, boolean>>({});
+  const [consent, setConsent] = useState<ConsentSummary | null>(null);
 
   return (
     <div className="flex min-h-svh flex-col md:flex-row">
@@ -38,11 +39,21 @@ export function SignupWizard() {
         {step === 3 && (
           <PdpaConsentStep
             applicantType={applicantType}
-            onNext={() => setStep(4)}
+            onNext={(consentData) => {
+              setConsent(consentData);
+              setStep(4);
+            }}
             onBack={() => setStep(2)}
           />
         )}
-        {step > 3 && <ComingSoonStep step={step} onBack={() => setStep(1)} />}
+        {step === 4 && (
+          <ReviewSubmitStep
+            applicantType={applicantType}
+            consent={consent}
+            onBack={() => setStep(3)}
+            onEditStep={setStep}
+          />
+        )}
       </main>
     </div>
   );

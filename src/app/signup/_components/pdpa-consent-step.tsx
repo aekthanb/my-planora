@@ -12,13 +12,20 @@ const consentEditionByType: Record<string, string> = {
   O20: "ผู้ให้บริการภายนอก",
 };
 
+export type ConsentSummary = {
+  readAcknowledged: boolean;
+  consentProcessing: boolean;
+  consentSensitive: boolean;
+  consentedAt: Date;
+};
+
 export function PdpaConsentStep({
   applicantType,
   onNext,
   onBack,
 }: {
   applicantType: string;
-  onNext: () => void;
+  onNext: (consent: ConsentSummary) => void;
   onBack: () => void;
 }) {
   const [readAcknowledged, setReadAcknowledged] = useState(true);
@@ -172,7 +179,19 @@ export function PdpaConsentStep({
         <Button type="button" variant="outline" size="lg" onClick={onBack}>
           ← ย้อนกลับ
         </Button>
-        <Button type="button" size="lg" disabled={!canProceed} onClick={onNext}>
+        <Button
+          type="button"
+          size="lg"
+          disabled={!canProceed}
+          onClick={() =>
+            onNext({
+              readAcknowledged,
+              consentProcessing,
+              consentSensitive,
+              consentedAt: new Date(),
+            })
+          }
+        >
           ถัดไป: ยืนยันและส่งใบสมัคร →
         </Button>
       </div>
