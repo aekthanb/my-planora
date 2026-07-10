@@ -55,7 +55,7 @@ export function RegisterSidebar({
         </div>
 
         <ol className="mt-10 space-y-6">
-          {steps.map((step) => {
+          {steps.map((step, index) => {
             const isActive = step.number === currentStep;
             const isExpanded = isActive && !!step.subSteps;
             const subSteps = step.subSteps?.map((sub) => ({
@@ -63,9 +63,16 @@ export function RegisterSidebar({
               done: subStepCompletion?.[sub.id] ?? false,
             }));
             const doneCount = subSteps?.filter((sub) => sub.done).length ?? 0;
+            const isLast = index === steps.length - 1;
 
             return (
-              <li key={step.number}>
+              <li key={step.number} className="relative">
+                {!isLast && (
+                  <span
+                    aria-hidden="true"
+                    className="bg-border absolute top-7 -bottom-6 left-3.5 w-px"
+                  />
+                )}
                 <button
                   type="button"
                   onClick={() => onStepClick?.(step.number)}
