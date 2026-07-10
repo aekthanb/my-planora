@@ -38,7 +38,7 @@ export function RegisterSidebar({
   onStepClick?: (step: number) => void;
 }) {
   return (
-    <aside className="bg-background flex w-full shrink-0 flex-col justify-between border-r p-8 md:w-72">
+    <aside className="bg-background sticky top-0 flex h-svh w-full shrink-0 flex-col justify-between overflow-y-auto border-r p-8 md:w-72">
       <div>
         <div className="flex items-center gap-2.5">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-sm font-bold text-white">
