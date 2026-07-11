@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import Link from "next/link";
 import {
+  ArrowLeft,
   ArrowRight,
   ChevronDown,
   ListTodo,
   Menu,
   Network,
   Plus,
+  Search,
   UserRound,
   Users,
   X,
@@ -96,6 +98,25 @@ const plans = Array.from({ length: 100 }, (_, index) => {
   };
 });
 
+const planSummary = [
+  { label: "แผนงานทั้งหมด", value: plans.length, color: "text-slate-900" },
+  {
+    label: "กำลังดำเนินการ",
+    value: plans.filter((plan) => plan.status === "กำลังดำเนินการ").length,
+    color: "text-blue-700",
+  },
+  {
+    label: "รอดำเนินการ",
+    value: plans.filter((plan) => plan.status === "รอดำเนินการ").length,
+    color: "text-amber-700",
+  },
+  {
+    label: "เสร็จสิ้น",
+    value: plans.filter((plan) => plan.status === "เสร็จสิ้น").length,
+    color: "text-emerald-700",
+  },
+];
+
 const navLinks: {
   label: string;
   href: string;
@@ -114,7 +135,24 @@ export function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [planModalOpen, setPlanModalOpen] = useState(false);
+  const [planSearch, setPlanSearch] = useState("");
+  const [planPage, setPlanPage] = useState(1);
   const navRef = useRef<HTMLElement>(null);
+
+  const plansPerPage = 10;
+  const normalizedSearch = planSearch.trim().toLocaleLowerCase("th");
+  const filteredPlans = normalizedSearch
+    ? plans.filter((plan) =>
+        Object.values(plan).some((value) =>
+          String(value).toLocaleLowerCase("th").includes(normalizedSearch),
+        ),
+      )
+    : plans;
+  const totalPlanPages = Math.max(1, Math.ceil(filteredPlans.length / plansPerPage));
+  const paginatedPlans = filteredPlans.slice(
+    (planPage - 1) * plansPerPage,
+    planPage * plansPerPage,
+  );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -129,12 +167,21 @@ export function Navbar() {
   useEffect(() => {
     if (!planModalOpen) return;
 
+    const previousOverflow = document.documentElement.style.overflow;
+    const previousScrollbarGutter = document.documentElement.style.scrollbarGutter;
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.scrollbarGutter = "auto";
+
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") setPlanModalOpen(false);
     }
 
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.documentElement.style.overflow = previousOverflow;
+      document.documentElement.style.scrollbarGutter = previousScrollbarGutter;
+    };
   }, [planModalOpen]);
 
   function openPlanModal() {
@@ -334,7 +381,7 @@ export function Navbar() {
 
       {planModalOpen && (
         <div
-          className="fixed inset-0 z-100 flex items-center justify-center bg-black/45 p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-100 flex w-screen items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) setPlanModalOpen(false);
           }}
@@ -343,28 +390,73 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="plan-modal-title"
-            className="bg-background w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border shadow-2xl"
+            className="bg-background flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-slate-300 shadow-2xl"
           >
-            <div className="flex items-start justify-between border-b px-6 py-5">
-              <div>
-                <h2 id="plan-modal-title" className="text-xl font-semibold">
-                  แผนงานทั้งหมด
-                </h2>
-                <p className="text-muted-foreground mt-1 text-sm">
-                  รายการแผนงานและสถานะการดำเนินงาน
-                </p>
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
+              <div className="flex items-center gap-3">
+                <span className="flex size-10 items-center justify-center rounded-lg bg-slate-900 text-white">
+                  <ListTodo className="size-5" />
+                </span>
+                <div>
+                  <div className="flex items-center gap-2.5">
+                    <h2 id="plan-modal-title" className="text-lg font-semibold text-slate-950">
+                      ทะเบียนแผนงาน
+                    </h2>
+                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                      100 รายการ
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-sm text-slate-500">
+                    รายการแผนงานและผลการดำเนินงานขององค์กร
+                  </p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setPlanModalOpen(false)}
                 aria-label="ปิดหน้าต่างแผนงาน"
-                className="hover:bg-muted flex size-9 items-center justify-center rounded-full transition-colors"
+                className="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 <X className="size-4" />
               </button>
             </div>
 
-            <div className="max-h-[65vh] overflow-y-auto p-4 sm:p-6">
+            <div className="grid shrink-0 grid-cols-2 border-b border-slate-200 bg-slate-50 px-6 sm:grid-cols-4">
+              {planSummary.map((summary, index) => (
+                <div
+                  key={summary.label}
+                  className={cn("px-4 py-3", index > 0 && "border-l border-slate-200")}
+                >
+                  <p className="text-xs text-slate-500">{summary.label}</p>
+                  <p className={cn("mt-0.5 text-xl font-semibold tabular-nums", summary.color)}>
+                    {summary.value}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 px-6 py-3">
+              <label className="relative block w-full max-w-md">
+                <span className="sr-only">ค้นหาแผนงาน</span>
+                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="search"
+                  value={planSearch}
+                  onChange={(event) => {
+                    setPlanSearch(event.target.value);
+                    setPlanPage(1);
+                  }}
+                  placeholder="ค้นหารหัส ชื่อแผนงาน ผู้รับผิดชอบ หรือสถานะ..."
+                  className="h-9 w-full rounded-md border border-slate-300 bg-white pr-3 pl-9 text-sm text-slate-900 transition outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                />
+              </label>
+              <p className="shrink-0 text-xs text-slate-500">
+                พบ <span className="font-semibold text-slate-800">{filteredPlans.length}</span>{" "}
+                รายการ
+              </p>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-4">
               <table className="w-full table-fixed text-left text-xs xl:text-sm">
                 <colgroup>
                   <col className="w-[7%]" />
@@ -378,51 +470,60 @@ export function Navbar() {
                   <col className="w-[8%]" />
                   <col className="w-[8%]" />
                 </colgroup>
-                <thead>
-                  <tr className="text-muted-foreground border-b">
-                    <th className="px-2 py-3 font-medium">รหัส</th>
-                    <th className="px-2 py-3 font-medium">ชื่อแผนงาน</th>
-                    <th className="px-2 py-3 font-medium">ประเภท</th>
-                    <th className="px-2 py-3 font-medium">ผู้รับผิดชอบ</th>
-                    <th className="px-2 py-3 font-medium">ฝ่าย</th>
-                    <th className="px-2 py-3 font-medium">วันเริ่ม</th>
-                    <th className="px-2 py-3 font-medium">วันสิ้นสุด</th>
-                    <th className="px-2 py-3 font-medium">ความคืบหน้า</th>
-                    <th className="px-2 py-3 font-medium">งบประมาณ</th>
-                    <th className="px-2 py-3 font-medium">สถานะ</th>
+                <thead className="sticky top-0 z-10 bg-slate-100">
+                  <tr className="border-b border-slate-300 text-slate-600">
+                    <th className="px-2 py-3 font-semibold">รหัส</th>
+                    <th className="px-2 py-3 font-semibold">ชื่อแผนงาน</th>
+                    <th className="px-2 py-3 font-semibold">ประเภท</th>
+                    <th className="px-2 py-3 font-semibold">ผู้รับผิดชอบ</th>
+                    <th className="px-2 py-3 font-semibold">ฝ่าย</th>
+                    <th className="px-2 py-3 font-semibold">วันเริ่ม</th>
+                    <th className="px-2 py-3 font-semibold">วันสิ้นสุด</th>
+                    <th className="px-2 py-3 font-semibold">ความคืบหน้า</th>
+                    <th className="px-2 py-3 font-semibold">งบประมาณ</th>
+                    <th className="px-2 py-3 font-semibold">สถานะ</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {plans.map((plan) => (
-                    <tr key={plan.code} className="hover:bg-muted/50 border-b last:border-0">
-                      <td className="text-muted-foreground px-2 py-4">{plan.code}</td>
-                      <td className="px-2 py-4 font-medium">{plan.name}</td>
-                      <td className="text-muted-foreground px-2 py-4">{plan.type}</td>
-                      <td className="text-muted-foreground px-2 py-4">{plan.owner}</td>
-                      <td className="text-muted-foreground px-2 py-4">{plan.department}</td>
-                      <td className="text-muted-foreground px-2 py-4">{plan.startDate}</td>
-                      <td className="text-muted-foreground px-2 py-4">{plan.endDate}</td>
+                  {paginatedPlans.map((plan) => (
+                    <tr
+                      key={plan.code}
+                      className="border-b border-slate-200 even:bg-slate-50/70 hover:bg-blue-50/60"
+                    >
+                      <td className="px-2 py-3 font-mono text-[11px] font-medium text-slate-500">
+                        {plan.code}
+                      </td>
+                      <td className="px-2 py-3 font-medium text-slate-900">{plan.name}</td>
+                      <td className="px-2 py-3 text-slate-600">{plan.type}</td>
+                      <td className="px-2 py-3 text-slate-600">{plan.owner}</td>
+                      <td className="px-2 py-3 text-slate-600">{plan.department}</td>
+                      <td className="px-2 py-3 text-slate-600">{plan.startDate}</td>
+                      <td className="px-2 py-3 text-slate-600">{plan.endDate}</td>
                       <td className="px-2 py-4">
                         <div className="flex items-center gap-1.5">
-                          <div className="bg-muted h-1.5 min-w-6 flex-1 overflow-hidden rounded-full">
+                          <div className="h-1.5 min-w-6 flex-1 overflow-hidden rounded-full bg-slate-200">
                             <div
-                              className="bg-foreground h-full rounded-full"
+                              className="h-full rounded-full bg-slate-700"
                               style={{ width: `${plan.progress}%` }}
                             />
                           </div>
-                          <span className="text-muted-foreground text-xs">{plan.progress}%</span>
+                          <span className="text-[11px] text-slate-500 tabular-nums">
+                            {plan.progress}%
+                          </span>
                         </div>
                       </td>
-                      <td className="text-muted-foreground px-2 py-4">{plan.budget}</td>
+                      <td className="px-2 py-3 font-medium text-slate-700 tabular-nums">
+                        {plan.budget}
+                      </td>
                       <td className="px-2 py-4">
                         <span
                           className={cn(
-                            "inline-flex rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
+                            "inline-flex rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap shadow-xs",
                             plan.status === "เสร็จสิ้น"
-                              ? "bg-emerald-600 text-white"
+                              ? "bg-emerald-700 text-white"
                               : plan.status === "กำลังดำเนินการ"
-                                ? "bg-blue-600 text-white"
-                                : "bg-amber-500 text-white",
+                                ? "bg-blue-700 text-white"
+                                : "bg-amber-600 text-white",
                           )}
                         >
                           {plan.status}
@@ -430,8 +531,58 @@ export function Navbar() {
                       </td>
                     </tr>
                   ))}
+                  {paginatedPlans.length === 0 && (
+                    <tr>
+                      <td colSpan={10} className="px-4 py-16 text-center text-sm text-slate-500">
+                        ไม่พบแผนงานที่ตรงกับคำค้นหา
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
+            </div>
+
+            <div className="flex shrink-0 items-center justify-between border-t border-slate-200 bg-white px-6 py-3">
+              <p className="text-xs text-slate-500">
+                แสดง{" "}
+                <span className="font-medium text-slate-700">
+                  {filteredPlans.length === 0 ? 0 : (planPage - 1) * plansPerPage + 1}–
+                  {Math.min(planPage * plansPerPage, filteredPlans.length)}
+                </span>{" "}
+                จาก {filteredPlans.length} รายการ
+              </p>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPlanPage((page) => Math.max(1, page - 1))}
+                  disabled={planPage === 1}
+                  aria-label="หน้าก่อนหน้า"
+                  className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ArrowLeft className="size-3.5" />
+                </button>
+                {Array.from({ length: totalPlanPages }, (_, index) => index + 1).map((page) => (
+                  <button
+                    key={page}
+                    type="button"
+                    onClick={() => setPlanPage(page)}
+                    aria-label={`หน้า ${page}`}
+                    aria-current={planPage === page ? "page" : undefined}
+                    className="flex size-8 items-center justify-center rounded-md text-xs font-medium text-slate-600 transition hover:bg-slate-100 aria-current:bg-slate-900 aria-current:text-white"
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setPlanPage((page) => Math.min(totalPlanPages, page + 1))}
+                  disabled={planPage === totalPlanPages}
+                  aria-label="หน้าถัดไป"
+                  className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <ArrowRight className="size-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
