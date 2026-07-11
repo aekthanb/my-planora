@@ -53,26 +53,48 @@ const planItems: DropdownItem[] = [
   },
 ];
 
-const plans = [
+const planTemplates = [
   {
     name: "แผนพัฒนาระบบบริหารบุคลากร",
+    type: "พัฒนาระบบ",
     owner: "ทีมผลิตภัณฑ์",
-    period: "1 ก.ค. – 30 ก.ย. 2569",
-    status: "กำลังดำเนินการ",
+    department: "เทคโนโลยี",
+    startDate: "1 ก.ค. 2569",
+    endDate: "30 ก.ย. 2569",
   },
   {
     name: "แผนอบรมพนักงานประจำปี",
+    type: "พัฒนาบุคลากร",
     owner: "ฝ่ายทรัพยากรบุคคล",
-    period: "15 ส.ค. – 15 ต.ค. 2569",
-    status: "รอดำเนินการ",
+    department: "ทรัพยากรบุคคล",
+    startDate: "15 ส.ค. 2569",
+    endDate: "15 ต.ค. 2569",
   },
   {
     name: "แผนปรับปรุงกระบวนการทำงาน",
+    type: "ปรับปรุงองค์กร",
     owner: "ทีมปฏิบัติการ",
-    period: "1 เม.ย. – 30 มิ.ย. 2569",
-    status: "เสร็จสิ้น",
+    department: "ปฏิบัติการ",
+    startDate: "1 เม.ย. 2569",
+    endDate: "30 มิ.ย. 2569",
   },
 ];
+
+const planStatuses = ["กำลังดำเนินการ", "รอดำเนินการ", "เสร็จสิ้น"];
+
+const plans = Array.from({ length: 100 }, (_, index) => {
+  const template = planTemplates[index % planTemplates.length]!;
+  const sequence = index + 1;
+
+  return {
+    ...template,
+    code: `PLN-${String(sequence).padStart(3, "0")}`,
+    name: `${template.name} ${sequence}`,
+    progress: index % 3 === 2 ? 100 : (index * 17 + 20) % 91,
+    budget: `฿${(95000 + ((index * 37500) % 500000)).toLocaleString("en-US")}`,
+    status: planStatuses[index % planStatuses.length]!,
+  };
+});
 
 const navLinks: {
   label: string;
@@ -321,7 +343,7 @@ export function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="plan-modal-title"
-            className="bg-background w-full max-w-5xl overflow-hidden rounded-2xl border shadow-2xl"
+            className="bg-background w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border shadow-2xl"
           >
             <div className="flex items-start justify-between border-b px-6 py-5">
               <div>
@@ -342,33 +364,65 @@ export function Navbar() {
               </button>
             </div>
 
-            <div className="max-h-[65vh] overflow-auto p-6">
-              <table className="w-full min-w-180 text-left text-sm">
+            <div className="max-h-[65vh] overflow-y-auto p-4 sm:p-6">
+              <table className="w-full table-fixed text-left text-xs xl:text-sm">
+                <colgroup>
+                  <col className="w-[7%]" />
+                  <col className="w-[18%]" />
+                  <col className="w-[10%]" />
+                  <col className="w-[12%]" />
+                  <col className="w-[10%]" />
+                  <col className="w-[9%]" />
+                  <col className="w-[9%]" />
+                  <col className="w-[9%]" />
+                  <col className="w-[8%]" />
+                  <col className="w-[8%]" />
+                </colgroup>
                 <thead>
                   <tr className="text-muted-foreground border-b">
-                    <th className="px-4 py-3 font-medium">ชื่อแผนงาน</th>
-                    <th className="px-4 py-3 font-medium">ผู้รับผิดชอบ</th>
-                    <th className="px-4 py-3 font-medium">ระยะเวลา</th>
-                    <th className="px-4 py-3 font-medium">สถานะ</th>
+                    <th className="px-2 py-3 font-medium">รหัส</th>
+                    <th className="px-2 py-3 font-medium">ชื่อแผนงาน</th>
+                    <th className="px-2 py-3 font-medium">ประเภท</th>
+                    <th className="px-2 py-3 font-medium">ผู้รับผิดชอบ</th>
+                    <th className="px-2 py-3 font-medium">ฝ่าย</th>
+                    <th className="px-2 py-3 font-medium">วันเริ่ม</th>
+                    <th className="px-2 py-3 font-medium">วันสิ้นสุด</th>
+                    <th className="px-2 py-3 font-medium">ความคืบหน้า</th>
+                    <th className="px-2 py-3 font-medium">งบประมาณ</th>
+                    <th className="px-2 py-3 font-medium">สถานะ</th>
                   </tr>
                 </thead>
                 <tbody>
                   {plans.map((plan) => (
-                    <tr key={plan.name} className="hover:bg-muted/50 border-b last:border-0">
-                      <td className="px-4 py-4 font-medium">{plan.name}</td>
-                      <td className="text-muted-foreground px-4 py-4">{plan.owner}</td>
-                      <td className="text-muted-foreground px-4 py-4 whitespace-nowrap">
-                        {plan.period}
+                    <tr key={plan.code} className="hover:bg-muted/50 border-b last:border-0">
+                      <td className="text-muted-foreground px-2 py-4">{plan.code}</td>
+                      <td className="px-2 py-4 font-medium">{plan.name}</td>
+                      <td className="text-muted-foreground px-2 py-4">{plan.type}</td>
+                      <td className="text-muted-foreground px-2 py-4">{plan.owner}</td>
+                      <td className="text-muted-foreground px-2 py-4">{plan.department}</td>
+                      <td className="text-muted-foreground px-2 py-4">{plan.startDate}</td>
+                      <td className="text-muted-foreground px-2 py-4">{plan.endDate}</td>
+                      <td className="px-2 py-4">
+                        <div className="flex items-center gap-1.5">
+                          <div className="bg-muted h-1.5 min-w-6 flex-1 overflow-hidden rounded-full">
+                            <div
+                              className="bg-foreground h-full rounded-full"
+                              style={{ width: `${plan.progress}%` }}
+                            />
+                          </div>
+                          <span className="text-muted-foreground text-xs">{plan.progress}%</span>
+                        </div>
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="text-muted-foreground px-2 py-4">{plan.budget}</td>
+                      <td className="px-2 py-4">
                         <span
                           className={cn(
                             "inline-flex rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap",
                             plan.status === "เสร็จสิ้น"
-                              ? "bg-emerald-100 text-emerald-700"
+                              ? "bg-emerald-600 text-white"
                               : plan.status === "กำลังดำเนินการ"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-amber-100 text-amber-700",
+                                ? "bg-blue-600 text-white"
+                                : "bg-amber-500 text-white",
                           )}
                         >
                           {plan.status}
