@@ -2,7 +2,17 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Menu, Network, UserRound, Users, X } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronDown,
+  ListTodo,
+  Menu,
+  Network,
+  Plus,
+  UserRound,
+  Users,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type DropdownItem = {
@@ -27,6 +37,21 @@ const employeeItems: DropdownItem[] = [
   },
 ];
 
+const planItems: DropdownItem[] = [
+  {
+    icon: ListTodo,
+    title: "ดูแผนงาน",
+    description: "ดูและจัดการแผนงานทั้งหมด",
+    href: "/plans",
+  },
+  {
+    icon: Plus,
+    title: "สร้างแผนงานใหม่",
+    description: "เริ่มสร้างแผนงานใหม่",
+    href: "/plans/new",
+  },
+];
+
 const navLinks: {
   label: string;
   href: string;
@@ -35,7 +60,7 @@ const navLinks: {
   columns?: 1 | 2;
 }[] = [
   { label: "พนักงาน", href: "#", dropdown: employeeItems, columns: 2 },
-  { label: "แผนงาน", href: "#" },
+  { label: "แผนงาน", href: "/plans", dropdown: planItems, columns: 2 },
   { label: "ตั้งค่าหลัก", href: "#" },
   { label: "สิทธิ์การใช้งาน", href: "#" },
   { label: "รายงาน", href: "#" },
@@ -172,16 +197,35 @@ export function Navbar() {
 
       {mobileOpen && (
         <div className="space-y-1 border-t px-8 py-4 md:hidden">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="text-muted-foreground hover:text-foreground block py-2 text-sm transition-colors"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.dropdown ? (
+              <div key={link.label}>
+                <p className="text-foreground py-2 text-sm font-medium">{link.label}</p>
+                <div className="border-l pl-4">
+                  {link.dropdown.map((item) => (
+                    <Link
+                      key={item.title}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="text-muted-foreground hover:text-foreground flex items-center gap-2 py-2 text-sm transition-colors"
+                    >
+                      <item.icon className="size-4" />
+                      {item.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="text-muted-foreground hover:text-foreground block py-2 text-sm transition-colors"
+              >
+                {link.label}
+              </Link>
+            ),
+          )}
           <Link
             href="/login"
             onClick={() => setMobileOpen(false)}

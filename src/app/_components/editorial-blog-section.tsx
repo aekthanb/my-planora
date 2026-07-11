@@ -74,12 +74,9 @@ export function EditorialBlogSection() {
               มีอะไรใหม่?
             </p>
             <h2 className="mt-4 text-6xl font-bold tracking-tight sm:text-7xl lg:text-8xl">
-              บทความ<span className="text-muted-foreground">.</span>
+              ข่าวสาร<span className="text-muted-foreground">.</span>
             </h2>
           </div>
-          <p className="text-muted-foreground max-w-xs text-sm leading-relaxed sm:text-right">
-            เรื่องราว แนวคิด และอัปเดตความเคลื่อนไหวในการบริหารจัดการองค์กร คัดสรรโดยทีมงาน Planora
-          </p>
         </div>
       </div>
       <div className="mx-8 border-t sm:mx-16 lg:mx-24 xl:mx-32" />
