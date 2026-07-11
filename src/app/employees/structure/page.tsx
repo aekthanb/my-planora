@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/app/_components/navbar";
 import { OrgChart } from "./_components/org-chart";
 import { OrgStats } from "./_components/org-stats";
 import { getOrgStats, orgChartData } from "./data";
@@ -13,7 +12,6 @@ export default function OrgStructurePage() {
 
   return (
     <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans dark:bg-black">
-      <Navbar />
       <section className="mx-auto w-full max-w-6xl px-8 py-12">
         <div>
           <p className="text-primary text-sm font-medium">พนักงาน</p>

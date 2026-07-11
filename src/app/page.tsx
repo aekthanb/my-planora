@@ -1,10 +1,8 @@
 import { EditorialBlogSection } from "./_components/editorial-blog-section";
-import { Navbar } from "./_components/navbar";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans dark:bg-black">
-      <Navbar />
       <EditorialBlogSection />
     </div>
   );
