@@ -1124,7 +1124,7 @@ export function EnterpriseGridDemo() {
   return (
     <main className="min-h-screen bg-[#eef2f7] text-[#172033]">
       <section className="flex h-screen w-full flex-col gap-2 px-1.5 py-2 sm:px-2">
-        <div className="shrink-0 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        {/* <div className="shrink-0 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
           <p className="mb-2 text-sm font-medium text-slate-500">
             สรุปการใช้ Status ในแผน (Plan Days)
           </p>
@@ -1146,7 +1146,7 @@ export function EnterpriseGridDemo() {
               );
             })}
           </div>
-        </div>
+        </div> */}
 
         <div
           ref={gridPanelRef}
