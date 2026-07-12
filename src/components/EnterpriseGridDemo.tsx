@@ -514,7 +514,11 @@ export function EnterpriseGridDemo() {
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
           params.node.rowPinned ? null : (
-            <Button type="button" size="xs">
+            <Button
+              type="button"
+              size="xs"
+              className="bg-violet-600 text-white hover:bg-violet-500"
+            >
               Send
             </Button>
           ),
