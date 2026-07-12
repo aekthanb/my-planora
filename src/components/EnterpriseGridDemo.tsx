@@ -13,7 +13,6 @@ import {
   Minimize2,
   MapPin,
   Plus,
-  Search,
   UserRound,
 } from "lucide-react";
 import {
@@ -147,15 +146,23 @@ type PersonHistorySummary = {
   approved: number;
 };
 
-const owners = ["Mali", "Niran", "Arisa", "Kawin", "Suda", "Pim"];
+const owners = ["มาลี", "นิรันดร์", "อริสา", "กวิน", "สุดา", "พิม"];
 const regions = [
-  { region: "APAC", countries: ["Thailand", "Singapore", "Japan"] },
-  { region: "EMEA", countries: ["Germany", "France", "UAE"] },
-  { region: "Americas", countries: ["United States", "Canada", "Brazil"] },
+  { region: "ภาคกลาง", countries: ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี"] },
+  { region: "ภาคเหนือ", countries: ["เชียงใหม่", "เชียงราย", "ลำปาง"] },
+  { region: "ภาคตะวันออกเฉียงเหนือ", countries: ["ขอนแก่น", "นครราชสีมา", "อุดรธานี"] },
+  { region: "ภาคใต้", countries: ["สงขลา", "ภูเก็ต", "สุราษฎร์ธานี"] },
 ];
-const segments = ["Enterprise", "Mid Market", "Public Sector", "Strategic"];
+const segments = ["แผนกรักษาความปลอดภัย", "แผนกทำความสะอาด", "แผนกภูมิทัศน์", "แผนกธุรการ"];
 const stages: DealStage[] = ["Discovery", "Proposal", "Negotiation", "Closed Won", "At Risk"];
 const quarters: DealQuarter[] = ["Q1", "Q2", "Q3", "Q4"];
+const quarterLocations = ["สาขา 1", "สาขา 2", "สาขา 3", "สาขา 4"];
+
+function quarterLabel(quarter: DealQuarter | ""): string {
+  const index = quarters.indexOf(quarter as DealQuarter);
+
+  return index >= 0 ? quarterLocations[index]! : "-";
+}
 const allCountries = regions.flatMap((item) => item.countries);
 const scheduleDays = Array.from({ length: 31 }, (_, index) => index + 1);
 const demoMultiOutDaysByRowNumber = new Map<number, number[]>([[4, [4, 5, 8, 12, 16, 20, 24, 28]]]);
@@ -257,8 +264,8 @@ function makeRows(): DealRow[] {
       segment: segments[index % segments.length]!,
       account:
         index === 3
-          ? "Nong Mali - Field Staff"
-          : `${country} ${segments[(index + 1) % segments.length]} ${index + 1}`,
+          ? "น้องมาลี - พนักงานภาคสนาม"
+          : `${segments[(index + 1) % segments.length]} จังหวัด${country} ${index + 1}`,
       owner: owners[index % owners.length]!,
       stage,
       quarter: quarters[Math.floor((closeMonth - 1) / 3)]!,
@@ -306,7 +313,7 @@ function createReviewItem(row: DealRow, day: number, status: "IN" | "OUT" = "OUT
     country: row.country || "-",
     area: row.segment || "-",
     position: row.stage || "-",
-    location: row.quarter || "-",
+    location: row.quarter ? quarterLabel(row.quarter) : "-",
     amount: row.revenue,
     checkInAt: `08:${checkInMinute}`,
     checkOutAt: `17:${checkOutMinute}`,
@@ -347,7 +354,6 @@ export function EnterpriseGridDemo() {
   const gridApi = useRef<GridApi<DealRow> | null>(null);
   const gridPanelRef = useRef<HTMLDivElement | null>(null);
   const blankRowCounter = useRef(1);
-  const [quickFilter, setQuickFilter] = useState("");
   const [rowData, setRowData] = useState<DealRow[]>(() => makeRows());
   const [pinnedBottomRowData, setPinnedBottomRowData] = useState<DealRow[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -563,6 +569,7 @@ export function EnterpriseGridDemo() {
         headerName: "Location",
         minWidth: 160,
         filter: "agSetColumnFilter",
+        valueFormatter: (params) => (params.value ? quarterLabel(params.value) : ""),
       },
       {
         headerName: "Plan Days",
@@ -1015,7 +1022,6 @@ export function EnterpriseGridDemo() {
     const newRow = createBlankDealRow(`NEW-${blankRowCounter.current}`);
 
     blankRowCounter.current += 1;
-    setQuickFilter("");
     api?.setFilterModel(null);
     api?.setGridOption("quickFilterText", "");
 
@@ -1102,23 +1108,7 @@ export function EnterpriseGridDemo() {
           ref={gridPanelRef}
           className="grid-panel-shell flex min-h-0 flex-1 flex-col rounded-lg border border-slate-200 bg-white shadow-sm"
         >
-          <div className="flex shrink-0 flex-col gap-3 border-b border-slate-200 p-2.5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="relative w-full lg:max-w-sm">
-              <Search
-                className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
-                aria-hidden
-              />
-              <input
-                value={quickFilter}
-                onChange={(event) => {
-                  setQuickFilter(event.target.value);
-                  gridApi.current?.setGridOption("quickFilterText", event.target.value);
-                }}
-                placeholder="Search accounts, owners, countries"
-                className="h-10 w-full rounded-md border border-slate-300 bg-white pr-3 pl-9 text-sm ring-blue-500 transition outline-none focus:border-blue-400 focus:ring-2"
-              />
-            </div>
-
+          <div className="flex shrink-0 flex-col gap-3 border-b border-slate-200 p-2.5 lg:flex-row lg:items-center lg:justify-end">
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
