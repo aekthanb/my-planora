@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EnterpriseGridDemo } from "@/components/EnterpriseGridDemo";
+import { PlanOverviewHeader } from "@/components/PlanOverviewHeader";
 import "../../enterprise-grid.css";
 
 export const metadata: Metadata = {
@@ -7,5 +8,12 @@ export const metadata: Metadata = {
 };
 
 export default function NewPlanPage() {
-  return <EnterpriseGridDemo />;
+  return (
+    <div className="flex min-h-full flex-1 flex-col">
+      <div className="shrink-0 px-1.5 pt-2 sm:px-2">
+        <PlanOverviewHeader />
+      </div>
+      <EnterpriseGridDemo />
+    </div>
+  );
 }
