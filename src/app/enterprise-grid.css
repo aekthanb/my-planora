@@ -183,9 +183,15 @@
 }
 
 .status-pending {
-  --status-bg: var(--accent);
-  --status-border: var(--border);
-  --status-fg: var(--accent-foreground);
+  --status-bg: var(--ring);
+  --status-border: var(--ring);
+  --status-fg: var(--foreground);
+}
+
+.status-out {
+  --status-bg: color-mix(in oklch, var(--destructive), var(--background) 35%);
+  --status-border: var(--destructive);
+  --status-fg: white;
 }
 
 .status-temp {
@@ -198,6 +204,7 @@
 .ag-theme-quartz .schedule-day-cell-content.status-leave-paid,
 .ag-theme-quartz .schedule-day-cell-content.status-leave-unpaid,
 .ag-theme-quartz .schedule-day-cell-content.status-pending,
+.ag-theme-quartz .schedule-day-cell-content.status-out,
 .ag-theme-quartz .schedule-day-cell-content.status-temp {
   background: var(--status-bg);
   color: var(--status-fg);
@@ -207,6 +214,7 @@
 .person-day-status.status-leave-paid,
 .person-day-status.status-leave-unpaid,
 .person-day-status.status-pending,
+.person-day-status.status-out,
 .person-day-status.status-temp {
   background: var(--status-bg);
   color: var(--status-fg);

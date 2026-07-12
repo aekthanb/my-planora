@@ -240,7 +240,7 @@ const statusOptions: StatusOption[] = [
   { code: "S11", label: "ลาบวช(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
   { code: "S13", label: "ลาทำหมัน(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
   { code: "IN", label: "เช็คอินแล้ว รอเช็คเอาท์", className: "status-pending" },
-  { code: "OUT", label: "เช็คเอาท์แล้ว รออนุมัติ", className: "status-pending" },
+  { code: "OUT", label: "เช็คเอาท์แล้ว รออนุมัติ", className: "status-out" },
   { code: "T", label: "งานชั่วคราว", className: "status-temp" },
   { code: "S4", label: "สรรหา", className: "status-temp" },
 ];
@@ -257,7 +257,12 @@ const statusButtonStyles: Record<string, { fill: string; text: string; ring: str
     text: "text-white",
     ring: "ring-destructive/40",
   },
-  "status-pending": { fill: "bg-accent", text: "text-accent-foreground", ring: "ring-ring" },
+  "status-pending": { fill: "bg-ring", text: "text-foreground", ring: "ring-ring" },
+  "status-out": {
+    fill: "bg-[color-mix(in_oklch,var(--destructive),var(--background)_35%)]",
+    text: "text-white",
+    ring: "ring-destructive/30",
+  },
   "status-temp": { fill: "bg-muted", text: "text-muted-foreground", ring: "ring-border" },
 };
 const thaiWeekdays = ["พ.", "พฤ.", "ศ.", "ส.", "อา.", "จ.", "อ."];
@@ -509,11 +514,7 @@ export function EnterpriseGridDemo() {
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
           params.node.rowPinned ? null : (
-            <Button
-              type="button"
-              size="xs"
-              className="bg-emerald-500 text-white hover:bg-emerald-600"
-            >
+            <Button type="button" size="xs">
               Send
             </Button>
           ),
@@ -537,7 +538,6 @@ export function EnterpriseGridDemo() {
               type="button"
               size="xs"
               variant="outline"
-              className="border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100"
               onClick={() => openPersonHistory(params.data?.account || "Blank row")}
             >
               <History className="h-3.5 w-3.5" aria-hidden />
