@@ -462,11 +462,11 @@ function ScheduleDayHeader({
   );
 }
 
-export function EnterpriseGridDemo() {
+export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boolean }) {
   const gridApi = useRef<GridApi<DealRow> | null>(null);
   const gridPanelRef = useRef<HTMLDivElement | null>(null);
   const blankRowCounter = useRef(1);
-  const [rowData, setRowData] = useState<DealRow[]>(() => makeRows());
+  const [rowData, setRowData] = useState<DealRow[]>(() => (showMockData ? makeRows() : []));
   const [pinnedBottomRowData, setPinnedBottomRowData] = useState<DealRow[]>([]);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeStatusCell, setActiveStatusCell] = useState<ActiveStatusCell | null>(null);

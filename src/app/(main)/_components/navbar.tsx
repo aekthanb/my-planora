@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
@@ -120,6 +121,7 @@ const navLinks: {
 ];
 
 export function Navbar() {
+  const router = useRouter();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [planModalOpen, setPlanModalOpen] = useState(false);
@@ -410,7 +412,19 @@ export function Navbar() {
                 {paginatedPlans.map((plan) => (
                   <tr
                     key={plan.code}
-                    className="border-border hover:bg-muted h-[34px] border-b transition-colors"
+                    tabIndex={0}
+                    role="link"
+                    onClick={() => {
+                      setPlanModalOpen(false);
+                      router.push(`/plans/new?project=${encodeURIComponent(plan.code)}`);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Enter" && event.key !== " ") return;
+                      event.preventDefault();
+                      setPlanModalOpen(false);
+                      router.push(`/plans/new?project=${encodeURIComponent(plan.code)}`);
+                    }}
+                    className="border-border hover:bg-muted focus-visible:ring-ring h-[34px] cursor-pointer border-b transition-colors outline-none focus-visible:ring-2 focus-visible:ring-inset"
                   >
                     <td className="text-muted-foreground px-3 py-2 font-mono font-medium">
                       {plan.code}

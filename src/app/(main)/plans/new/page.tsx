@@ -7,13 +7,19 @@ export const metadata: Metadata = {
   title: "สร้างแผนงานใหม่ | Planora",
 };
 
-export default function NewPlanPage() {
+export default async function NewPlanPage({ searchParams }: PageProps<"/plans/new">) {
+  const { project } = await searchParams;
+  const selectedProject = typeof project === "string" && project.length > 0;
+
   return (
     <div className="flex min-h-full flex-1 flex-col gap-4">
       {/* <div className="shrink-0 px-4 pt-6 sm:px-6">
         <PlanOverviewHeader />
       </div> */}
-      <EnterpriseGridDemo />
+      <EnterpriseGridDemo
+        key={selectedProject ? project : "blank"}
+        showMockData={selectedProject}
+      />
     </div>
   );
 }
