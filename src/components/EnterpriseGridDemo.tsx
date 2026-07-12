@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Image from "next/image";
 import {
   AlertTriangle,
   ArrowRight,
@@ -270,6 +271,8 @@ const statusButtonStyles: Record<string, { fill: string; text: string; ring: str
   "status-temp": { fill: "bg-muted", text: "text-muted-foreground", ring: "ring-border" },
 };
 const thaiWeekdays = ["พ.", "พฤ.", "ศ.", "ส.", "อา.", "จ.", "อ."];
+const checkInPhotoUrl = "https://images.pexels.com/photos/7388699/pexels-photo-7388699.jpeg";
+const checkOutPhotoUrl = "https://images.pexels.com/photos/34516670/pexels-photo-34516670.jpeg";
 
 const dropdownCellEditor = {
   cellEditor: "agRichSelectCellEditor",
@@ -1385,7 +1388,13 @@ export function EnterpriseGridDemo() {
                               In photo
                             </div>
                             <div className="bg-muted relative aspect-[4/3]">
-                              <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
+                              <Image
+                                src={checkInPhotoUrl}
+                                alt="In photo"
+                                fill
+                                sizes="(min-width: 1024px) 200px, 45vw"
+                                className="object-cover"
+                              />
                             </div>
                           </div>
                           <div className="border-border bg-card overflow-hidden rounded-md border">
@@ -1395,7 +1404,13 @@ export function EnterpriseGridDemo() {
                             </div>
                             <div className="bg-muted relative aspect-[4/3]">
                               {activeOutReview.status === "OUT" ? (
-                                <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
+                                <Image
+                                  src={checkOutPhotoUrl}
+                                  alt="Out photo"
+                                  fill
+                                  sizes="(min-width: 1024px) 200px, 45vw"
+                                  className="object-cover"
+                                />
                               ) : (
                                 <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-xs font-semibold">
                                   Waiting for checkout
@@ -1470,54 +1485,15 @@ export function EnterpriseGridDemo() {
                   Check-in/out History
                 </DialogTitle>
                 <p className="text-muted-foreground mt-1 text-xs">
-                  Evidence records remain available after OUT is approved to 1.
+                  {selectedPersonAccount ??
+                    "Evidence records remain available after OUT is approved to 1."}
                 </p>
               </DialogHeader>
 
-              {personHistorySummaries.length > 0 ? (
-                <div className="grid min-h-0 overflow-hidden lg:grid-cols-[260px_1fr]">
-                  <aside className="border-border bg-muted min-h-0 overflow-y-auto border-b p-3 lg:border-r lg:border-b-0">
-                    <div className="space-y-2">
-                      {personHistorySummaries.map((person) => {
-                        const isActive = person.account === selectedPersonAccount;
-
-                        return (
-                          <button
-                            key={person.account}
-                            type="button"
-                            onClick={() => setActivePersonAccount(person.account)}
-                            className={`w-full rounded-lg border px-3 py-3 text-left transition ${
-                              isActive
-                                ? "border-primary/50 bg-card ring-primary/20 shadow-sm ring-2"
-                                : "border-border bg-card hover:bg-muted"
-                            }`}
-                          >
-                            <div className="flex items-start gap-2">
-                              <span className="bg-accent text-primary mt-0.5 rounded-full p-1.5">
-                                <UserRound className="h-4 w-4" aria-hidden />
-                              </span>
-                              <span className="min-w-0 flex-1">
-                                <span className="text-foreground block truncate text-sm font-semibold">
-                                  {person.account}
-                                </span>
-                                <span className="mt-1 flex flex-wrap gap-1 text-xs">
-                                  <span className="bg-secondary text-secondary-foreground rounded px-1.5 py-0.5 font-medium">
-                                    IN/OUT {person.pending}
-                                  </span>
-                                  <span className="bg-accent text-accent-foreground rounded px-1.5 py-0.5 font-medium">
-                                    Approved {person.approved}
-                                  </span>
-                                </span>
-                              </span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </aside>
-
+              {selectedPersonAccount != null ? (
+                <div className="grid min-h-0 overflow-hidden">
                   <div className="min-h-0 overflow-y-auto p-4">
-                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-medium">
+                    <div className="grid grid-cols-3 gap-2 text-xs font-medium">
                       <span className="bg-muted text-foreground rounded px-2 py-2 text-center">
                         Records {selectedPersonHistory.length}
                       </span>
@@ -1605,7 +1581,13 @@ export function EnterpriseGridDemo() {
                                 In photo
                               </div>
                               <div className="bg-muted relative aspect-[4/3]">
-                                <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
+                                <Image
+                                  src={checkInPhotoUrl}
+                                  alt="In photo"
+                                  fill
+                                  sizes="200px"
+                                  className="object-cover"
+                                />
                               </div>
                             </div>
                             <div className="border-border bg-card overflow-hidden rounded-md border">
@@ -1619,7 +1601,13 @@ export function EnterpriseGridDemo() {
                                     Waiting
                                   </div>
                                 ) : (
-                                  <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
+                                  <Image
+                                    src={checkOutPhotoUrl}
+                                    alt="Out photo"
+                                    fill
+                                    sizes="200px"
+                                    className="object-cover"
+                                  />
                                 )}
                               </div>
                             </div>
@@ -1794,7 +1782,13 @@ export function EnterpriseGridDemo() {
                           Check-in photo
                         </div>
                         <div className="bg-muted relative aspect-[4/3]">
-                          <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
+                          <Image
+                            src={checkInPhotoUrl}
+                            alt="Check-in photo"
+                            fill
+                            sizes="(min-width: 1024px) 400px, 90vw"
+                            className="object-cover"
+                          />
                           <div className="absolute inset-x-0 bottom-0 bg-black/45 p-4 text-white">
                             <p className="text-sm font-semibold">Site entrance confirmation</p>
                             <p className="text-xs opacity-80">
@@ -1810,7 +1804,13 @@ export function EnterpriseGridDemo() {
                           Check-out photo
                         </div>
                         <div className="bg-muted relative aspect-[4/3]">
-                          <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
+                          <Image
+                            src={checkOutPhotoUrl}
+                            alt="Check-out photo"
+                            fill
+                            sizes="(min-width: 1024px) 400px, 90vw"
+                            className="object-cover"
+                          />
                           <div className="absolute inset-x-0 bottom-0 bg-black/45 p-4 text-white">
                             <p className="text-sm font-semibold">End-of-day confirmation</p>
                             <p className="text-xs opacity-80">
