@@ -69,6 +69,7 @@ type DealRow = {
   closeDate: string;
   schedule?: Partial<Record<number, ScheduleStatusCode>>;
   isDraft?: boolean;
+  useMockSchedule?: boolean;
   planDaysTotal?: number;
 };
 
@@ -374,6 +375,7 @@ function makeRows(): DealRow[] {
       margin,
       probability: Math.min(95, 25 + ((index * 11) % 70)),
       closeDate: `2026-${String(closeMonth).padStart(2, "0")}-${String(closeDay).padStart(2, "0")}`,
+      useMockSchedule: true,
     };
   });
 }
@@ -382,7 +384,7 @@ function getScheduleValue(row: DealRow, day: number): ScheduleStatusCode {
   const customValue = row.schedule?.[day];
 
   if (customValue !== undefined) return customValue;
-  if (row.isDraft) return "";
+  if (!row.useMockSchedule) return "";
 
   const rowNumber = Number(row.id.replace("D-", ""));
 
@@ -1005,43 +1007,6 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
     });
   };
 
-  const getSelectedScheduleTargets = (fallback: { rowId: string; day: number }) => {
-    const api = gridApi.current;
-    const ranges = api?.getCellRanges();
-    const targets = new Map<string, { rowId: string; day: number }>();
-
-    ranges?.forEach((range) => {
-      const startIndex = range.startRow?.rowIndex;
-      const endIndex = range.endRow?.rowIndex;
-
-      if (startIndex == null || endIndex == null) return;
-
-      const fromIndex = Math.min(startIndex, endIndex);
-      const toIndex = Math.max(startIndex, endIndex);
-      const days = range.columns
-        .map((column) => column.getColId())
-        .filter((colId) => colId.startsWith("schedule-"))
-        .map((colId) => Number(colId.replace("schedule-", "")))
-        .filter((day) => Number.isInteger(day));
-
-      for (let rowIndex = fromIndex; rowIndex <= toIndex; rowIndex += 1) {
-        const row = api?.getDisplayedRowAtIndex(rowIndex)?.data;
-
-        if (!row) continue;
-
-        days.forEach((day) => {
-          targets.set(`${row.id}:${day}`, { rowId: row.id, day });
-        });
-      }
-    });
-
-    if (targets.size === 0) {
-      targets.set(`${fallback.rowId}:${fallback.day}`, fallback);
-    }
-
-    return Array.from(targets.values());
-  };
-
   const onCellDoubleClicked = (event: CellDoubleClickedEvent<DealRow>) => {
     const colId = event.column.getColId();
 
@@ -1076,14 +1041,12 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
       return;
     }
 
-    const targets = getSelectedScheduleTargets({ rowId: event.data.id, day });
-
     setActiveStatusCell({
       rowId: event.data.id,
       account: event.data.account || "Blank row",
       day,
       value,
-      targets,
+      targets: [{ rowId: event.data.id, day }],
     });
   };
 
