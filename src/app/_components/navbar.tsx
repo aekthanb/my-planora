@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -349,10 +348,7 @@ export function Navbar() {
       </header>
 
       <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
-        <DialogContent
-          showCloseButton={false}
-          className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl border border-slate-300 p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300"
-        >
+        <DialogContent className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl border border-slate-300 p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300">
           <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
             <DialogHeader className="gap-1">
               <DialogTitle className="text-lg font-semibold text-slate-950">
@@ -362,12 +358,6 @@ export function Navbar() {
                 รายการแผนงานและผลการดำเนินงานขององค์กร
               </DialogDescription>
             </DialogHeader>
-            <DialogClose
-              aria-label="ปิดหน้าต่างแผนงาน"
-              className="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-            >
-              <X className="size-4" />
-            </DialogClose>
           </div>
 
           <div className="shrink-0 border-b border-slate-200 px-6 py-3">
