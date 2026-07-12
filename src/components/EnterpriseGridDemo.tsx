@@ -257,7 +257,11 @@ const statusButtonStyles: Record<string, { fill: string; text: string; ring: str
     text: "text-white",
     ring: "ring-destructive/40",
   },
-  "status-pending": { fill: "bg-ring", text: "text-foreground", ring: "ring-ring" },
+  "status-pending": {
+    fill: "bg-[color-mix(in_oklch,oklch(0.577_0.245_207.325),var(--background)_35%)]",
+    text: "text-white",
+    ring: "ring-[oklch(0.577_0.245_207.325)]/30",
+  },
   "status-out": {
     fill: "bg-[color-mix(in_oklch,var(--destructive),var(--background)_35%)]",
     text: "text-white",
