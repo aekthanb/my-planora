@@ -1,3 +1,4 @@
+import { Briefcase, Building2, CalendarDays, UserRound, Wallet } from "lucide-react";
 import {
   Card,
   CardAction,
@@ -10,11 +11,11 @@ import { Separator } from "@/components/ui/separator";
 
 type PlanStatus = "กำลังดำเนินการ" | "รออนุมัติ" | "เสร็จสิ้น" | "ล่าช้า";
 
-const planStatusStyles: Record<PlanStatus, string> = {
-  กำลังดำเนินการ: "bg-secondary text-secondary-foreground",
-  รออนุมัติ: "bg-accent text-accent-foreground",
-  เสร็จสิ้น: "bg-primary text-primary-foreground",
-  ล่าช้า: "bg-destructive/10 text-destructive",
+const planStatusStyles: Record<PlanStatus, { dot: string; text: string }> = {
+  กำลังดำเนินการ: { dot: "bg-primary", text: "text-foreground" },
+  รออนุมัติ: { dot: "bg-muted-foreground", text: "text-foreground" },
+  เสร็จสิ้น: { dot: "bg-primary", text: "text-foreground" },
+  ล่าช้า: { dot: "bg-destructive", text: "text-destructive" },
 };
 
 const plan = {
@@ -44,51 +45,53 @@ function formatBudget(value: number) {
   }).format(value);
 }
 
+const fields = [
+  { icon: UserRound, label: "ผู้รับผิดชอบ", value: plan.owner },
+  { icon: Building2, label: "ฝ่าย", value: plan.department },
+  { icon: CalendarDays, label: "วันเริ่ม", value: formatThaiDate(plan.startDate) },
+  { icon: CalendarDays, label: "วันสิ้นสุด", value: formatThaiDate(plan.endDate) },
+  { icon: Wallet, label: "งบประมาณ", value: formatBudget(plan.budget) },
+];
+
 export function PlanOverviewHeader() {
+  const status = planStatusStyles[plan.status];
+
   return (
-    <Card className="rounded-lg shadow-sm">
-      <CardHeader>
-        <CardDescription>{plan.type}</CardDescription>
+    <Card className="rounded-xl py-6 shadow-sm">
+      <CardHeader className="gap-2 px-6">
+        <CardDescription className="flex items-center gap-1.5">
+          <Briefcase className="h-3.5 w-3.5" aria-hidden />
+          {plan.type}
+        </CardDescription>
         <CardTitle className="text-foreground text-xl">{plan.name}</CardTitle>
         <CardAction>
-          <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${planStatusStyles[plan.status]}`}
-          >
-            {plan.status}
+          <span className="border-border bg-card inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold shadow-sm">
+            <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
+            <span className={status.text}>{plan.status}</span>
           </span>
         </CardAction>
       </CardHeader>
 
-      <CardContent>
-        <Separator className="mb-4" />
+      <CardContent className="px-6">
+        <Separator className="mt-2 mb-5" />
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          <div>
-            <p className="text-muted-foreground text-xs font-medium">ผู้รับผิดชอบ</p>
-            <p className="text-foreground mt-1 text-sm font-semibold">{plan.owner}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground text-xs font-medium">ฝ่าย</p>
-            <p className="text-foreground mt-1 text-sm font-semibold">{plan.department}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground text-xs font-medium">วันเริ่ม</p>
-            <p className="text-foreground mt-1 text-sm font-semibold">
-              {formatThaiDate(plan.startDate)}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground text-xs font-medium">วันสิ้นสุด</p>
-            <p className="text-foreground mt-1 text-sm font-semibold">
-              {formatThaiDate(plan.endDate)}
-            </p>
-          </div>
-          <div>
-            <p className="text-muted-foreground text-xs font-medium">งบประมาณ</p>
-            <p className="text-foreground mt-1 text-sm font-semibold">
-              {formatBudget(plan.budget)}
-            </p>
-          </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {fields.map(({ icon: Icon, label, value }) => (
+            <div
+              key={label}
+              className="border-border bg-muted/40 flex items-start gap-3 rounded-lg border p-3.5"
+            >
+              <span className="bg-background border-border text-muted-foreground mt-0.5 shrink-0 rounded-full border p-2">
+                <Icon className="h-4 w-4" aria-hidden />
+              </span>
+              <span className="min-w-0">
+                <span className="text-muted-foreground block text-xs font-medium">{label}</span>
+                <span className="text-foreground mt-1 block truncate text-sm font-semibold">
+                  {value}
+                </span>
+              </span>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
