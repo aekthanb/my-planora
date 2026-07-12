@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
   AlertTriangle,
@@ -41,6 +42,11 @@ import { AllEnterpriseModule, LicenseManager } from "ag-grid-enterprise";
 import { AgGridReact } from "ag-grid-react";
 
 ModuleRegistry.registerModules([AllEnterpriseModule, RowDragModule]);
+
+const CheckInMap = dynamic(() => import("@/components/CheckInMap").then((mod) => mod.CheckInMap), {
+  ssr: false,
+  loading: () => <div className="border-border bg-muted h-40 w-full rounded-md border" />,
+});
 
 const licenseKey = process.env.NEXT_PUBLIC_AG_GRID_LICENSE_KEY;
 
@@ -131,6 +137,10 @@ type OutReviewItem = {
   checkInAt: string;
   checkOutAt: string;
   distanceMeters: number;
+  siteLat: number;
+  siteLng: number;
+  checkLat: number;
+  checkLng: number;
 };
 
 type ReviewHistoryItem = Omit<OutReviewItem, "status"> & {
@@ -199,6 +209,35 @@ const regions = [
   { region: "ภาคตะวันออกเฉียงเหนือ", countries: ["ขอนแก่น", "นครราชสีมา", "อุดรธานี"] },
   { region: "ภาคใต้", countries: ["สงขลา", "ภูเก็ต", "สุราษฎร์ธานี"] },
 ];
+const provinceCoordinates: Record<string, { lat: number; lng: number }> = {
+  กรุงเทพมหานคร: { lat: 13.7563, lng: 100.5018 },
+  นนทบุรี: { lat: 13.8622, lng: 100.5144 },
+  ปทุมธานี: { lat: 14.0208, lng: 100.525 },
+  เชียงใหม่: { lat: 18.7883, lng: 98.9853 },
+  เชียงราย: { lat: 19.9105, lng: 99.8406 },
+  ลำปาง: { lat: 18.2888, lng: 99.4909 },
+  ขอนแก่น: { lat: 16.4419, lng: 102.836 },
+  นครราชสีมา: { lat: 14.9799, lng: 102.0977 },
+  อุดรธานี: { lat: 17.4138, lng: 102.7873 },
+  สงขลา: { lat: 7.1897, lng: 100.5951 },
+  ภูเก็ต: { lat: 7.8804, lng: 98.3923 },
+  สุราษฎร์ธานี: { lat: 9.1382, lng: 99.3215 },
+};
+
+function getGeoPoints(province: string, rowNumber: number, day: number, distanceMeters: number) {
+  const site = provinceCoordinates[province] ?? provinceCoordinates["กรุงเทพมหานคร"]!;
+  const bearing = ((rowNumber * 47 + day * 19) % 360) * (Math.PI / 180);
+  const metersPerDegreeLat = 111320;
+  const metersPerDegreeLng = 111320 * Math.cos(site.lat * (Math.PI / 180));
+
+  return {
+    site,
+    check: {
+      lat: site.lat + (Math.cos(bearing) * distanceMeters) / metersPerDegreeLat,
+      lng: site.lng + (Math.sin(bearing) * distanceMeters) / metersPerDegreeLng,
+    },
+  };
+}
 const segments = ["แผนกรักษาความปลอดภัย", "แผนกทำความสะอาด", "แผนกภูมิทัศน์", "แผนกธุรการ"];
 const stages: DealStage[] = [
   "พนักงานรักษาความปลอดภัย",
@@ -362,6 +401,13 @@ function createReviewItem(row: DealRow, day: number, status: "IN" | "OUT" = "OUT
   const rowNumber = Number(row.id.replace(/\D/g, "")) || 0;
   const checkInMinute = String((rowNumber + day * 3) % 50).padStart(2, "0");
   const checkOutMinute = String((rowNumber + day * 5) % 50).padStart(2, "0");
+  const distanceMeters = 18 + ((rowNumber + day) % 8) * 11;
+  const { site, check } = getGeoPoints(
+    row.country || "กรุงเทพมหานคร",
+    rowNumber,
+    day,
+    distanceMeters,
+  );
 
   return {
     key: `${row.id}:${day}`,
@@ -379,7 +425,11 @@ function createReviewItem(row: DealRow, day: number, status: "IN" | "OUT" = "OUT
     amount: row.revenue,
     checkInAt: `08:${checkInMinute}`,
     checkOutAt: `17:${checkOutMinute}`,
-    distanceMeters: 18 + ((rowNumber + day) % 8) * 11,
+    distanceMeters,
+    siteLat: site.lat,
+    siteLng: site.lng,
+    checkLat: check.lat,
+    checkLng: check.lng,
   };
 }
 
@@ -1533,20 +1583,6 @@ export function EnterpriseGridDemo() {
                                 {item.region} / {item.country} - {item.location}
                               </p>
                             </div>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (item.status === "IN" || item.status === "OUT") {
-                                  openOutReview(item);
-                                  return;
-                                }
-
-                                focusScheduleCell(item);
-                              }}
-                              className="border-input bg-card text-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
-                            >
-                              {item.status === "1" ? "Focus" : "Review"}
-                            </button>
                           </div>
                           <div className="mt-3 grid grid-cols-3 gap-2">
                             <div className="bg-accent rounded-md px-2 py-2">
@@ -1574,6 +1610,17 @@ export function EnterpriseGridDemo() {
                               </p>
                             </div>
                           </div>
+
+                          <div className="mt-3">
+                            <CheckInMap
+                              siteLat={item.siteLat}
+                              siteLng={item.siteLng}
+                              checkLat={item.checkLat}
+                              checkLng={item.checkLng}
+                              distanceMeters={item.distanceMeters}
+                            />
+                          </div>
+
                           <div className="mt-3 grid grid-cols-2 gap-2">
                             <div className="border-border bg-card overflow-hidden rounded-md border">
                               <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
@@ -1585,7 +1632,7 @@ export function EnterpriseGridDemo() {
                                   src={checkInPhotoUrl}
                                   alt="In photo"
                                   fill
-                                  sizes="200px"
+                                  sizes="(min-width: 1024px) 460px, 45vw"
                                   className="object-cover"
                                 />
                               </div>
@@ -1605,7 +1652,7 @@ export function EnterpriseGridDemo() {
                                     src={checkOutPhotoUrl}
                                     alt="Out photo"
                                     fill
-                                    sizes="200px"
+                                    sizes="(min-width: 1024px) 460px, 45vw"
                                     className="object-cover"
                                   />
                                 )}
