@@ -147,6 +147,40 @@ type PersonHistorySummary = {
 };
 
 const owners = ["มาลี", "นิรันดร์", "อริสา", "กวิน", "สุดา", "พิม"];
+const workerFirstNames = [
+  "สมชาย",
+  "วิภา",
+  "ประยุทธ์",
+  "อรุณ",
+  "กัญญา",
+  "ธนากร",
+  "ปิยะดา",
+  "วีระ",
+  "สุนีย์",
+  "ชัยวัฒน์",
+  "นภา",
+  "ธีรพงษ์",
+  "รัตนา",
+  "อนุชา",
+  "พรทิพย์",
+  "สมหญิง",
+  "ไพโรจน์",
+  "ดวงใจ",
+  "ณัฐพล",
+  "มณีรัตน์",
+];
+const workerLastNames = [
+  "ใจดี",
+  "สุขสันต์",
+  "รักเรียน",
+  "แสงทอง",
+  "ศรีสุข",
+  "บุญมี",
+  "ทองดี",
+  "จันทร์เพ็ญ",
+  "วงศ์ษา",
+  "พูลสวัสดิ์",
+];
 const regions = [
   { region: "ภาคกลาง", countries: ["กรุงเทพมหานคร", "นนทบุรี", "ปทุมธานี"] },
   { region: "ภาคเหนือ", countries: ["เชียงใหม่", "เชียงราย", "ลำปาง"] },
@@ -262,10 +296,9 @@ function makeRows(): DealRow[] {
       region: regionConfig.region,
       country,
       segment: segments[index % segments.length]!,
-      account:
-        index === 3
-          ? "น้องมาลี - พนักงานภาคสนาม"
-          : `${segments[(index + 1) % segments.length]} จังหวัด${country} ${index + 1}`,
+      account: `${workerFirstNames[index % workerFirstNames.length]} ${
+        workerLastNames[Math.floor(index / workerFirstNames.length) % workerLastNames.length]
+      }`,
       owner: owners[index % owners.length]!,
       stage,
       quarter: quarters[Math.floor((closeMonth - 1) / 3)]!,
@@ -546,6 +579,7 @@ export function EnterpriseGridDemo() {
           values: rowData.map((row) => row.account),
         },
         filter: "agMultiColumnFilter",
+        cellClass: "cursor-pointer font-medium text-blue-700",
       },
       {
         field: "stage",
