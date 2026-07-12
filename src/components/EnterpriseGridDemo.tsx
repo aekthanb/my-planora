@@ -62,7 +62,7 @@ type DealRow = {
   account: string;
   owner: string;
   stage: DealStage | "";
-  quarter: DealQuarter | "";
+  quarter: string;
   revenue: number | null;
   margin: number;
   probability: number;
@@ -249,10 +249,10 @@ const stages: DealStage[] = [
 const quarters: DealQuarter[] = ["Q1", "Q2", "Q3", "Q4"];
 const quarterLocations = ["สาขา 1", "สาขา 2", "สาขา 3", "สาขา 4"];
 
-function quarterLabel(quarter: DealQuarter | ""): string {
+function quarterLabel(quarter: string): string {
   const index = quarters.indexOf(quarter as DealQuarter);
 
-  return index >= 0 ? quarterLocations[index]! : "-";
+  return index >= 0 ? quarterLocations[index]! : quarter;
 }
 const allCountries = regions.flatMap((item) => item.countries);
 const scheduleDays = Array.from({ length: 31 }, (_, index) => index + 1);
@@ -677,6 +677,8 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         headerName: "Location",
         minWidth: 160,
         filter: "agTextColumnFilter",
+        filterValueGetter: (params) =>
+          params.data?.quarter ? quarterLabel(params.data.quarter) : "",
         valueFormatter: (params) => (params.value ? quarterLabel(params.value) : ""),
       },
       {
