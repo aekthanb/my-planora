@@ -348,7 +348,7 @@ export function Navbar() {
       </header>
 
       <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
-        <DialogContent className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300">
+        <DialogContent className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex max-h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300">
           <div className="border-border flex shrink-0 items-center justify-between border-b px-6 py-4">
             <DialogHeader className="gap-1">
               <DialogTitle className="text-foreground text-lg font-semibold">
@@ -380,15 +380,14 @@ export function Navbar() {
           <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-4">
             <table className="w-full table-fixed text-left text-[13px]">
               <colgroup>
-                <col className="w-[7%]" />
-                <col className="w-[18%]" />
-                <col className="w-[10%]" />
-                <col className="w-[12%]" />
-                <col className="w-[10%]" />
-                <col className="w-[9%]" />
-                <col className="w-[9%]" />
-                <col className="w-[9%]" />
                 <col className="w-[8%]" />
+                <col className="w-[20%]" />
+                <col className="w-[11%]" />
+                <col className="w-[13%]" />
+                <col className="w-[11%]" />
+                <col className="w-[10%]" />
+                <col className="w-[10%]" />
+                <col className="w-[9%]" />
                 <col className="w-[8%]" />
               </colgroup>
               <thead className="bg-muted sticky top-0 z-10">
@@ -400,7 +399,6 @@ export function Navbar() {
                   <th className="px-3 py-3 font-semibold">ฝ่าย</th>
                   <th className="px-3 py-3 font-semibold">วันเริ่ม</th>
                   <th className="px-3 py-3 font-semibold">วันสิ้นสุด</th>
-                  <th className="px-3 py-3 font-semibold">ความคืบหน้า</th>
                   <th className="px-3 py-3 font-semibold">งบประมาณ</th>
                   <th className="px-3 py-3 font-semibold">สถานะ</th>
                 </tr>
@@ -420,19 +418,6 @@ export function Navbar() {
                     <td className="text-muted-foreground px-3 py-2">{plan.department}</td>
                     <td className="text-muted-foreground px-3 py-2">{plan.startDate}</td>
                     <td className="text-muted-foreground px-3 py-2">{plan.endDate}</td>
-                    <td className="px-3 py-2">
-                      <div className="flex items-center gap-1.5">
-                        <div className="bg-muted h-1.5 min-w-6 flex-1 overflow-hidden rounded-full">
-                          <div
-                            className="bg-primary h-full rounded-full"
-                            style={{ width: `${plan.progress}%` }}
-                          />
-                        </div>
-                        <span className="text-muted-foreground text-xs tabular-nums">
-                          {plan.progress}%
-                        </span>
-                      </div>
-                    </td>
                     <td className="text-foreground px-3 py-2 font-medium tabular-nums">
                       {plan.budget}
                     </td>
@@ -455,7 +440,7 @@ export function Navbar() {
                 {paginatedPlans.length === 0 && (
                   <tr>
                     <td
-                      colSpan={10}
+                      colSpan={9}
                       className="text-muted-foreground px-4 py-16 text-center text-sm"
                     >
                       ไม่พบแผนงานที่ตรงกับคำค้นหา
