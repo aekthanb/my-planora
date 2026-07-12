@@ -158,109 +158,56 @@
   background: var(--muted);
 }
 
-.status-slate {
-  --status-bg: #475569;
-  --status-border: #334155;
-  --status-fg: #ffffff;
-  --status-muted: #e2e8f0;
+/*
+ * Status buckets are grouped by meaning (not by arbitrary hue) and sourced
+ * entirely from the shared shadcn tokens, matching the rest of the app:
+ * work/paid-work, paid leave, unpaid leave or a problem state, an
+ * in-progress check-in/out, and temporary/other.
+ */
+.status-work {
+  --status-bg: var(--primary);
+  --status-border: var(--primary);
+  --status-fg: var(--primary-foreground);
 }
 
-.status-blue {
-  --status-bg: #1d4ed8;
-  --status-border: #1e40af;
-  --status-fg: #ffffff;
-  --status-muted: #dbeafe;
+.status-leave-paid {
+  --status-bg: var(--secondary);
+  --status-border: var(--border);
+  --status-fg: var(--secondary-foreground);
 }
 
-.status-green {
-  --status-bg: #166534;
-  --status-border: #14532d;
-  --status-fg: #ffffff;
-  --status-muted: #dcfce7;
+.status-leave-unpaid {
+  --status-bg: color-mix(in oklch, var(--destructive), transparent 15%);
+  --status-border: var(--destructive);
+  --status-fg: white;
 }
 
-.status-emerald {
-  --status-bg: #047857;
-  --status-border: #065f46;
-  --status-fg: #ffffff;
-  --status-muted: #d1fae5;
+.status-pending {
+  --status-bg: var(--accent);
+  --status-border: var(--border);
+  --status-fg: var(--accent-foreground);
 }
 
-.status-lime {
-  --status-bg: #4d7c0f;
-  --status-border: #3f6212;
-  --status-fg: #ffffff;
-  --status-muted: #ecfccb;
+.status-temp {
+  --status-bg: var(--muted);
+  --status-border: var(--border);
+  --status-fg: var(--muted-foreground);
 }
 
-.status-red {
-  --status-bg: #b91c1c;
-  --status-border: #991b1b;
-  --status-fg: #ffffff;
-  --status-muted: #fee2e2;
-}
-
-.status-orange {
-  --status-bg: #c2410c;
-  --status-border: #9a3412;
-  --status-fg: #ffffff;
-  --status-muted: #ffedd5;
-}
-
-.status-amber {
-  --status-bg: #d97706;
-  --status-border: #b45309;
-  --status-fg: #ffffff;
-  --status-muted: #fef3c7;
-}
-
-.status-cyan {
-  --status-bg: #0e7490;
-  --status-border: #155e75;
-  --status-fg: #ffffff;
-  --status-muted: #cffafe;
-}
-
-.status-purple {
-  --status-bg: #7e22ce;
-  --status-border: #6b21a8;
-  --status-fg: #ffffff;
-  --status-muted: #f3e8ff;
-}
-
-.status-zinc {
-  --status-bg: #52525b;
-  --status-border: #3f3f46;
-  --status-fg: #ffffff;
-  --status-muted: #e2e8f0;
-}
-
-.ag-theme-quartz .schedule-day-cell-content.status-slate,
-.ag-theme-quartz .schedule-day-cell-content.status-blue,
-.ag-theme-quartz .schedule-day-cell-content.status-green,
-.ag-theme-quartz .schedule-day-cell-content.status-emerald,
-.ag-theme-quartz .schedule-day-cell-content.status-lime,
-.ag-theme-quartz .schedule-day-cell-content.status-red,
-.ag-theme-quartz .schedule-day-cell-content.status-orange,
-.ag-theme-quartz .schedule-day-cell-content.status-amber,
-.ag-theme-quartz .schedule-day-cell-content.status-cyan,
-.ag-theme-quartz .schedule-day-cell-content.status-purple,
-.ag-theme-quartz .schedule-day-cell-content.status-zinc {
+.ag-theme-quartz .schedule-day-cell-content.status-work,
+.ag-theme-quartz .schedule-day-cell-content.status-leave-paid,
+.ag-theme-quartz .schedule-day-cell-content.status-leave-unpaid,
+.ag-theme-quartz .schedule-day-cell-content.status-pending,
+.ag-theme-quartz .schedule-day-cell-content.status-temp {
   background: var(--status-bg);
   color: var(--status-fg);
 }
 
-.person-day-status.status-slate,
-.person-day-status.status-blue,
-.person-day-status.status-green,
-.person-day-status.status-emerald,
-.person-day-status.status-lime,
-.person-day-status.status-red,
-.person-day-status.status-orange,
-.person-day-status.status-amber,
-.person-day-status.status-cyan,
-.person-day-status.status-purple,
-.person-day-status.status-zinc {
+.person-day-status.status-work,
+.person-day-status.status-leave-paid,
+.person-day-status.status-leave-unpaid,
+.person-day-status.status-pending,
+.person-day-status.status-temp {
   background: var(--status-bg);
   color: var(--status-fg);
 }

@@ -219,44 +219,46 @@ const scheduleDays = Array.from({ length: 31 }, (_, index) => index + 1);
 const demoMultiOutDaysByRowNumber = new Map<number, number[]>([[4, [4, 5, 8, 12, 16, 20, 24, 28]]]);
 const dropdownColumnIds = new Set(["region", "country", "segment", "owner", "account", "stage"]);
 const statusOptions: StatusOption[] = [
-  { code: "Y", label: "Visit ทำงานรอเช็คอิน", className: "status-slate" },
-  { code: "N", label: "ยกเลิกวันทำงาน", className: "status-blue" },
-  { code: "S3", label: "ลาป่วย(รับค่าจ้าง)", className: "status-green" },
-  { code: "S5", label: "ลาพักร้อน(รับค่าจ้าง)", className: "status-green" },
-  { code: "S6", label: "ลาคลอด(รับค่าจ้าง)", className: "status-green" },
-  { code: "S7", label: "ลากิจ(รับค่าจ้าง)", className: "status-green" },
-  { code: "S10", label: "ลาบวช(รับค่าจ้าง)", className: "status-green" },
-  { code: "S12", label: "ลาทำหมัน(รับค่าจ้าง)", className: "status-green" },
-  { code: "1", label: "ทำงานคิดเต็มวัน", className: "status-emerald" },
-  { code: "X", label: "วันหยุดรับค่าจ้าง", className: "status-emerald" },
-  { code: "0.5", label: "ทำงานคิดครึ่งวัน", className: "status-lime" },
-  { code: "SH", label: "หาช่วยภายนอก", className: "status-red" },
-  { code: "S14", label: "ขาดงาน", className: "status-red" },
-  { code: "X1", label: "ให้หยุด(ไม่รับค่าจ้าง)", className: "status-red" },
-  { code: "S1", label: "ลากิจ(ไม่รับค่าจ้าง)", className: "status-orange" },
-  { code: "S2", label: "ลาป่วย(ไม่รับค่าจ้าง)", className: "status-orange" },
-  { code: "S8", label: "ลาพักร้อน(ไม่รับค่าจ้าง)", className: "status-orange" },
-  { code: "S9", label: "ลาคลอด(ไม่รับค่าจ้าง)", className: "status-orange" },
-  { code: "S11", label: "ลาบวช(ไม่รับค่าจ้าง)", className: "status-orange" },
-  { code: "S13", label: "ลาทำหมัน(ไม่รับค่าจ้าง)", className: "status-orange" },
-  { code: "IN", label: "เช็คอินแล้ว รอเช็คเอาท์", className: "status-amber" },
-  { code: "OUT", label: "เช็คเอาท์แล้ว รออนุมัติ", className: "status-cyan" },
-  { code: "T", label: "งานชั่วคราว", className: "status-zinc" },
-  { code: "S4", label: "สรรหา", className: "status-purple" },
+  { code: "Y", label: "Visit ทำงานรอเช็คอิน", className: "status-work" },
+  { code: "N", label: "ยกเลิกวันทำงาน", className: "status-leave-unpaid" },
+  { code: "S3", label: "ลาป่วย(รับค่าจ้าง)", className: "status-leave-paid" },
+  { code: "S5", label: "ลาพักร้อน(รับค่าจ้าง)", className: "status-leave-paid" },
+  { code: "S6", label: "ลาคลอด(รับค่าจ้าง)", className: "status-leave-paid" },
+  { code: "S7", label: "ลากิจ(รับค่าจ้าง)", className: "status-leave-paid" },
+  { code: "S10", label: "ลาบวช(รับค่าจ้าง)", className: "status-leave-paid" },
+  { code: "S12", label: "ลาทำหมัน(รับค่าจ้าง)", className: "status-leave-paid" },
+  { code: "1", label: "ทำงานคิดเต็มวัน", className: "status-work" },
+  { code: "X", label: "วันหยุดรับค่าจ้าง", className: "status-work" },
+  { code: "0.5", label: "ทำงานคิดครึ่งวัน", className: "status-work" },
+  { code: "SH", label: "หาช่วยภายนอก", className: "status-leave-unpaid" },
+  { code: "S14", label: "ขาดงาน", className: "status-leave-unpaid" },
+  { code: "X1", label: "ให้หยุด(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "S1", label: "ลากิจ(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "S2", label: "ลาป่วย(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "S8", label: "ลาพักร้อน(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "S9", label: "ลาคลอด(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "S11", label: "ลาบวช(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "S13", label: "ลาทำหมัน(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
+  { code: "IN", label: "เช็คอินแล้ว รอเช็คเอาท์", className: "status-pending" },
+  { code: "OUT", label: "เช็คเอาท์แล้ว รออนุมัติ", className: "status-pending" },
+  { code: "T", label: "งานชั่วคราว", className: "status-temp" },
+  { code: "S4", label: "สรรหา", className: "status-temp" },
 ];
 
-const statusButtonStyles: Record<string, { fill: string; ring: string }> = {
-  "status-slate": { fill: "bg-slate-600", ring: "ring-slate-400" },
-  "status-blue": { fill: "bg-blue-700", ring: "ring-blue-400" },
-  "status-green": { fill: "bg-green-800", ring: "ring-green-400" },
-  "status-emerald": { fill: "bg-emerald-700", ring: "ring-emerald-400" },
-  "status-lime": { fill: "bg-lime-700", ring: "ring-lime-400" },
-  "status-red": { fill: "bg-red-700", ring: "ring-red-400" },
-  "status-orange": { fill: "bg-orange-700", ring: "ring-orange-400" },
-  "status-amber": { fill: "bg-amber-600", ring: "ring-amber-400" },
-  "status-cyan": { fill: "bg-cyan-700", ring: "ring-cyan-400" },
-  "status-purple": { fill: "bg-purple-700", ring: "ring-purple-400" },
-  "status-zinc": { fill: "bg-zinc-600", ring: "ring-zinc-400" },
+const statusButtonStyles: Record<string, { fill: string; text: string; ring: string }> = {
+  "status-work": { fill: "bg-primary", text: "text-primary-foreground", ring: "ring-ring" },
+  "status-leave-paid": {
+    fill: "bg-secondary",
+    text: "text-secondary-foreground",
+    ring: "ring-border",
+  },
+  "status-leave-unpaid": {
+    fill: "bg-destructive",
+    text: "text-white",
+    ring: "ring-destructive/40",
+  },
+  "status-pending": { fill: "bg-accent", text: "text-accent-foreground", ring: "ring-ring" },
+  "status-temp": { fill: "bg-muted", text: "text-muted-foreground", ring: "ring-border" },
 };
 const thaiWeekdays = ["พ.", "พฤ.", "ศ.", "ส.", "อา.", "จ.", "อ."];
 
@@ -1143,9 +1145,9 @@ export function EnterpriseGridDemo() {
                 <div
                   key={option.code}
                   title={option.label}
-                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm ${
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
                     style.fill
-                  } ${option.count === 0 ? "opacity-35" : ""}`}
+                  } ${style.text} ${option.count === 0 ? "opacity-35" : ""}`}
                 >
                   <span>{option.code}</span>
                   <span className="rounded-full bg-black/20 px-1.5 py-0.5">{option.count}</span>
@@ -2108,9 +2110,9 @@ export function EnterpriseGridDemo() {
                       key={option.code}
                       type="button"
                       onClick={() => setScheduleStatus(option.code)}
-                      className={`flex min-h-24 flex-col items-center justify-center gap-1.5 rounded-lg px-3 py-3 text-center text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110 ${
+                      className={`flex min-h-24 flex-col items-center justify-center gap-1.5 rounded-lg px-3 py-3 text-center shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110 ${
                         style.fill
-                      } ${isActive ? `ring-2 ring-offset-1 ${style.ring}` : ""}`}
+                      } ${style.text} ${isActive ? `ring-2 ring-offset-1 ${style.ring}` : ""}`}
                     >
                       <span className="text-2xl leading-none font-extrabold">{option.code}</span>
                       <span className="text-xs leading-snug font-semibold opacity-90">
