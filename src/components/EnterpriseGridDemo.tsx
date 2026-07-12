@@ -545,7 +545,7 @@ export function EnterpriseGridDemo() {
               onClick={() => openPersonHistory(params.data?.account || "Blank row")}
             >
               <History className="h-3.5 w-3.5" aria-hidden />
-              History
+              ประวัติ
             </Button>
           ),
       },
@@ -1167,7 +1167,7 @@ export function EnterpriseGridDemo() {
         >
           <div className="border-border flex shrink-0 flex-col gap-3 border-b p-2.5 lg:flex-row lg:items-center lg:justify-end">
             <div className="flex flex-wrap items-center gap-2">
-              <Button
+              {/* <Button
                 type="button"
                 size="lg"
                 variant="outline"
@@ -1179,7 +1179,7 @@ export function EnterpriseGridDemo() {
                 <span className="bg-muted rounded px-1.5 py-0.5 text-xs">
                   {personHistorySummaries.length}
                 </span>
-              </Button>
+              </Button> */}
               {/* <Button
                 type="button"
                 size="lg"
