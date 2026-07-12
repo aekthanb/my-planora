@@ -98,25 +98,6 @@ const plans = Array.from({ length: 100 }, (_, index) => {
   };
 });
 
-const planSummary = [
-  { label: "แผนงานทั้งหมด", value: plans.length, color: "text-slate-900" },
-  {
-    label: "กำลังดำเนินการ",
-    value: plans.filter((plan) => plan.status === "กำลังดำเนินการ").length,
-    color: "text-blue-700",
-  },
-  {
-    label: "รอดำเนินการ",
-    value: plans.filter((plan) => plan.status === "รอดำเนินการ").length,
-    color: "text-amber-700",
-  },
-  {
-    label: "เสร็จสิ้น",
-    value: plans.filter((plan) => plan.status === "เสร็จสิ้น").length,
-    color: "text-emerald-700",
-  },
-];
-
 const navLinks: {
   label: string;
   href: string;
@@ -393,23 +374,13 @@ export function Navbar() {
             className="bg-background flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-slate-300 shadow-2xl"
           >
             <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
-              <div className="flex items-center gap-3">
-                <span className="flex size-10 items-center justify-center rounded-lg bg-slate-900 text-white">
-                  <ListTodo className="size-5" />
-                </span>
-                <div>
-                  <div className="flex items-center gap-2.5">
-                    <h2 id="plan-modal-title" className="text-lg font-semibold text-slate-950">
-                      ทะเบียนแผนงาน
-                    </h2>
-                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                      100 รายการ
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-sm text-slate-500">
-                    รายการแผนงานและผลการดำเนินงานขององค์กร
-                  </p>
-                </div>
+              <div>
+                <h2 id="plan-modal-title" className="text-lg font-semibold text-slate-950">
+                  ทะเบียนแผนงาน
+                </h2>
+                <p className="mt-0.5 text-sm text-slate-500">
+                  รายการแผนงานและผลการดำเนินงานขององค์กร
+                </p>
               </div>
               <button
                 type="button"
@@ -421,21 +392,7 @@ export function Navbar() {
               </button>
             </div>
 
-            <div className="grid shrink-0 grid-cols-2 border-b border-slate-200 bg-slate-50 px-6 sm:grid-cols-4">
-              {planSummary.map((summary, index) => (
-                <div
-                  key={summary.label}
-                  className={cn("px-4 py-3", index > 0 && "border-l border-slate-200")}
-                >
-                  <p className="text-xs text-slate-500">{summary.label}</p>
-                  <p className={cn("mt-0.5 text-xl font-semibold tabular-nums", summary.color)}>
-                    {summary.value}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 px-6 py-3">
+            <div className="shrink-0 border-b border-slate-200 px-6 py-3">
               <label className="relative block w-full max-w-md">
                 <span className="sr-only">ค้นหาแผนงาน</span>
                 <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
@@ -450,10 +407,6 @@ export function Navbar() {
                   className="h-9 w-full rounded-md border border-slate-300 bg-white pr-3 pl-9 text-sm text-slate-900 transition outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
                 />
               </label>
-              <p className="shrink-0 text-xs text-slate-500">
-                พบ <span className="font-semibold text-slate-800">{filteredPlans.length}</span>{" "}
-                รายการ
-              </p>
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-4">
