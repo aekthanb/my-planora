@@ -64,7 +64,12 @@ type DealRow = {
   planDaysTotal?: number;
 };
 
-type DealStage = "Discovery" | "Proposal" | "Negotiation" | "Closed Won" | "At Risk";
+type DealStage =
+  | "พนักงานรักษาความปลอดภัย"
+  | "พนักงานทำความสะอาด"
+  | "พนักงานภูมิทัศน์"
+  | "พนักงานธุรการ"
+  | "หัวหน้าทีมภาคสนาม";
 type DealQuarter = "Q1" | "Q2" | "Q3" | "Q4";
 type ScheduleStatusCode =
   | ""
@@ -193,7 +198,13 @@ const regions = [
   { region: "ภาคใต้", countries: ["สงขลา", "ภูเก็ต", "สุราษฎร์ธานี"] },
 ];
 const segments = ["แผนกรักษาความปลอดภัย", "แผนกทำความสะอาด", "แผนกภูมิทัศน์", "แผนกธุรการ"];
-const stages: DealStage[] = ["Discovery", "Proposal", "Negotiation", "Closed Won", "At Risk"];
+const stages: DealStage[] = [
+  "พนักงานรักษาความปลอดภัย",
+  "พนักงานทำความสะอาด",
+  "พนักงานภูมิทัศน์",
+  "พนักงานธุรการ",
+  "หัวหน้าทีมภาคสนาม",
+];
 const quarters: DealQuarter[] = ["Q1", "Q2", "Q3", "Q4"];
 const quarterLocations = ["สาขา 1", "สาขา 2", "สาขา 3", "สาขา 4"];
 
@@ -326,8 +337,8 @@ function getScheduleValue(row: DealRow, day: number): ScheduleStatusCode {
 
   if (demoOutDays?.includes(day)) return "OUT";
   if (day === attendanceDay) return rowNumber % 4 === 0 ? "OUT" : "IN";
-  if (day <= 5 && row.stage !== "At Risk") return "Y";
-  if (day >= 3 && day <= 6 && row.stage === "At Risk") return "T";
+  if (day <= 5 && row.stage !== "หัวหน้าทีมภาคสนาม") return "Y";
+  if (day >= 3 && day <= 6 && row.stage === "หัวหน้าทีมภาคสนาม") return "T";
 
   return "";
 }
@@ -596,10 +607,6 @@ export function EnterpriseGridDemo() {
         },
         filter: "agSetColumnFilter",
         cellClass: "cursor-pointer",
-        cellClassRules: {
-          "font-semibold text-emerald-700": (params) => params.value === "Closed Won",
-          "font-semibold text-rose-700": (params) => params.value === "At Risk",
-        },
       },
       {
         field: "quarter",
