@@ -507,7 +507,11 @@ export function EnterpriseGridDemo() {
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
           params.node.rowPinned ? null : (
-            <Button type="button" size="xs">
+            <Button
+              type="button"
+              size="xs"
+              className="bg-emerald-500 text-white hover:bg-emerald-600"
+            >
               Send
             </Button>
           ),
@@ -527,7 +531,12 @@ export function EnterpriseGridDemo() {
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
           params.node.rowPinned ? null : (
-            <Button type="button" size="xs" variant="secondary">
+            <Button
+              type="button"
+              size="xs"
+              variant="outline"
+              className="border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100"
+            >
               <History className="h-3.5 w-3.5" aria-hidden />
               History
             </Button>
