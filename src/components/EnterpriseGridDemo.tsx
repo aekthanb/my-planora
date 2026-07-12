@@ -14,7 +14,6 @@ import {
   MapPin,
   Plus,
   Search,
-  ShieldAlert,
   UserRound,
 } from "lucide-react";
 import {
@@ -1075,24 +1074,6 @@ export function EnterpriseGridDemo() {
   return (
     <main className="min-h-screen bg-[#eef2f7] text-[#172033]">
       <section className="flex h-screen w-full flex-col gap-2 px-1.5 py-2 sm:px-2">
-        <header className="shrink-0 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-500">
-                <span>Next.js 16</span>
-                <span className="h-1 w-1 rounded-full bg-slate-300" />
-                <span>AG Grid Enterprise 36</span>
-              </div>
-              <h1 className="mt-1 text-2xl font-semibold text-slate-950">PlanY Field Work Plan</h1>
-            </div>
-
-            <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
-              <ShieldAlert className="h-4 w-4 text-slate-500" aria-hidden />
-              <span>Enterprise modules enabled</span>
-            </div>
-          </div>
-        </header>
-
         <div className="shrink-0 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
           <p className="mb-2 text-sm font-medium text-slate-500">
             สรุปการใช้ Status ในแผน (Plan Days)
