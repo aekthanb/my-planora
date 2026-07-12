@@ -507,8 +507,8 @@ export function EnterpriseGridDemo() {
         colId: "send-job-history",
         headerName: "",
         rowDrag: true,
-        width: 210,
-        minWidth: 210,
+        width: 248,
+        minWidth: 248,
         pinned: "left",
         editable: false,
         filter: false,
@@ -519,7 +519,7 @@ export function EnterpriseGridDemo() {
         suppressHeaderMenuButton: true,
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null }; data?: DealRow }) =>
-          params.node.rowPinned ? null : (
+          params.node.rowPinned || !params.data ? null : (
             <div className="flex items-center gap-1.5">
               <Button
                 type="button"
@@ -536,6 +536,15 @@ export function EnterpriseGridDemo() {
               >
                 <History className="h-3.5 w-3.5" aria-hidden />
                 ประวัติ
+              </Button>
+              <Button
+                type="button"
+                size="xs"
+                variant="outline"
+                className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => deleteRow(params.data!.id)}
+              >
+                ลบ
               </Button>
             </div>
           ),
@@ -1099,6 +1108,10 @@ export function EnterpriseGridDemo() {
         colKey: "region",
       });
     }, 50);
+  };
+
+  const deleteRow = (id: string) => {
+    setRowData((currentRows) => currentRows.filter((row) => row.id !== id));
   };
 
   const toggleFullscreen = async () => {
