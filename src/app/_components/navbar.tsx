@@ -15,6 +15,14 @@ import {
   Users,
   X,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 type DropdownItem = {
@@ -144,26 +152,6 @@ export function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    if (!planModalOpen) return;
-
-    const previousOverflow = document.documentElement.style.overflow;
-    const previousScrollbarGutter = document.documentElement.style.scrollbarGutter;
-    document.documentElement.style.overflow = "hidden";
-    document.documentElement.style.scrollbarGutter = "auto";
-
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") setPlanModalOpen(false);
-    }
-
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.documentElement.style.overflow = previousOverflow;
-      document.documentElement.style.scrollbarGutter = previousScrollbarGutter;
-    };
-  }, [planModalOpen]);
 
   function openPlanModal() {
     setOpenMenu(null);
@@ -360,186 +348,175 @@ export function Navbar() {
         )}
       </header>
 
-      {planModalOpen && (
-        <div
-          className="fixed inset-0 z-100 flex w-screen items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setPlanModalOpen(false);
-          }}
+      <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
+        <DialogContent
+          showCloseButton={false}
+          className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl border border-slate-300 p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300"
         >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="plan-modal-title"
-            className="bg-background flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-slate-300 shadow-2xl"
-          >
-            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
-              <div>
-                <h2 id="plan-modal-title" className="text-lg font-semibold text-slate-950">
-                  ทะเบียนแผนงาน
-                </h2>
-                <p className="mt-0.5 text-sm text-slate-500">
-                  รายการแผนงานและผลการดำเนินงานขององค์กร
-                </p>
-              </div>
+          <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
+            <DialogHeader className="gap-1">
+              <DialogTitle className="text-lg font-semibold text-slate-950">
+                ทะเบียนแผนงาน
+              </DialogTitle>
+              <DialogDescription className="text-sm text-slate-500">
+                รายการแผนงานและผลการดำเนินงานขององค์กร
+              </DialogDescription>
+            </DialogHeader>
+            <DialogClose
+              aria-label="ปิดหน้าต่างแผนงาน"
+              className="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            >
+              <X className="size-4" />
+            </DialogClose>
+          </div>
+
+          <div className="shrink-0 border-b border-slate-200 px-6 py-3">
+            <label className="relative block w-full max-w-md">
+              <span className="sr-only">ค้นหาแผนงาน</span>
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+              <input
+                type="search"
+                value={planSearch}
+                onChange={(event) => {
+                  setPlanSearch(event.target.value);
+                  setPlanPage(1);
+                }}
+                placeholder="ค้นหารหัส ชื่อแผนงาน ผู้รับผิดชอบ หรือสถานะ..."
+                className="h-9 w-full rounded-md border border-slate-300 bg-white pr-3 pl-9 text-sm text-slate-900 transition outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              />
+            </label>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-4">
+            <table className="w-full table-fixed text-left text-xs xl:text-sm">
+              <colgroup>
+                <col className="w-[7%]" />
+                <col className="w-[18%]" />
+                <col className="w-[10%]" />
+                <col className="w-[12%]" />
+                <col className="w-[10%]" />
+                <col className="w-[9%]" />
+                <col className="w-[9%]" />
+                <col className="w-[9%]" />
+                <col className="w-[8%]" />
+                <col className="w-[8%]" />
+              </colgroup>
+              <thead className="sticky top-0 z-10 bg-slate-100">
+                <tr className="border-b border-slate-300 text-slate-600">
+                  <th className="px-2 py-3 font-semibold">รหัส</th>
+                  <th className="px-2 py-3 font-semibold">ชื่อแผนงาน</th>
+                  <th className="px-2 py-3 font-semibold">ประเภท</th>
+                  <th className="px-2 py-3 font-semibold">ผู้รับผิดชอบ</th>
+                  <th className="px-2 py-3 font-semibold">ฝ่าย</th>
+                  <th className="px-2 py-3 font-semibold">วันเริ่ม</th>
+                  <th className="px-2 py-3 font-semibold">วันสิ้นสุด</th>
+                  <th className="px-2 py-3 font-semibold">ความคืบหน้า</th>
+                  <th className="px-2 py-3 font-semibold">งบประมาณ</th>
+                  <th className="px-2 py-3 font-semibold">สถานะ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedPlans.map((plan) => (
+                  <tr
+                    key={plan.code}
+                    className="border-b border-slate-200 even:bg-slate-50/70 hover:bg-blue-50/60"
+                  >
+                    <td className="px-2 py-3 font-mono text-[11px] font-medium text-slate-500">
+                      {plan.code}
+                    </td>
+                    <td className="px-2 py-3 font-medium text-slate-900">{plan.name}</td>
+                    <td className="px-2 py-3 text-slate-600">{plan.type}</td>
+                    <td className="px-2 py-3 text-slate-600">{plan.owner}</td>
+                    <td className="px-2 py-3 text-slate-600">{plan.department}</td>
+                    <td className="px-2 py-3 text-slate-600">{plan.startDate}</td>
+                    <td className="px-2 py-3 text-slate-600">{plan.endDate}</td>
+                    <td className="px-2 py-4">
+                      <div className="flex items-center gap-1.5">
+                        <div className="h-1.5 min-w-6 flex-1 overflow-hidden rounded-full bg-slate-200">
+                          <div
+                            className="h-full rounded-full bg-slate-700"
+                            style={{ width: `${plan.progress}%` }}
+                          />
+                        </div>
+                        <span className="text-[11px] text-slate-500 tabular-nums">
+                          {plan.progress}%
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-2 py-3 font-medium text-slate-700 tabular-nums">
+                      {plan.budget}
+                    </td>
+                    <td className="px-2 py-4">
+                      <span
+                        className={cn(
+                          "inline-flex rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap shadow-xs",
+                          plan.status === "เสร็จสิ้น"
+                            ? "bg-emerald-700 text-white"
+                            : plan.status === "กำลังดำเนินการ"
+                              ? "bg-blue-700 text-white"
+                              : "bg-amber-600 text-white",
+                        )}
+                      >
+                        {plan.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {paginatedPlans.length === 0 && (
+                  <tr>
+                    <td colSpan={10} className="px-4 py-16 text-center text-sm text-slate-500">
+                      ไม่พบแผนงานที่ตรงกับคำค้นหา
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex shrink-0 items-center justify-between border-t border-slate-200 bg-white px-6 py-3">
+            <p className="text-xs text-slate-500">
+              แสดง{" "}
+              <span className="font-medium text-slate-700">
+                {filteredPlans.length === 0 ? 0 : (planPage - 1) * plansPerPage + 1}–
+                {Math.min(planPage * plansPerPage, filteredPlans.length)}
+              </span>{" "}
+              จาก {filteredPlans.length} รายการ
+            </p>
+            <div className="flex items-center gap-1">
               <button
                 type="button"
-                onClick={() => setPlanModalOpen(false)}
-                aria-label="ปิดหน้าต่างแผนงาน"
-                className="flex size-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                onClick={() => setPlanPage((page) => Math.max(1, page - 1))}
+                disabled={planPage === 1}
+                aria-label="หน้าก่อนหน้า"
+                className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
               >
-                <X className="size-4" />
+                <ArrowLeft className="size-3.5" />
+              </button>
+              {Array.from({ length: totalPlanPages }, (_, index) => index + 1).map((page) => (
+                <button
+                  key={page}
+                  type="button"
+                  onClick={() => setPlanPage(page)}
+                  aria-label={`หน้า ${page}`}
+                  aria-current={planPage === page ? "page" : undefined}
+                  className="flex size-8 items-center justify-center rounded-md text-xs font-medium text-slate-600 transition hover:bg-slate-100 aria-current:bg-slate-900 aria-current:text-white"
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setPlanPage((page) => Math.min(totalPlanPages, page + 1))}
+                disabled={planPage === totalPlanPages}
+                aria-label="หน้าถัดไป"
+                className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ArrowRight className="size-3.5" />
               </button>
             </div>
-
-            <div className="shrink-0 border-b border-slate-200 px-6 py-3">
-              <label className="relative block w-full max-w-md">
-                <span className="sr-only">ค้นหาแผนงาน</span>
-                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="search"
-                  value={planSearch}
-                  onChange={(event) => {
-                    setPlanSearch(event.target.value);
-                    setPlanPage(1);
-                  }}
-                  placeholder="ค้นหารหัส ชื่อแผนงาน ผู้รับผิดชอบ หรือสถานะ..."
-                  className="h-9 w-full rounded-md border border-slate-300 bg-white pr-3 pl-9 text-sm text-slate-900 transition outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
-                />
-              </label>
-            </div>
-
-            <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-4">
-              <table className="w-full table-fixed text-left text-xs xl:text-sm">
-                <colgroup>
-                  <col className="w-[7%]" />
-                  <col className="w-[18%]" />
-                  <col className="w-[10%]" />
-                  <col className="w-[12%]" />
-                  <col className="w-[10%]" />
-                  <col className="w-[9%]" />
-                  <col className="w-[9%]" />
-                  <col className="w-[9%]" />
-                  <col className="w-[8%]" />
-                  <col className="w-[8%]" />
-                </colgroup>
-                <thead className="sticky top-0 z-10 bg-slate-100">
-                  <tr className="border-b border-slate-300 text-slate-600">
-                    <th className="px-2 py-3 font-semibold">รหัส</th>
-                    <th className="px-2 py-3 font-semibold">ชื่อแผนงาน</th>
-                    <th className="px-2 py-3 font-semibold">ประเภท</th>
-                    <th className="px-2 py-3 font-semibold">ผู้รับผิดชอบ</th>
-                    <th className="px-2 py-3 font-semibold">ฝ่าย</th>
-                    <th className="px-2 py-3 font-semibold">วันเริ่ม</th>
-                    <th className="px-2 py-3 font-semibold">วันสิ้นสุด</th>
-                    <th className="px-2 py-3 font-semibold">ความคืบหน้า</th>
-                    <th className="px-2 py-3 font-semibold">งบประมาณ</th>
-                    <th className="px-2 py-3 font-semibold">สถานะ</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedPlans.map((plan) => (
-                    <tr
-                      key={plan.code}
-                      className="border-b border-slate-200 even:bg-slate-50/70 hover:bg-blue-50/60"
-                    >
-                      <td className="px-2 py-3 font-mono text-[11px] font-medium text-slate-500">
-                        {plan.code}
-                      </td>
-                      <td className="px-2 py-3 font-medium text-slate-900">{plan.name}</td>
-                      <td className="px-2 py-3 text-slate-600">{plan.type}</td>
-                      <td className="px-2 py-3 text-slate-600">{plan.owner}</td>
-                      <td className="px-2 py-3 text-slate-600">{plan.department}</td>
-                      <td className="px-2 py-3 text-slate-600">{plan.startDate}</td>
-                      <td className="px-2 py-3 text-slate-600">{plan.endDate}</td>
-                      <td className="px-2 py-4">
-                        <div className="flex items-center gap-1.5">
-                          <div className="h-1.5 min-w-6 flex-1 overflow-hidden rounded-full bg-slate-200">
-                            <div
-                              className="h-full rounded-full bg-slate-700"
-                              style={{ width: `${plan.progress}%` }}
-                            />
-                          </div>
-                          <span className="text-[11px] text-slate-500 tabular-nums">
-                            {plan.progress}%
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-3 font-medium text-slate-700 tabular-nums">
-                        {plan.budget}
-                      </td>
-                      <td className="px-2 py-4">
-                        <span
-                          className={cn(
-                            "inline-flex rounded-md px-2 py-1 text-[11px] font-medium whitespace-nowrap shadow-xs",
-                            plan.status === "เสร็จสิ้น"
-                              ? "bg-emerald-700 text-white"
-                              : plan.status === "กำลังดำเนินการ"
-                                ? "bg-blue-700 text-white"
-                                : "bg-amber-600 text-white",
-                          )}
-                        >
-                          {plan.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  {paginatedPlans.length === 0 && (
-                    <tr>
-                      <td colSpan={10} className="px-4 py-16 text-center text-sm text-slate-500">
-                        ไม่พบแผนงานที่ตรงกับคำค้นหา
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="flex shrink-0 items-center justify-between border-t border-slate-200 bg-white px-6 py-3">
-              <p className="text-xs text-slate-500">
-                แสดง{" "}
-                <span className="font-medium text-slate-700">
-                  {filteredPlans.length === 0 ? 0 : (planPage - 1) * plansPerPage + 1}–
-                  {Math.min(planPage * plansPerPage, filteredPlans.length)}
-                </span>{" "}
-                จาก {filteredPlans.length} รายการ
-              </p>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setPlanPage((page) => Math.max(1, page - 1))}
-                  disabled={planPage === 1}
-                  aria-label="หน้าก่อนหน้า"
-                  className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <ArrowLeft className="size-3.5" />
-                </button>
-                {Array.from({ length: totalPlanPages }, (_, index) => index + 1).map((page) => (
-                  <button
-                    key={page}
-                    type="button"
-                    onClick={() => setPlanPage(page)}
-                    aria-label={`หน้า ${page}`}
-                    aria-current={planPage === page ? "page" : undefined}
-                    className="flex size-8 items-center justify-center rounded-md text-xs font-medium text-slate-600 transition hover:bg-slate-100 aria-current:bg-slate-900 aria-current:text-white"
-                  >
-                    {page}
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => setPlanPage((page) => Math.min(totalPlanPages, page + 1))}
-                  disabled={planPage === totalPlanPages}
-                  aria-label="หน้าถัดไป"
-                  className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <ArrowRight className="size-3.5" />
-                </button>
-              </div>
-            </div>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
