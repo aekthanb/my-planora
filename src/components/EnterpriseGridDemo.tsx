@@ -504,10 +504,11 @@ export function EnterpriseGridDemo() {
   const columnDefs = useMemo<(ColDef<DealRow> | ColGroupDef<DealRow>)[]>(
     () => [
       {
-        headerName: "Send Job",
+        colId: "send-job-history",
+        headerName: "",
         rowDrag: true,
-        width: 118,
-        minWidth: 118,
+        width: 210,
+        minWidth: 210,
         pinned: "left",
         editable: false,
         filter: false,
@@ -515,42 +516,28 @@ export function EnterpriseGridDemo() {
         sortable: false,
         resizable: false,
         suppressSizeToFit: true,
-        cellClass: "send-job-cell",
-        cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
-          params.node.rowPinned ? null : (
-            <Button
-              type="button"
-              size="xs"
-              className="bg-violet-600 text-white hover:bg-violet-500"
-            >
-              ส่งสัญญา
-            </Button>
-          ),
-      },
-      {
-        colId: "person-history",
-        headerName: "History",
-        width: 108,
-        minWidth: 108,
-        pinned: "left",
-        editable: false,
-        filter: false,
-        floatingFilter: false,
-        sortable: false,
-        resizable: false,
-        suppressSizeToFit: true,
+        suppressHeaderMenuButton: true,
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null }; data?: DealRow }) =>
           params.node.rowPinned ? null : (
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              onClick={() => openPersonHistory(params.data?.account || "Blank row")}
-            >
-              <History className="h-3.5 w-3.5" aria-hidden />
-              ประวัติ
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <Button
+                type="button"
+                size="xs"
+                className="bg-violet-600 text-white hover:bg-violet-500"
+              >
+                ส่งสัญญา
+              </Button>
+              <Button
+                type="button"
+                size="xs"
+                variant="outline"
+                onClick={() => openPersonHistory(params.data?.account || "Blank row")}
+              >
+                <History className="h-3.5 w-3.5" aria-hidden />
+                ประวัติ
+              </Button>
+            </div>
           ),
       },
       {
