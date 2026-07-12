@@ -15,6 +15,7 @@ import {
   Plus,
   UserRound,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -506,12 +507,9 @@ export function EnterpriseGridDemo() {
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
           params.node.rowPinned ? null : (
-            <button
-              type="button"
-              className="rounded bg-emerald-500 px-2 py-1 text-xs font-semibold text-white"
-            >
+            <Button type="button" size="xs">
               Send
-            </button>
+            </Button>
           ),
       },
       {
@@ -529,13 +527,10 @@ export function EnterpriseGridDemo() {
         cellClass: "send-job-cell",
         cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
           params.node.rowPinned ? null : (
-            <button
-              type="button"
-              className="inline-flex items-center gap-1.5 rounded border border-indigo-200 bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-700"
-            >
+            <Button type="button" size="xs" variant="secondary">
               <History className="h-3.5 w-3.5" aria-hidden />
               History
-            </button>
+            </Button>
           ),
       },
       {
@@ -581,7 +576,8 @@ export function EnterpriseGridDemo() {
           values: owners,
         },
         filter: "agSetColumnFilter",
-        cellClass: "cursor-pointer font-medium text-blue-700",
+        cellClass:
+          "cursor-pointer font-medium text-primary underline decoration-primary/40 underline-offset-2",
       },
       {
         field: "account",
@@ -593,7 +589,8 @@ export function EnterpriseGridDemo() {
           values: rowData.map((row) => row.account),
         },
         filter: "agMultiColumnFilter",
-        cellClass: "cursor-pointer font-medium text-blue-700",
+        cellClass:
+          "cursor-pointer font-medium text-primary underline decoration-primary/40 underline-offset-2",
       },
       {
         field: "stage",
@@ -1122,10 +1119,10 @@ export function EnterpriseGridDemo() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#eef2f7] text-[#172033]">
+    <main className="bg-background text-foreground min-h-screen">
       <section className="flex h-screen w-full flex-col gap-2 px-1.5 py-2 sm:px-2">
-        {/* <div className="shrink-0 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
-          <p className="mb-2 text-sm font-medium text-slate-500">
+        {/* <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3 shadow-sm">
+          <p className="mb-2 text-sm font-medium text-muted-foreground">
             สรุปการใช้ Status ในแผน (Plan Days)
           </p>
           <div className="flex flex-wrap gap-2">
@@ -1150,28 +1147,30 @@ export function EnterpriseGridDemo() {
 
         <div
           ref={gridPanelRef}
-          className="grid-panel-shell flex min-h-0 flex-1 flex-col rounded-lg border border-slate-200 bg-white shadow-sm"
+          className="grid-panel-shell border-border bg-card flex min-h-0 flex-1 flex-col rounded-lg border shadow-sm"
         >
-          <div className="flex shrink-0 flex-col gap-3 border-b border-slate-200 p-2.5 lg:flex-row lg:items-center lg:justify-end">
+          <div className="border-border flex shrink-0 flex-col gap-3 border-b p-2.5 lg:flex-row lg:items-center lg:justify-end">
             <div className="flex flex-wrap items-center gap-2">
-              <button
+              <Button
                 type="button"
+                size="lg"
+                variant="outline"
                 onClick={() => openPersonHistoryModal()}
                 disabled={personHistoryItems.length === 0}
-                className="inline-flex h-10 items-center gap-2 rounded-md border border-indigo-200 bg-indigo-50 px-3 text-sm font-medium text-indigo-800 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-indigo-50"
               >
                 <History className="h-4 w-4" aria-hidden />
                 Person History
-                <span className="rounded bg-indigo-100 px-1.5 py-0.5 text-xs">
+                <span className="bg-muted rounded px-1.5 py-0.5 text-xs">
                   {personHistorySummaries.length}
                 </span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                size="lg"
+                variant="outline"
                 onClick={() => {
                   void toggleFullscreen();
                 }}
-                className="inline-flex h-10 items-center gap-2 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
               >
                 {isFullscreen ? (
                   <Minimize2 className="h-4 w-4" aria-hidden />
@@ -1179,32 +1178,29 @@ export function EnterpriseGridDemo() {
                   <Maximize2 className="h-4 w-4" aria-hidden />
                 )}
                 {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-              </button>
-              <button
-                type="button"
-                onClick={insertBlankRow}
-                className="inline-flex h-10 items-center gap-2 rounded-md bg-blue-700 px-3 text-sm font-medium text-white transition hover:bg-blue-600"
-              >
+              </Button>
+              <Button type="button" size="lg" onClick={insertBlankRow}>
                 <Plus className="h-4 w-4" aria-hidden />
                 Blank Row
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                size="lg"
+                variant="outline"
                 onClick={() =>
                   gridApi.current?.exportDataAsExcel({
                     fileName: "ag-grid-enterprise-pipeline.xlsx",
                   })
                 }
-                className="inline-flex h-10 items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-3 text-sm font-medium text-emerald-800 transition hover:bg-emerald-100"
               >
                 <Download className="h-4 w-4" aria-hidden />
                 Excel
-              </button>
+              </Button>
             </div>
           </div>
 
           {!licenseKey ? (
-            <div className="mx-3 mt-3 flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            <div className="border-border bg-muted text-foreground mx-3 mt-3 flex items-start gap-3 rounded-md border px-3 py-2 text-sm">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
               <span>
                 Set NEXT_PUBLIC_AG_GRID_LICENSE_KEY in .env.local to remove the enterprise
@@ -1214,7 +1210,7 @@ export function EnterpriseGridDemo() {
           ) : null}
 
           <div className="flex min-h-0 flex-1 gap-2 p-1.5">
-            <div className="ag-theme-quartz h-full min-h-0 flex-1 overflow-hidden rounded-md border border-slate-200 bg-white">
+            <div className="ag-theme-quartz bg-card h-full min-h-0 flex-1 overflow-hidden rounded-md">
               <AgGridReact<DealRow>
                 theme="legacy"
                 rowData={rowData}
@@ -1265,29 +1261,29 @@ export function EnterpriseGridDemo() {
               }`}
             >
               <aside
-                className={`flex h-full min-h-0 w-full flex-col overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition-transform duration-300 ease-in-out lg:w-[420px] xl:w-[460px] ${
+                className={`border-border bg-card flex h-full min-h-0 w-full flex-col overflow-hidden rounded-md border shadow-sm transition-transform duration-300 ease-in-out lg:w-[420px] xl:w-[460px] ${
                   isPlanYInspectorOpen ? "translate-x-0" : "translate-x-full"
                 }`}
               >
                 {activeOutReviewKey !== null ? (
                   <>
-                    <div className="shrink-0 border-b border-slate-200 px-4 py-3">
+                    <div className="border-border shrink-0 border-b px-4 py-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-xs font-semibold tracking-wide text-cyan-700 uppercase">
+                          <p className="text-primary text-xs font-semibold tracking-wide uppercase">
                             PlanY inspector
                           </p>
-                          <h2 className="mt-1 text-base font-semibold text-slate-950">
+                          <h2 className="text-foreground mt-1 text-base font-semibold">
                             Review {activeOutReview?.status ?? "IN/OUT"} Evidence
                           </h2>
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="text-muted-foreground mt-1 text-xs">
                             The selected cell stays visible in PlanY while evidence is checked here.
                           </p>
                         </div>
                         <button
                           type="button"
                           onClick={() => setActiveOutReviewKey(null)}
-                          className="h-8 rounded-md border border-slate-300 bg-white px-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                          className="border-input bg-card text-muted-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
                         >
                           Close
                         </button>
@@ -1297,19 +1293,21 @@ export function EnterpriseGridDemo() {
                     {activeOutReview ? (
                       <>
                         <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                          <div className="rounded-lg border border-cyan-200 bg-cyan-50 p-3">
+                          <div className="border-border bg-accent rounded-lg border p-3">
                             <div className="flex items-start justify-between gap-3">
                               <div>
-                                <p className="text-xs font-semibold text-cyan-700">
+                                <p className="text-primary text-xs font-semibold">
                                   Day {activeOutReview.day}
                                 </p>
-                                <h3 className="mt-1 text-sm font-semibold text-slate-950">
+                                <h3 className="text-foreground mt-1 text-sm font-semibold">
                                   {activeOutReview.account}
                                 </h3>
                               </div>
                               <span
-                                className={`rounded px-2 py-1 text-xs font-bold text-white ${
-                                  activeOutReview.status === "IN" ? "bg-amber-600" : "bg-cyan-700"
+                                className={`rounded px-2 py-1 text-xs font-bold ${
+                                  activeOutReview.status === "IN"
+                                    ? "bg-secondary text-secondary-foreground"
+                                    : "bg-primary text-primary-foreground"
                                 }`}
                               >
                                 {activeOutReview.status}
@@ -1317,20 +1315,20 @@ export function EnterpriseGridDemo() {
                             </div>
                             <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
                               <div>
-                                <dt className="text-slate-500">Supervisor</dt>
-                                <dd className="font-semibold text-slate-900">
+                                <dt className="text-muted-foreground">Supervisor</dt>
+                                <dd className="text-foreground font-semibold">
                                   {activeOutReview.owner}
                                 </dd>
                               </div>
                               <div>
-                                <dt className="text-slate-500">Location</dt>
-                                <dd className="font-semibold text-slate-900">
+                                <dt className="text-muted-foreground">Location</dt>
+                                <dd className="text-foreground font-semibold">
                                   {activeOutReview.location}
                                 </dd>
                               </div>
                               <div className="col-span-2">
-                                <dt className="text-slate-500">Area</dt>
-                                <dd className="font-semibold text-slate-900">
+                                <dt className="text-muted-foreground">Area</dt>
+                                <dd className="text-foreground font-semibold">
                                   {activeOutReview.region} / {activeOutReview.country} /{" "}
                                   {activeOutReview.area}
                                 </dd>
@@ -1339,48 +1337,50 @@ export function EnterpriseGridDemo() {
                           </div>
 
                           <div className="mt-3 grid grid-cols-3 gap-2">
-                            <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
-                              <p className="text-xs font-medium text-emerald-700">Check in</p>
-                              <p className="mt-1 text-lg font-bold text-emerald-950">
+                            <div className="border-border bg-accent rounded-md border p-3">
+                              <p className="text-accent-foreground text-xs font-medium">Check in</p>
+                              <p className="text-foreground mt-1 text-lg font-bold">
                                 {activeOutReview.checkInAt}
                               </p>
                             </div>
-                            <div className="rounded-md border border-cyan-200 bg-cyan-50 p-3">
-                              <p className="text-xs font-medium text-cyan-700">Check out</p>
-                              <p className="mt-1 text-lg font-bold text-cyan-950">
+                            <div className="border-border bg-secondary rounded-md border p-3">
+                              <p className="text-secondary-foreground text-xs font-medium">
+                                Check out
+                              </p>
+                              <p className="text-foreground mt-1 text-lg font-bold">
                                 {activeOutReview.status === "OUT"
                                   ? activeOutReview.checkOutAt
                                   : "Pending"}
                               </p>
                             </div>
-                            <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                              <p className="text-xs font-medium text-slate-500">Distance</p>
-                              <p className="mt-1 text-lg font-bold text-slate-950">
+                            <div className="border-border bg-muted rounded-md border p-3">
+                              <p className="text-muted-foreground text-xs font-medium">Distance</p>
+                              <p className="text-foreground mt-1 text-lg font-bold">
                                 {activeOutReview.distanceMeters}m
                               </p>
                             </div>
                           </div>
 
                           <div className="mt-3 grid grid-cols-2 gap-2">
-                            <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-                              <div className="flex items-center gap-1.5 border-b border-slate-200 px-3 py-2 text-xs font-semibold text-slate-800">
+                            <div className="border-border bg-card overflow-hidden rounded-md border">
+                              <div className="border-border text-foreground flex items-center gap-1.5 border-b px-3 py-2 text-xs font-semibold">
                                 <Camera className="h-3.5 w-3.5" aria-hidden />
                                 In photo
                               </div>
-                              <div className="relative aspect-[4/3] bg-slate-900">
-                                <div className="absolute inset-0 bg-[linear-gradient(135deg,#0f766e,#0f172a_55%,#334155)]" />
+                              <div className="bg-muted relative aspect-[4/3]">
+                                <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
                               </div>
                             </div>
-                            <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-                              <div className="flex items-center gap-1.5 border-b border-slate-200 px-3 py-2 text-xs font-semibold text-slate-800">
+                            <div className="border-border bg-card overflow-hidden rounded-md border">
+                              <div className="border-border text-foreground flex items-center gap-1.5 border-b px-3 py-2 text-xs font-semibold">
                                 <Camera className="h-3.5 w-3.5" aria-hidden />
                                 Out photo
                               </div>
-                              <div className="relative aspect-[4/3] bg-slate-900">
+                              <div className="bg-muted relative aspect-[4/3]">
                                 {activeOutReview.status === "OUT" ? (
-                                  <div className="absolute inset-0 bg-[linear-gradient(135deg,#0369a1,#1e293b_55%,#475569)]" />
+                                  <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
                                 ) : (
-                                  <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-xs font-semibold text-slate-500">
+                                  <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-xs font-semibold">
                                     Waiting for checkout
                                   </div>
                                 )}
@@ -1393,7 +1393,7 @@ export function EnterpriseGridDemo() {
                               type="button"
                               onClick={() => moveOutReview(-1)}
                               disabled={outReviewItems.length <= 1}
-                              className="h-9 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                              className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45"
                             >
                               Previous
                             </button>
@@ -1401,7 +1401,7 @@ export function EnterpriseGridDemo() {
                               type="button"
                               onClick={() => moveOutReview(1)}
                               disabled={outReviewItems.length <= 1}
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
+                              className="border-input bg-card text-foreground hover:bg-muted inline-flex h-9 items-center justify-center gap-2 rounded-md border text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45"
                             >
                               Next
                               <ArrowRight className="h-4 w-4" aria-hidden />
@@ -1409,12 +1409,12 @@ export function EnterpriseGridDemo() {
                           </div>
                         </div>
 
-                        <div className="shrink-0 space-y-2 border-t border-slate-200 bg-slate-50 p-3">
+                        <div className="border-border bg-muted shrink-0 space-y-2 border-t p-3">
                           <div className="grid grid-cols-2 gap-2">
                             <button
                               type="button"
                               onClick={openStatusFromOutReview}
-                              className="h-9 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                              className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border px-3 text-sm font-medium transition"
                             >
                               Change
                             </button>
@@ -1422,7 +1422,7 @@ export function EnterpriseGridDemo() {
                               type="button"
                               onClick={approveOutReview}
                               disabled={activeOutReview.status !== "OUT"}
-                              className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-emerald-600 px-3 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-emerald-600"
+                              className="bg-primary hover:bg-primary/80 disabled:hover:bg-primary inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45"
                             >
                               <CheckCircle2 className="h-4 w-4" aria-hidden />
                               Approve 1
@@ -1431,23 +1431,23 @@ export function EnterpriseGridDemo() {
                         </div>
                       </>
                     ) : (
-                      <div className="p-5 text-center text-sm text-slate-500">
+                      <div className="text-muted-foreground p-5 text-center text-sm">
                         No IN/OUT records to review.
                       </div>
                     )}
                   </>
                 ) : (
                   <>
-                    <div className="shrink-0 border-b border-slate-200 px-4 py-3">
+                    <div className="border-border shrink-0 border-b px-4 py-3">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <p className="text-xs font-semibold tracking-wide text-indigo-700 uppercase">
+                          <p className="text-primary text-xs font-semibold tracking-wide uppercase">
                             PlanY inspector
                           </p>
-                          <h2 className="mt-1 text-base font-semibold text-slate-950">
+                          <h2 className="text-foreground mt-1 text-base font-semibold">
                             Check-in/out History
                           </h2>
-                          <p className="mt-1 text-xs text-slate-500">
+                          <p className="text-muted-foreground mt-1 text-xs">
                             Evidence records remain available after OUT is approved to 1.
                           </p>
                         </div>
@@ -1457,7 +1457,7 @@ export function EnterpriseGridDemo() {
                             setIsPersonHistoryOpen(false);
                             setActivePersonAccount(null);
                           }}
-                          className="h-8 rounded-md border border-slate-300 bg-white px-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                          className="border-input bg-card text-muted-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
                         >
                           Close
                         </button>
@@ -1469,7 +1469,7 @@ export function EnterpriseGridDemo() {
                         <select
                           value={selectedPersonAccount ?? ""}
                           onChange={(event) => setActivePersonAccount(event.target.value)}
-                          className="h-10 w-full rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-800 ring-indigo-500 outline-none focus:border-indigo-400 focus:ring-2"
+                          className="border-input bg-card text-foreground ring-ring focus:border-ring h-10 w-full rounded-md border px-3 text-sm font-medium outline-none focus:ring-2"
                         >
                           {personHistorySummaries.map((person) => (
                             <option key={person.account} value={person.account}>
@@ -1479,14 +1479,14 @@ export function EnterpriseGridDemo() {
                         </select>
 
                         <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-medium">
-                          <span className="rounded bg-slate-100 px-2 py-2 text-center text-slate-700">
+                          <span className="bg-muted text-foreground rounded px-2 py-2 text-center">
                             Records {selectedPersonHistory.length}
                           </span>
-                          <span className="rounded bg-cyan-100 px-2 py-2 text-center text-cyan-800">
+                          <span className="bg-secondary text-secondary-foreground rounded px-2 py-2 text-center">
                             IN/OUT{" "}
                             {selectedPersonHistory.filter((item) => item.status !== "1").length}
                           </span>
-                          <span className="rounded bg-emerald-100 px-2 py-2 text-center text-emerald-800">
+                          <span className="bg-accent text-accent-foreground rounded px-2 py-2 text-center">
                             1 {selectedPersonHistory.filter((item) => item.status === "1").length}
                           </span>
                         </div>
@@ -1495,27 +1495,27 @@ export function EnterpriseGridDemo() {
                           {selectedPersonHistory.map((item) => (
                             <div
                               key={`${item.key}:${item.status}`}
-                              className="rounded-md border border-slate-200 bg-white p-3 text-sm"
+                              className="border-border bg-card rounded-md border p-3 text-sm"
                             >
                               <div className="flex items-start justify-between gap-2">
                                 <div>
                                   <div className="flex items-center gap-2">
                                     <span
-                                      className={`rounded px-2 py-0.5 text-xs font-bold text-white ${
+                                      className={`rounded px-2 py-0.5 text-xs font-bold ${
                                         item.status === "IN"
-                                          ? "bg-amber-600"
+                                          ? "bg-secondary text-secondary-foreground"
                                           : item.status === "OUT"
-                                            ? "bg-cyan-700"
-                                            : "bg-emerald-600"
+                                            ? "bg-primary text-primary-foreground"
+                                            : "bg-accent text-accent-foreground"
                                       }`}
                                     >
                                       {item.status}
                                     </span>
-                                    <span className="font-semibold text-slate-950">
+                                    <span className="text-foreground font-semibold">
                                       Day {item.day}
                                     </span>
                                   </div>
-                                  <p className="mt-1 text-xs text-slate-500">
+                                  <p className="text-muted-foreground mt-1 text-xs">
                                     {item.region} / {item.country} - {item.location}
                                   </p>
                                 </div>
@@ -1529,65 +1529,69 @@ export function EnterpriseGridDemo() {
 
                                     focusScheduleCell(item);
                                   }}
-                                  className="h-8 rounded-md border border-slate-300 bg-white px-2 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+                                  className="border-input bg-card text-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
                                 >
                                   {item.status === "1" ? "Focus" : "Review"}
                                 </button>
                               </div>
                               <div className="mt-3 grid grid-cols-3 gap-2">
-                                <div className="rounded-md bg-emerald-50 px-2 py-2">
-                                  <p className="text-[10px] font-medium text-emerald-700">
+                                <div className="bg-accent rounded-md px-2 py-2">
+                                  <p className="text-accent-foreground text-[10px] font-medium">
                                     Check in
                                   </p>
-                                  <p className="mt-1 text-sm font-semibold text-emerald-950">
+                                  <p className="text-foreground mt-1 text-sm font-semibold">
                                     {item.checkInAt}
                                   </p>
                                 </div>
-                                <div className="rounded-md bg-cyan-50 px-2 py-2">
-                                  <p className="text-[10px] font-medium text-cyan-700">Check out</p>
-                                  <p className="mt-1 text-sm font-semibold text-cyan-950">
+                                <div className="bg-secondary rounded-md px-2 py-2">
+                                  <p className="text-secondary-foreground text-[10px] font-medium">
+                                    Check out
+                                  </p>
+                                  <p className="text-foreground mt-1 text-sm font-semibold">
                                     {item.status === "IN" ? "Pending" : item.checkOutAt}
                                   </p>
                                 </div>
-                                <div className="rounded-md bg-slate-100 px-2 py-2">
-                                  <p className="text-[10px] font-medium text-slate-500">Distance</p>
-                                  <p className="mt-1 text-sm font-semibold text-slate-950">
+                                <div className="bg-muted rounded-md px-2 py-2">
+                                  <p className="text-muted-foreground text-[10px] font-medium">
+                                    Distance
+                                  </p>
+                                  <p className="text-foreground mt-1 text-sm font-semibold">
                                     {item.distanceMeters}m
                                   </p>
                                 </div>
                               </div>
                               <div className="mt-3 grid grid-cols-2 gap-2">
-                                <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-                                  <div className="flex items-center gap-1.5 border-b border-slate-200 px-2 py-1.5 text-[10px] font-semibold text-slate-700">
+                                <div className="border-border bg-card overflow-hidden rounded-md border">
+                                  <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
                                     <Camera className="h-3 w-3" aria-hidden />
                                     In photo
                                   </div>
-                                  <div className="relative aspect-[4/3] bg-slate-900">
-                                    <div className="absolute inset-0 bg-[linear-gradient(135deg,#0f766e,#0f172a_55%,#334155)]" />
+                                  <div className="bg-muted relative aspect-[4/3]">
+                                    <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
                                   </div>
                                 </div>
-                                <div className="overflow-hidden rounded-md border border-slate-200 bg-white">
-                                  <div className="flex items-center gap-1.5 border-b border-slate-200 px-2 py-1.5 text-[10px] font-semibold text-slate-700">
+                                <div className="border-border bg-card overflow-hidden rounded-md border">
+                                  <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
                                     <Camera className="h-3 w-3" aria-hidden />
                                     Out photo
                                   </div>
-                                  <div className="relative aspect-[4/3] bg-slate-900">
+                                  <div className="bg-muted relative aspect-[4/3]">
                                     {item.status === "IN" ? (
-                                      <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-[10px] font-semibold text-slate-500">
+                                      <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-[10px] font-semibold">
                                         Waiting
                                       </div>
                                     ) : (
-                                      <div className="absolute inset-0 bg-[linear-gradient(135deg,#0369a1,#1e293b_55%,#475569)]" />
+                                      <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
                                     )}
                                   </div>
                                 </div>
                               </div>
                               {item.status === "1" ? (
-                                <p className="mt-2 rounded bg-emerald-50 px-2 py-1 text-xs text-emerald-800">
+                                <p className="bg-accent text-accent-foreground mt-2 rounded px-2 py-1 text-xs">
                                   Approved by {item.reviewedBy} at {item.reviewedAt}
                                 </p>
                               ) : (
-                                <p className="mt-2 rounded bg-cyan-50 px-2 py-1 text-xs text-cyan-800">
+                                <p className="bg-secondary text-secondary-foreground mt-2 rounded px-2 py-1 text-xs">
                                   {item.status === "IN"
                                     ? "Waiting for checkout."
                                     : "Waiting for back-office approval."}
@@ -1598,7 +1602,7 @@ export function EnterpriseGridDemo() {
                         </div>
                       </div>
                     ) : (
-                      <div className="p-5 text-center text-sm text-slate-500">
+                      <div className="text-muted-foreground p-5 text-center text-sm">
                         No person history yet.
                       </div>
                     )}
@@ -1615,18 +1619,18 @@ export function EnterpriseGridDemo() {
             }}
           >
             <DialogContent className="flex max-h-[calc(100vh-2rem)] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-5xl">
-              <DialogHeader className="border-b border-slate-200 px-5 py-4 text-left">
+              <DialogHeader className="border-border border-b px-5 py-4 text-left">
                 <div className="flex flex-col gap-3 pr-8 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <DialogTitle className="text-lg font-semibold text-slate-950">
+                    <DialogTitle className="text-foreground text-lg font-semibold">
                       Review OUT Evidence
                     </DialogTitle>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="text-muted-foreground mt-1 text-sm">
                       Check field evidence, approve valid OUT records to 1, or change status when
                       the evidence is not valid.
                     </p>
                   </div>
-                  <div className="rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm font-semibold text-cyan-800">
+                  <div className="border-border bg-accent text-primary rounded-md border px-3 py-2 text-sm font-semibold">
                     {activeOutReviewIndex + 1 > 0 ? activeOutReviewIndex + 1 : 0} /{" "}
                     {outReviewItems.length} OUT
                   </div>
@@ -1635,45 +1639,49 @@ export function EnterpriseGridDemo() {
 
               {activeOutReview ? (
                 <div className="grid min-h-0 gap-0 overflow-y-auto lg:grid-cols-[320px_1fr]">
-                  <aside className="border-b border-slate-200 bg-slate-50 p-5 lg:border-r lg:border-b-0">
-                    <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                  <aside className="border-border bg-muted border-b p-5 lg:border-r lg:border-b-0">
+                    <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
                       <div className="flex items-center justify-between gap-3">
                         <div>
-                          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
+                          <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                             Day {activeOutReview.day}
                           </p>
-                          <h3 className="mt-1 text-base font-semibold text-slate-950">
+                          <h3 className="text-foreground mt-1 text-base font-semibold">
                             {activeOutReview.account}
                           </h3>
                         </div>
-                        <span className="rounded bg-cyan-700 px-2.5 py-1 text-xs font-bold text-white">
+                        <span className="bg-primary rounded px-2.5 py-1 text-xs font-bold text-white">
                           OUT
                         </span>
                       </div>
 
                       <dl className="mt-4 space-y-3 text-sm">
                         <div>
-                          <dt className="text-slate-500">Supervisor</dt>
-                          <dd className="font-medium text-slate-900">{activeOutReview.owner}</dd>
+                          <dt className="text-muted-foreground">Supervisor</dt>
+                          <dd className="text-foreground font-medium">{activeOutReview.owner}</dd>
                         </div>
                         <div>
-                          <dt className="text-slate-500">Area</dt>
-                          <dd className="font-medium text-slate-900">
+                          <dt className="text-muted-foreground">Area</dt>
+                          <dd className="text-foreground font-medium">
                             {activeOutReview.region} / {activeOutReview.country} /{" "}
                             {activeOutReview.area}
                           </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-500">Position</dt>
-                          <dd className="font-medium text-slate-900">{activeOutReview.position}</dd>
+                          <dt className="text-muted-foreground">Position</dt>
+                          <dd className="text-foreground font-medium">
+                            {activeOutReview.position}
+                          </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-500">Location</dt>
-                          <dd className="font-medium text-slate-900">{activeOutReview.location}</dd>
+                          <dt className="text-muted-foreground">Location</dt>
+                          <dd className="text-foreground font-medium">
+                            {activeOutReview.location}
+                          </dd>
                         </div>
                         <div>
-                          <dt className="text-slate-500">Amount</dt>
-                          <dd className="font-medium text-slate-900">
+                          <dt className="text-muted-foreground">Amount</dt>
+                          <dd className="text-foreground font-medium">
                             {currencyFormatter(activeOutReview.amount)}
                           </dd>
                         </div>
@@ -1681,70 +1689,76 @@ export function EnterpriseGridDemo() {
                     </div>
 
                     <div className="mt-3 grid grid-cols-2 gap-2">
-                      <button
+                      <Button
                         type="button"
+                        size="lg"
+                        variant="outline"
                         onClick={() => moveOutReview(-1)}
                         disabled={outReviewItems.length <= 1}
-                        className="h-10 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-45"
                       >
                         Previous
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        size="lg"
+                        variant="outline"
                         onClick={() => moveOutReview(1)}
                         disabled={outReviewItems.length <= 1}
-                        className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-45"
                       >
                         Next
                         <ArrowRight className="h-4 w-4" aria-hidden />
-                      </button>
+                      </Button>
                     </div>
                   </aside>
 
                   <div className="min-h-0 p-5">
                     <div className="grid gap-3 sm:grid-cols-3">
-                      <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-emerald-900">
+                      <div className="border-border bg-accent rounded-lg border p-4">
+                        <div className="text-accent-foreground flex items-center gap-2 text-sm font-semibold">
                           <Clock3 className="h-4 w-4" aria-hidden />
                           Check in
                         </div>
-                        <p className="mt-3 text-2xl font-bold text-emerald-950">
+                        <p className="text-foreground mt-3 text-2xl font-bold">
                           {activeOutReview.checkInAt}
                         </p>
-                        <p className="mt-1 text-xs text-emerald-700">
+                        <p className="text-accent-foreground mt-1 text-xs">
                           Photo and timestamp received
                         </p>
                       </div>
-                      <div className="rounded-lg border border-cyan-200 bg-cyan-50 p-4">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-cyan-900">
+                      <div className="border-border bg-secondary rounded-lg border p-4">
+                        <div className="text-secondary-foreground flex items-center gap-2 text-sm font-semibold">
                           <Clock3 className="h-4 w-4" aria-hidden />
                           Check out
                         </div>
-                        <p className="mt-3 text-2xl font-bold text-cyan-950">
+                        <p className="text-foreground mt-3 text-2xl font-bold">
                           {activeOutReview.checkOutAt}
                         </p>
-                        <p className="mt-1 text-xs text-cyan-700">Ready for back-office review</p>
+                        <p className="text-secondary-foreground mt-1 text-xs">
+                          Ready for back-office review
+                        </p>
                       </div>
-                      <div className="rounded-lg border border-slate-200 bg-white p-4">
-                        <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                          <MapPin className="h-4 w-4 text-slate-500" aria-hidden />
+                      <div className="border-border bg-card rounded-lg border p-4">
+                        <div className="text-foreground flex items-center gap-2 text-sm font-semibold">
+                          <MapPin className="text-muted-foreground h-4 w-4" aria-hidden />
                           Location match
                         </div>
-                        <p className="mt-3 text-2xl font-bold text-slate-950">
+                        <p className="text-foreground mt-3 text-2xl font-bold">
                           {activeOutReview.distanceMeters} m
                         </p>
-                        <p className="mt-1 text-xs text-slate-500">Distance from planned site</p>
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          Distance from planned site
+                        </p>
                       </div>
                     </div>
 
                     <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-                        <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
-                          <Camera className="h-4 w-4 text-slate-500" aria-hidden />
+                      <div className="border-border bg-card overflow-hidden rounded-lg border shadow-sm">
+                        <div className="border-border text-foreground flex items-center gap-2 border-b px-4 py-3 text-sm font-semibold">
+                          <Camera className="text-muted-foreground h-4 w-4" aria-hidden />
                           Check-in photo
                         </div>
-                        <div className="relative aspect-[4/3] bg-slate-900">
-                          <div className="absolute inset-0 bg-[linear-gradient(135deg,#0f766e,#0f172a_55%,#334155)]" />
+                        <div className="bg-muted relative aspect-[4/3]">
+                          <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
                           <div className="absolute inset-x-0 bottom-0 bg-black/45 p-4 text-white">
                             <p className="text-sm font-semibold">Site entrance confirmation</p>
                             <p className="text-xs opacity-80">
@@ -1754,13 +1768,13 @@ export function EnterpriseGridDemo() {
                         </div>
                       </div>
 
-                      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-                        <div className="flex items-center gap-2 border-b border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
-                          <Camera className="h-4 w-4 text-slate-500" aria-hidden />
+                      <div className="border-border bg-card overflow-hidden rounded-lg border shadow-sm">
+                        <div className="border-border text-foreground flex items-center gap-2 border-b px-4 py-3 text-sm font-semibold">
+                          <Camera className="text-muted-foreground h-4 w-4" aria-hidden />
                           Check-out photo
                         </div>
-                        <div className="relative aspect-[4/3] bg-slate-900">
-                          <div className="absolute inset-0 bg-[linear-gradient(135deg,#0369a1,#1e293b_55%,#475569)]" />
+                        <div className="bg-muted relative aspect-[4/3]">
+                          <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
                           <div className="absolute inset-x-0 bottom-0 bg-black/45 p-4 text-white">
                             <p className="text-sm font-semibold">End-of-day confirmation</p>
                             <p className="text-xs opacity-80">
@@ -1771,9 +1785,9 @@ export function EnterpriseGridDemo() {
                       </div>
                     </div>
 
-                    <div className="mt-4 rounded-lg border border-slate-200 bg-white p-4">
-                      <p className="text-sm font-semibold text-slate-950">Review note</p>
-                      <p className="mt-1 text-sm text-slate-500">
+                    <div className="border-border bg-card mt-4 rounded-lg border p-4">
+                      <p className="text-foreground text-sm font-semibold">Review note</p>
+                      <p className="text-muted-foreground mt-1 text-sm">
                         Demo data shows the expected review surface. In production this area should
                         load the real check-in/out photos, GPS, timestamp, and audit history from
                         the field app.
@@ -1783,40 +1797,44 @@ export function EnterpriseGridDemo() {
                 </div>
               ) : (
                 <div className="p-8 text-center">
-                  <p className="text-base font-semibold text-slate-950">No OUT records to review</p>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="text-foreground text-base font-semibold">
+                    No OUT records to review
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-sm">
                     When field staff check out, their cells will appear in this queue.
                   </p>
                 </div>
               )}
 
-              <DialogFooter className="mx-0 mb-0 flex-col gap-2 border-t border-slate-200 bg-white px-5 py-4 sm:flex-row">
-                <button
+              <DialogFooter className="border-border bg-card mx-0 mb-0 flex-col gap-2 border-t px-5 py-4 sm:flex-row">
+                <Button
                   type="button"
+                  size="lg"
+                  variant="secondary"
                   onClick={() => openPersonHistory(activeOutReview?.account)}
                   disabled={!activeOutReview}
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-indigo-200 bg-indigo-50 px-4 text-sm font-medium text-indigo-800 transition hover:bg-indigo-100 disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   <UserRound className="h-4 w-4" aria-hidden />
                   Person History
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  size="lg"
+                  variant="outline"
                   onClick={openStatusFromOutReview}
                   disabled={!activeOutReview}
-                  className="h-10 rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   Change Status
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
+                  size="lg"
                   onClick={approveOutReview}
                   disabled={!activeOutReview}
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-emerald-600 px-4 text-sm font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-emerald-600"
                 >
                   <CheckCircle2 className="h-4 w-4" aria-hidden />
                   Approve to 1
-                </button>
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -1828,18 +1846,18 @@ export function EnterpriseGridDemo() {
             }}
           >
             <DialogContent className="flex max-h-[calc(100vh-2rem)] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-6xl">
-              <DialogHeader className="border-b border-slate-200 px-5 py-4 text-left">
+              <DialogHeader className="border-border border-b px-5 py-4 text-left">
                 <div className="flex flex-col gap-3 pr-8 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <DialogTitle className="text-lg font-semibold text-slate-950">
+                    <DialogTitle className="text-foreground text-lg font-semibold">
                       Check-in/out History
                     </DialogTitle>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="text-muted-foreground mt-1 text-sm">
                       Search all field staff evidence records, including approved records after OUT
                       becomes 1.
                     </p>
                   </div>
-                  <div className="rounded-md border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-800">
+                  <div className="border-border bg-accent text-primary rounded-md border px-3 py-2 text-sm font-semibold">
                     {personHistorySummaries.length} people
                   </div>
                 </div>
@@ -1847,7 +1865,7 @@ export function EnterpriseGridDemo() {
 
               {personHistorySummaries.length > 0 ? (
                 <div className="grid min-h-0 overflow-hidden lg:grid-cols-[300px_1fr]">
-                  <aside className="min-h-0 overflow-y-auto border-b border-slate-200 bg-slate-50 p-3 lg:border-r lg:border-b-0">
+                  <aside className="border-border bg-muted min-h-0 overflow-y-auto border-b p-3 lg:border-r lg:border-b-0">
                     <div className="space-y-2">
                       {personHistorySummaries.map((person) => {
                         const isActive = person.account === selectedPersonAccount;
@@ -1859,23 +1877,23 @@ export function EnterpriseGridDemo() {
                             onClick={() => setActivePersonAccount(person.account)}
                             className={`w-full rounded-lg border px-3 py-3 text-left transition ${
                               isActive
-                                ? "border-indigo-300 bg-white shadow-sm ring-2 ring-indigo-100"
-                                : "border-slate-200 bg-white hover:bg-slate-100"
+                                ? "border-primary/50 bg-card ring-primary/20 shadow-sm ring-2"
+                                : "border-border bg-card hover:bg-muted"
                             }`}
                           >
                             <div className="flex items-start gap-2">
-                              <span className="mt-0.5 rounded-full bg-indigo-100 p-1.5 text-indigo-700">
+                              <span className="bg-accent text-primary mt-0.5 rounded-full p-1.5">
                                 <UserRound className="h-4 w-4" aria-hidden />
                               </span>
                               <span className="min-w-0 flex-1">
-                                <span className="block truncate text-sm font-semibold text-slate-950">
+                                <span className="text-foreground block truncate text-sm font-semibold">
                                   {person.account}
                                 </span>
                                 <span className="mt-1 flex flex-wrap gap-1 text-xs">
-                                  <span className="rounded bg-cyan-100 px-1.5 py-0.5 font-medium text-cyan-800">
+                                  <span className="bg-secondary text-secondary-foreground rounded px-1.5 py-0.5 font-medium">
                                     IN/OUT {person.pending}
                                   </span>
-                                  <span className="rounded bg-emerald-100 px-1.5 py-0.5 font-medium text-emerald-800">
+                                  <span className="bg-accent text-accent-foreground rounded px-1.5 py-0.5 font-medium">
                                     Approved {person.approved}
                                   </span>
                                 </span>
@@ -1888,37 +1906,37 @@ export function EnterpriseGridDemo() {
                   </aside>
 
                   <div className="min-h-0 overflow-y-auto p-5">
-                    <div className="flex flex-col gap-2 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="border-border flex flex-col gap-2 border-b pb-4 sm:flex-row sm:items-end sm:justify-between">
                       <div>
-                        <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">
+                        <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
                           Selected person
                         </p>
-                        <h3 className="mt-1 text-xl font-semibold text-slate-950">
+                        <h3 className="text-foreground mt-1 text-xl font-semibold">
                           {selectedPersonAccount}
                         </h3>
                       </div>
-                      <div className="text-sm text-slate-500">
+                      <div className="text-muted-foreground text-sm">
                         {selectedPersonHistory.length} record
                         {selectedPersonHistory.length === 1 ? "" : "s"}
                       </div>
                     </div>
 
                     <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                      <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-                        <p className="text-xs font-medium text-slate-500">Records</p>
-                        <p className="mt-1 text-xl font-semibold text-slate-950">
+                      <div className="border-border bg-muted rounded-lg border px-4 py-3">
+                        <p className="text-muted-foreground text-xs font-medium">Records</p>
+                        <p className="text-foreground mt-1 text-xl font-semibold">
                           {selectedPersonHistory.length}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-3">
-                        <p className="text-xs font-medium text-cyan-700">IN/OUT</p>
-                        <p className="mt-1 text-xl font-semibold text-cyan-950">
+                      <div className="border-border bg-secondary rounded-lg border px-4 py-3">
+                        <p className="text-secondary-foreground text-xs font-medium">IN/OUT</p>
+                        <p className="text-foreground mt-1 text-xl font-semibold">
                           {selectedPersonHistory.filter((item) => item.status !== "1").length}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3">
-                        <p className="text-xs font-medium text-emerald-700">Approved 1</p>
-                        <p className="mt-1 text-xl font-semibold text-emerald-950">
+                      <div className="border-border bg-accent rounded-lg border px-4 py-3">
+                        <p className="text-accent-foreground text-xs font-medium">Approved 1</p>
+                        <p className="text-foreground mt-1 text-xl font-semibold">
                           {selectedPersonHistory.filter((item) => item.status === "1").length}
                         </p>
                       </div>
@@ -1928,33 +1946,33 @@ export function EnterpriseGridDemo() {
                       {selectedPersonHistory.map((item) => (
                         <div
                           key={`${item.key}:${item.status}`}
-                          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+                          className="border-border bg-card rounded-lg border p-4 shadow-sm"
                         >
                           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                             <div className="min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span
-                                  className={`rounded px-2 py-1 text-xs font-bold text-white ${
+                                  className={`rounded px-2 py-1 text-xs font-bold ${
                                     item.status === "IN"
-                                      ? "bg-amber-600"
+                                      ? "bg-secondary text-secondary-foreground"
                                       : item.status === "OUT"
-                                        ? "bg-cyan-700"
-                                        : "bg-emerald-600"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-accent text-accent-foreground"
                                   }`}
                                 >
                                   {item.status}
                                 </span>
-                                <span className="text-sm font-semibold text-slate-950">
+                                <span className="text-foreground text-sm font-semibold">
                                   Day {item.day}
                                 </span>
-                                <span className="text-sm text-slate-500">
+                                <span className="text-muted-foreground text-sm">
                                   {item.region} / {item.country}
                                 </span>
                               </div>
-                              <p className="mt-2 text-base font-semibold text-slate-950">
+                              <p className="text-foreground mt-2 text-base font-semibold">
                                 {item.area} - {item.position}
                               </p>
-                              <p className="mt-1 text-sm text-slate-500">
+                              <p className="text-muted-foreground mt-1 text-sm">
                                 Location {item.location} · {currencyFormatter(item.amount)}
                               </p>
                             </div>
@@ -1967,7 +1985,7 @@ export function EnterpriseGridDemo() {
                                     setIsPersonHistoryModalOpen(false);
                                     openOutReview(item);
                                   }}
-                                  className="h-9 rounded-md bg-cyan-700 px-3 text-sm font-medium text-white transition hover:bg-cyan-600"
+                                  className="bg-primary text-primary-foreground hover:bg-primary/80 h-9 rounded-md px-3 text-sm font-medium transition"
                                 >
                                   Review
                                 </button>
@@ -1978,7 +1996,7 @@ export function EnterpriseGridDemo() {
                                     focusScheduleCell(item);
                                     setIsPersonHistoryModalOpen(false);
                                   }}
-                                  className="h-9 rounded-md border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                                  className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border px-3 text-sm font-medium transition"
                                 >
                                   Focus Cell
                                 </button>
@@ -1987,32 +2005,34 @@ export function EnterpriseGridDemo() {
                           </div>
 
                           <div className="mt-4 grid gap-2 sm:grid-cols-3">
-                            <div className="rounded-md bg-emerald-50 px-3 py-2">
-                              <p className="text-xs font-medium text-emerald-700">Check in</p>
-                              <p className="mt-1 text-sm font-semibold text-emerald-950">
+                            <div className="bg-accent rounded-md px-3 py-2">
+                              <p className="text-accent-foreground text-xs font-medium">Check in</p>
+                              <p className="text-foreground mt-1 text-sm font-semibold">
                                 {item.checkInAt}
                               </p>
                             </div>
-                            <div className="rounded-md bg-cyan-50 px-3 py-2">
-                              <p className="text-xs font-medium text-cyan-700">Check out</p>
-                              <p className="mt-1 text-sm font-semibold text-cyan-950">
+                            <div className="bg-secondary rounded-md px-3 py-2">
+                              <p className="text-secondary-foreground text-xs font-medium">
+                                Check out
+                              </p>
+                              <p className="text-foreground mt-1 text-sm font-semibold">
                                 {item.status === "IN" ? "Pending" : item.checkOutAt}
                               </p>
                             </div>
-                            <div className="rounded-md bg-slate-100 px-3 py-2">
-                              <p className="text-xs font-medium text-slate-500">Distance</p>
-                              <p className="mt-1 text-sm font-semibold text-slate-950">
+                            <div className="bg-muted rounded-md px-3 py-2">
+                              <p className="text-muted-foreground text-xs font-medium">Distance</p>
+                              <p className="text-foreground mt-1 text-sm font-semibold">
                                 {item.distanceMeters} m
                               </p>
                             </div>
                           </div>
 
                           {item.status === "1" ? (
-                            <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900">
+                            <div className="border-border bg-accent text-accent-foreground mt-3 rounded-md border px-3 py-2 text-sm">
                               Approved by {item.reviewedBy} at {item.reviewedAt}
                             </div>
                           ) : (
-                            <div className="mt-3 rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm text-cyan-900">
+                            <div className="border-border bg-secondary text-secondary-foreground mt-3 rounded-md border px-3 py-2 text-sm">
                               {item.status === "IN"
                                 ? "Waiting for checkout."
                                 : "Waiting for back-office approval."}
@@ -2025,8 +2045,8 @@ export function EnterpriseGridDemo() {
                 </div>
               ) : (
                 <div className="p-8 text-center">
-                  <p className="text-base font-semibold text-slate-950">No person history yet</p>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="text-foreground text-base font-semibold">No person history yet</p>
+                  <p className="text-muted-foreground mt-1 text-sm">
                     Review IN/OUT records first, then approved records will stay here.
                   </p>
                 </div>
@@ -2044,8 +2064,8 @@ export function EnterpriseGridDemo() {
               showCloseButton={false}
               className="flex max-h-[calc(100vh-2rem)] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-7xl"
             >
-              <DialogHeader className="border-b border-slate-200 px-5 py-4 text-left">
-                <DialogTitle className="text-lg font-semibold text-slate-950">
+              <DialogHeader className="border-border border-b px-5 py-4 text-left">
+                <DialogTitle className="text-foreground text-lg font-semibold">
                   เลือกสถานะ
                 </DialogTitle>
               </DialogHeader>
@@ -2073,14 +2093,15 @@ export function EnterpriseGridDemo() {
                 })}
               </div>
 
-              <DialogFooter className="mx-0 mb-0 border-t border-slate-200 bg-white px-5 py-4">
-                <button
+              <DialogFooter className="border-border bg-card mx-0 mb-0 border-t px-5 py-4">
+                <Button
                   type="button"
+                  size="lg"
+                  variant="outline"
                   onClick={() => setScheduleStatus("")}
-                  className="h-10 rounded-md border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
                   Clear Status
-                </button>
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

@@ -2,7 +2,7 @@
 @import "ag-grid-community/styles/ag-theme-quartz.css";
 
 .grid-panel-shell:fullscreen {
-  background: #ffffff;
+  background: var(--background);
   border-radius: 0;
   height: 100vh;
   padding: 0;
@@ -11,23 +11,28 @@
 
 .ag-theme-quartz {
   --ag-font-family: var(--font-sans), Arial, Helvetica, sans-serif;
-  --ag-background-color: #ffffff;
-  --ag-foreground-color: #172033;
-  --ag-header-background-color: #f8fafc;
-  --ag-header-foreground-color: #334155;
-  --ag-border-color: #e2e8f0;
-  --ag-row-hover-color: #f1f5f9;
-  --ag-selected-row-background-color: #dbeafe;
-  --ag-range-selection-border-color: #2563eb;
+  --ag-background-color: var(--card);
+  --ag-foreground-color: var(--foreground);
+  --ag-header-background-color: var(--muted);
+  --ag-header-foreground-color: var(--muted-foreground);
+  --ag-border-color: var(--border);
+  --ag-row-hover-color: var(--muted);
+  --ag-selected-row-background-color: var(--accent);
+  --ag-range-selection-border-color: var(--ring);
   --ag-range-selection-background-color: transparent;
   --ag-range-selection-background-color-2: transparent;
   --ag-range-selection-background-color-3: transparent;
   --ag-range-selection-background-color-4: transparent;
-  --ag-side-panel-background-color: #ffffff;
-  --ag-odd-row-background-color: #fbfdff;
+  --ag-side-panel-background-color: var(--popover);
+  --ag-odd-row-background-color: color-mix(in oklch, var(--muted), var(--background) 55%);
   --ag-wrapper-border-radius: 6px;
   --ag-header-height: 38px;
   --ag-row-height: 34px;
+}
+
+.ag-theme-quartz .ag-root-wrapper {
+  border: none;
+  border-radius: 0;
 }
 
 .ag-theme-quartz .account-drag-cell {
@@ -43,9 +48,9 @@
 .ag-theme-quartz .account-drag-cell.ag-cell-range-selected,
 .ag-theme-quartz .account-drag-cell.ag-cell-range-single-cell,
 .ag-theme-quartz .ag-row-selected .account-drag-cell {
-  background: #064b7f !important;
-  border-color: #3b82f6 !important;
-  color: #ffffff !important;
+  background: var(--primary) !important;
+  border-color: var(--ring) !important;
+  color: var(--primary-foreground) !important;
   font-weight: 700;
   outline: none !important;
 }
@@ -54,7 +59,7 @@
 .ag-theme-quartz .account-drag-cell.ag-cell-range-selected .ag-drag-handle,
 .ag-theme-quartz .account-drag-cell.ag-cell-range-single-cell .ag-drag-handle,
 .ag-theme-quartz .ag-row-selected .account-drag-cell .ag-drag-handle {
-  color: #c7d2fe;
+  color: color-mix(in oklch, var(--primary-foreground), transparent 25%);
 }
 
 .ag-theme-quartz .send-job-cell {
@@ -70,12 +75,12 @@
 }
 
 .ag-theme-quartz .send-job-cell .ag-drag-handle {
-  color: #64748b;
+  color: var(--muted-foreground);
 }
 
 .ag-theme-quartz .schedule-day-cell {
   align-items: center;
-  border-left: 1px solid #cbd5e1 !important;
+  border-left: 1px solid var(--border) !important;
   background: transparent !important;
   cursor: pointer;
   display: flex;
@@ -102,7 +107,7 @@
 }
 
 .ag-theme-quartz .schedule-month-header {
-  color: #2563eb;
+  color: var(--foreground);
   font-weight: 700;
   text-align: center;
 }
@@ -112,13 +117,13 @@
 }
 
 .ag-theme-quartz .schedule-day-header {
-  border-left: 1px solid #cbd5e1;
+  border-left: 1px solid var(--border);
   padding: 0;
 }
 
 .ag-theme-quartz .schedule-day-header.schedule-day-last,
 .ag-theme-quartz .schedule-day-cell.schedule-day-last {
-  border-right: 1px solid #cbd5e1 !important;
+  border-right: 1px solid var(--border) !important;
 }
 
 .ag-theme-quartz .schedule-day-header .ag-header-cell-label {
@@ -127,7 +132,7 @@
 
 .ag-theme-quartz .schedule-day-header-content {
   align-items: center;
-  color: #334155;
+  color: var(--foreground);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -150,7 +155,7 @@
 }
 
 .ag-theme-quartz .schedule-day-header-content.is-weekend {
-  color: #2563eb;
+  background: var(--muted);
 }
 
 .status-slate {
