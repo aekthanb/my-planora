@@ -611,7 +611,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ...dropdownCellEditor.cellEditorParams,
           values: regions.map((item) => item.region),
         },
-        filter: "agSetColumnFilter",
+        filter: "agTextColumnFilter",
       },
       {
         field: "country",
@@ -622,7 +622,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ...dropdownCellEditor.cellEditorParams,
           values: allCountries,
         },
-        filter: "agSetColumnFilter",
+        filter: "agTextColumnFilter",
       },
       {
         field: "segment",
@@ -633,7 +633,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ...dropdownCellEditor.cellEditorParams,
           values: segments,
         },
-        filter: "agSetColumnFilter",
+        filter: "agTextColumnFilter",
       },
       {
         field: "owner",
@@ -644,7 +644,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ...dropdownCellEditor.cellEditorParams,
           values: owners,
         },
-        filter: "agSetColumnFilter",
+        filter: "agTextColumnFilter",
         cellClass: "cursor-pointer font-medium text-blue-600 hover:text-blue-700",
       },
       {
@@ -654,9 +654,9 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         ...dropdownCellEditor,
         cellEditorParams: {
           ...dropdownCellEditor.cellEditorParams,
-          values: rowData.map((row) => row.account),
+          values: workerNames,
         },
-        filter: "agMultiColumnFilter",
+        filter: "agTextColumnFilter",
         cellClass: "cursor-pointer font-medium text-blue-600 hover:text-blue-700",
       },
       {
@@ -669,14 +669,14 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ...dropdownCellEditor.cellEditorParams,
           values: stages,
         },
-        filter: "agSetColumnFilter",
+        filter: "agTextColumnFilter",
         cellClass: "cursor-pointer",
       },
       {
         field: "quarter",
         headerName: "Location",
         minWidth: 160,
-        filter: "agSetColumnFilter",
+        filter: "agTextColumnFilter",
         valueFormatter: (params) => (params.value ? quarterLabel(params.value) : ""),
       },
       {
@@ -690,8 +690,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
             : params.data?.isDraft
               ? null
               : 5,
-        filter: false,
-        floatingFilter: false,
+        filter: "agNumberColumnFilter",
       },
       {
         field: "revenue",
@@ -700,8 +699,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         width: 130,
         valueFormatter: (params) => currencyFormatter(params.value),
         valueParser: (params) => Number(String(params.newValue).replace(/[$,]/g, "")),
-        filter: false,
-        floatingFilter: false,
+        filter: "agNumberColumnFilter",
       },
       {
         headerName: "กรกฎาคม 2569",
@@ -766,7 +764,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         })),
       },
     ],
-    [rowData],
+    [],
   );
 
   const defaultColDef = useMemo<ColDef<DealRow>>(
