@@ -2,9 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { loginSchema, type LoginFormState } from "@/lib/auth/definitions";
-import { login } from "@/lib/auth/api";
 import { createSession } from "@/lib/auth/session";
-import { ApiError } from "@/types/api";
+
+const ADMIN_EMAIL = "admin@admin.com";
+const ADMIN_PASSWORD = "admin";
+const ADMIN_SESSION_TOKEN = "planora-admin";
 
 export async function loginAction(
   _prevState: LoginFormState,
@@ -22,15 +24,10 @@ export async function loginAction(
 
   const { email, password, remember } = validated.data;
 
-  try {
-    const { token } = await login(email, password);
-    await createSession(token, remember);
-  } catch (error) {
-    if (error instanceof ApiError) {
-      return { message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
-    }
-    throw error;
+  if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    return { message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
   }
 
-  redirect("/dashboard");
+  await createSession(ADMIN_SESSION_TOKEN, remember);
+  redirect("/");
 }

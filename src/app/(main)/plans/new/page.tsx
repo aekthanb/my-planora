@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { EnterpriseGridDemo } from "@/components/EnterpriseGridDemo";
 // import { PlanOverviewHeader } from "@/components/PlanOverviewHeader";
-import "../../enterprise-grid.css";
+import "../../../enterprise-grid.css";
 
 export const metadata: Metadata = {
   title: "สร้างแผนงานใหม่ | Planora",
