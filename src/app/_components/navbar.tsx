@@ -348,7 +348,7 @@ export function Navbar() {
       </header>
 
       <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
-        <DialogContent className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl border border-slate-300 p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300">
+        <DialogContent className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300">
           <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
             <DialogHeader className="gap-1">
               <DialogTitle className="text-lg font-semibold text-slate-950">
