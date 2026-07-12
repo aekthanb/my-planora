@@ -519,7 +519,7 @@ export function EnterpriseGridDemo() {
               size="xs"
               className="bg-violet-600 text-white hover:bg-violet-500"
             >
-              Send
+              ส่งสัญญา
             </Button>
           ),
       },
