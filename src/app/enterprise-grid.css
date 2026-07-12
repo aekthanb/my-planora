@@ -1,0 +1,271 @@
+@import "ag-grid-community/styles/ag-grid.css";
+@import "ag-grid-community/styles/ag-theme-quartz.css";
+
+.grid-panel-shell:fullscreen {
+  background: #ffffff;
+  border-radius: 0;
+  height: 100vh;
+  padding: 0;
+  width: 100vw;
+}
+
+.ag-theme-quartz {
+  --ag-font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  --ag-background-color: #ffffff;
+  --ag-foreground-color: #172033;
+  --ag-header-background-color: #f8fafc;
+  --ag-header-foreground-color: #334155;
+  --ag-border-color: #e2e8f0;
+  --ag-row-hover-color: #f1f5f9;
+  --ag-selected-row-background-color: #dbeafe;
+  --ag-range-selection-border-color: #2563eb;
+  --ag-range-selection-background-color: transparent;
+  --ag-range-selection-background-color-2: transparent;
+  --ag-range-selection-background-color-3: transparent;
+  --ag-range-selection-background-color-4: transparent;
+  --ag-side-panel-background-color: #ffffff;
+  --ag-odd-row-background-color: #fbfdff;
+  --ag-wrapper-border-radius: 6px;
+  --ag-header-height: 38px;
+  --ag-row-height: 34px;
+}
+
+.ag-theme-quartz .account-drag-cell {
+  cursor: grab;
+  font-weight: 500;
+}
+
+.ag-theme-quartz .account-drag-cell:active {
+  cursor: grabbing;
+}
+
+.ag-theme-quartz .account-drag-cell.ag-cell-focus,
+.ag-theme-quartz .account-drag-cell.ag-cell-range-selected,
+.ag-theme-quartz .account-drag-cell.ag-cell-range-single-cell,
+.ag-theme-quartz .ag-row-selected .account-drag-cell {
+  background: #064b7f !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  outline: none !important;
+}
+
+.ag-theme-quartz .account-drag-cell.ag-cell-focus .ag-drag-handle,
+.ag-theme-quartz .account-drag-cell.ag-cell-range-selected .ag-drag-handle,
+.ag-theme-quartz .account-drag-cell.ag-cell-range-single-cell .ag-drag-handle,
+.ag-theme-quartz .ag-row-selected .account-drag-cell .ag-drag-handle {
+  color: #c7d2fe;
+}
+
+.ag-theme-quartz .send-job-cell {
+  align-items: center;
+  cursor: grab;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.ag-theme-quartz .send-job-cell:active {
+  cursor: grabbing;
+}
+
+.ag-theme-quartz .send-job-cell .ag-drag-handle {
+  color: #64748b;
+}
+
+.ag-theme-quartz .schedule-day-cell {
+  align-items: center;
+  border-left: 1px solid #cbd5e1 !important;
+  background: transparent !important;
+  cursor: pointer;
+  display: flex;
+  font-size: 11px;
+  font-weight: 700;
+  justify-content: center;
+  padding: 0;
+  transition:
+    filter 120ms ease,
+    transform 120ms ease;
+}
+
+.ag-theme-quartz .schedule-day-cell:hover {
+  filter: brightness(0.96);
+}
+
+.ag-theme-quartz .schedule-day-cell-content {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  min-height: 100%;
+  width: 100%;
+}
+
+.ag-theme-quartz .schedule-month-header {
+  color: #2563eb;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ag-theme-quartz .schedule-month-header .ag-header-group-cell-label {
+  justify-content: center;
+}
+
+.ag-theme-quartz .schedule-day-header {
+  border-left: 1px solid #cbd5e1;
+  padding: 0;
+}
+
+.ag-theme-quartz .schedule-day-header.schedule-day-last,
+.ag-theme-quartz .schedule-day-cell.schedule-day-last {
+  border-right: 1px solid #cbd5e1 !important;
+}
+
+.ag-theme-quartz .schedule-day-header .ag-header-cell-label {
+  justify-content: center;
+}
+
+.ag-theme-quartz .schedule-day-header-content {
+  align-items: center;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  height: 100%;
+  justify-content: center;
+  line-height: 1;
+  min-width: 0;
+  text-align: center;
+  width: 100%;
+}
+
+.ag-theme-quartz .schedule-day-header-content span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ag-theme-quartz .schedule-day-header-content small {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.ag-theme-quartz .schedule-day-header-content.is-weekend {
+  color: #2563eb;
+}
+
+.status-slate {
+  --status-bg: #475569;
+  --status-border: #334155;
+  --status-fg: #ffffff;
+  --status-muted: #e2e8f0;
+}
+
+.status-blue {
+  --status-bg: #1d4ed8;
+  --status-border: #1e40af;
+  --status-fg: #ffffff;
+  --status-muted: #dbeafe;
+}
+
+.status-green {
+  --status-bg: #166534;
+  --status-border: #14532d;
+  --status-fg: #ffffff;
+  --status-muted: #dcfce7;
+}
+
+.status-emerald {
+  --status-bg: #047857;
+  --status-border: #065f46;
+  --status-fg: #ffffff;
+  --status-muted: #d1fae5;
+}
+
+.status-lime {
+  --status-bg: #4d7c0f;
+  --status-border: #3f6212;
+  --status-fg: #ffffff;
+  --status-muted: #ecfccb;
+}
+
+.status-red {
+  --status-bg: #b91c1c;
+  --status-border: #991b1b;
+  --status-fg: #ffffff;
+  --status-muted: #fee2e2;
+}
+
+.status-orange {
+  --status-bg: #c2410c;
+  --status-border: #9a3412;
+  --status-fg: #ffffff;
+  --status-muted: #ffedd5;
+}
+
+.status-amber {
+  --status-bg: #d97706;
+  --status-border: #b45309;
+  --status-fg: #ffffff;
+  --status-muted: #fef3c7;
+}
+
+.status-cyan {
+  --status-bg: #0e7490;
+  --status-border: #155e75;
+  --status-fg: #ffffff;
+  --status-muted: #cffafe;
+}
+
+.status-purple {
+  --status-bg: #7e22ce;
+  --status-border: #6b21a8;
+  --status-fg: #ffffff;
+  --status-muted: #f3e8ff;
+}
+
+.status-zinc {
+  --status-bg: #52525b;
+  --status-border: #3f3f46;
+  --status-fg: #ffffff;
+  --status-muted: #e2e8f0;
+}
+
+.ag-theme-quartz .schedule-day-cell-content.status-slate,
+.ag-theme-quartz .schedule-day-cell-content.status-blue,
+.ag-theme-quartz .schedule-day-cell-content.status-green,
+.ag-theme-quartz .schedule-day-cell-content.status-emerald,
+.ag-theme-quartz .schedule-day-cell-content.status-lime,
+.ag-theme-quartz .schedule-day-cell-content.status-red,
+.ag-theme-quartz .schedule-day-cell-content.status-orange,
+.ag-theme-quartz .schedule-day-cell-content.status-amber,
+.ag-theme-quartz .schedule-day-cell-content.status-cyan,
+.ag-theme-quartz .schedule-day-cell-content.status-purple,
+.ag-theme-quartz .schedule-day-cell-content.status-zinc {
+  background: var(--status-bg);
+  color: var(--status-fg);
+}
+
+.person-day-status.status-slate,
+.person-day-status.status-blue,
+.person-day-status.status-green,
+.person-day-status.status-emerald,
+.person-day-status.status-lime,
+.person-day-status.status-red,
+.person-day-status.status-orange,
+.person-day-status.status-amber,
+.person-day-status.status-cyan,
+.person-day-status.status-purple,
+.person-day-status.status-zinc {
+  background: var(--status-bg);
+  color: var(--status-fg);
+}
+
+.ag-theme-quartz .schedule-day-cell.ag-cell-range-selected,
+.ag-theme-quartz .schedule-day-cell.ag-cell-range-selected-1,
+.ag-theme-quartz .schedule-day-cell.ag-cell-range-selected-2,
+.ag-theme-quartz .schedule-day-cell.ag-cell-range-selected-3,
+.ag-theme-quartz .schedule-day-cell.ag-cell-range-selected-4,
+.ag-theme-quartz .schedule-day-cell.ag-cell-range-single-cell {
+  background: transparent !important;
+  background-color: transparent !important;
+}
