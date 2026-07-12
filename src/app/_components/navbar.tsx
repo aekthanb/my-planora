@@ -349,21 +349,21 @@ export function Navbar() {
 
       <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
         <DialogContent className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] max-w-none flex-col gap-0 overflow-hidden rounded-xl p-0 shadow-2xl duration-300 sm:max-w-none [[data-slot=dialog-overlay]:has(~_&)]:duration-300">
-          <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-6 py-4">
+          <div className="border-border flex shrink-0 items-center justify-between border-b px-6 py-4">
             <DialogHeader className="gap-1">
-              <DialogTitle className="text-lg font-semibold text-slate-950">
+              <DialogTitle className="text-foreground text-lg font-semibold">
                 ทะเบียนแผนงาน
               </DialogTitle>
-              <DialogDescription className="text-sm text-slate-500">
+              <DialogDescription className="text-muted-foreground text-sm">
                 รายการแผนงานและผลการดำเนินงานขององค์กร
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          <div className="shrink-0 border-b border-slate-200 px-6 py-3">
+          <div className="shrink-0 px-6 py-3">
             <label className="relative block w-full max-w-md">
               <span className="sr-only">ค้นหาแผนงาน</span>
-              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+              <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <input
                 type="search"
                 value={planSearch}
@@ -372,7 +372,7 @@ export function Navbar() {
                   setPlanPage(1);
                 }}
                 placeholder="ค้นหารหัส ชื่อแผนงาน ผู้รับผิดชอบ หรือสถานะ..."
-                className="h-9 w-full rounded-md border border-slate-300 bg-white pr-3 pl-9 text-sm text-slate-900 transition outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                className="border-input bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 h-9 w-full rounded-md border pr-3 pl-9 text-sm transition outline-none focus-visible:ring-2"
               />
             </label>
           </div>
@@ -391,8 +391,8 @@ export function Navbar() {
                 <col className="w-[8%]" />
                 <col className="w-[8%]" />
               </colgroup>
-              <thead className="sticky top-0 z-10 bg-slate-100">
-                <tr className="border-b border-slate-300 text-slate-600">
+              <thead className="bg-muted/50 sticky top-0 z-10">
+                <tr className="border-border text-muted-foreground border-b">
                   <th className="px-2 py-3 font-semibold">รหัส</th>
                   <th className="px-2 py-3 font-semibold">ชื่อแผนงาน</th>
                   <th className="px-2 py-3 font-semibold">ประเภท</th>
@@ -409,31 +409,31 @@ export function Navbar() {
                 {paginatedPlans.map((plan) => (
                   <tr
                     key={plan.code}
-                    className="border-b border-slate-200 even:bg-slate-50/70 hover:bg-blue-50/60"
+                    className="border-border even:bg-muted/30 hover:bg-muted/50 border-b"
                   >
-                    <td className="px-2 py-3 font-mono text-[11px] font-medium text-slate-500">
+                    <td className="text-muted-foreground px-2 py-3 font-mono text-[11px] font-medium">
                       {plan.code}
                     </td>
-                    <td className="px-2 py-3 font-medium text-slate-900">{plan.name}</td>
-                    <td className="px-2 py-3 text-slate-600">{plan.type}</td>
-                    <td className="px-2 py-3 text-slate-600">{plan.owner}</td>
-                    <td className="px-2 py-3 text-slate-600">{plan.department}</td>
-                    <td className="px-2 py-3 text-slate-600">{plan.startDate}</td>
-                    <td className="px-2 py-3 text-slate-600">{plan.endDate}</td>
+                    <td className="text-foreground px-2 py-3 font-medium">{plan.name}</td>
+                    <td className="text-muted-foreground px-2 py-3">{plan.type}</td>
+                    <td className="text-muted-foreground px-2 py-3">{plan.owner}</td>
+                    <td className="text-muted-foreground px-2 py-3">{plan.department}</td>
+                    <td className="text-muted-foreground px-2 py-3">{plan.startDate}</td>
+                    <td className="text-muted-foreground px-2 py-3">{plan.endDate}</td>
                     <td className="px-2 py-4">
                       <div className="flex items-center gap-1.5">
-                        <div className="h-1.5 min-w-6 flex-1 overflow-hidden rounded-full bg-slate-200">
+                        <div className="bg-muted h-1.5 min-w-6 flex-1 overflow-hidden rounded-full">
                           <div
-                            className="h-full rounded-full bg-slate-700"
+                            className="bg-primary h-full rounded-full"
                             style={{ width: `${plan.progress}%` }}
                           />
                         </div>
-                        <span className="text-[11px] text-slate-500 tabular-nums">
+                        <span className="text-muted-foreground text-[11px] tabular-nums">
                           {plan.progress}%
                         </span>
                       </div>
                     </td>
-                    <td className="px-2 py-3 font-medium text-slate-700 tabular-nums">
+                    <td className="text-foreground px-2 py-3 font-medium tabular-nums">
                       {plan.budget}
                     </td>
                     <td className="px-2 py-4">
@@ -454,7 +454,10 @@ export function Navbar() {
                 ))}
                 {paginatedPlans.length === 0 && (
                   <tr>
-                    <td colSpan={10} className="px-4 py-16 text-center text-sm text-slate-500">
+                    <td
+                      colSpan={10}
+                      className="text-muted-foreground px-4 py-16 text-center text-sm"
+                    >
                       ไม่พบแผนงานที่ตรงกับคำค้นหา
                     </td>
                   </tr>
@@ -463,10 +466,10 @@ export function Navbar() {
             </table>
           </div>
 
-          <div className="flex shrink-0 items-center justify-between border-t border-slate-200 bg-white px-6 py-3">
-            <p className="text-xs text-slate-500">
+          <div className="border-border bg-background flex shrink-0 items-center justify-between border-t px-6 py-3">
+            <p className="text-muted-foreground text-xs">
               แสดง{" "}
-              <span className="font-medium text-slate-700">
+              <span className="text-foreground font-medium">
                 {filteredPlans.length === 0 ? 0 : (planPage - 1) * plansPerPage + 1}–
                 {Math.min(planPage * plansPerPage, filteredPlans.length)}
               </span>{" "}
@@ -478,7 +481,7 @@ export function Navbar() {
                 onClick={() => setPlanPage((page) => Math.max(1, page - 1))}
                 disabled={planPage === 1}
                 aria-label="หน้าก่อนหน้า"
-                className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                className="border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground flex size-8 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ArrowLeft className="size-3.5" />
               </button>
@@ -489,7 +492,7 @@ export function Navbar() {
                   onClick={() => setPlanPage(page)}
                   aria-label={`หน้า ${page}`}
                   aria-current={planPage === page ? "page" : undefined}
-                  className="flex size-8 items-center justify-center rounded-md text-xs font-medium text-slate-600 transition hover:bg-slate-100 aria-current:bg-slate-900 aria-current:text-white"
+                  className="text-muted-foreground hover:bg-accent hover:text-accent-foreground aria-current:bg-primary aria-current:text-primary-foreground flex size-8 items-center justify-center rounded-md text-xs font-medium transition"
                 >
                   {page}
                 </button>
@@ -499,7 +502,7 @@ export function Navbar() {
                 onClick={() => setPlanPage((page) => Math.min(totalPlanPages, page + 1))}
                 disabled={planPage === totalPlanPages}
                 aria-label="หน้าถัดไป"
-                className="flex size-8 items-center justify-center rounded-md border border-slate-300 text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+                className="border-input text-muted-foreground hover:bg-accent hover:text-accent-foreground flex size-8 items-center justify-center rounded-md border transition disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ArrowRight className="size-3.5" />
               </button>
