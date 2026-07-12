@@ -488,7 +488,7 @@ export function EnterpriseGridDemo() {
         : personHistoryItems.filter((item) => item.account === selectedPersonAccount),
     [personHistoryItems, selectedPersonAccount],
   );
-  const isPlanYInspectorOpen = activeOutReviewKey !== null || isPersonHistoryOpen;
+  const isPlanYInspectorOpen = activeOutReviewKey !== null;
 
   const columnDefs = useMemo<(ColDef<DealRow> | ColGroupDef<DealRow>)[]>(
     () => [
@@ -529,13 +529,14 @@ export function EnterpriseGridDemo() {
         resizable: false,
         suppressSizeToFit: true,
         cellClass: "send-job-cell",
-        cellRenderer: (params: { node: { rowPinned?: string | null } }) =>
+        cellRenderer: (params: { node: { rowPinned?: string | null }; data?: DealRow }) =>
           params.node.rowPinned ? null : (
             <Button
               type="button"
               size="xs"
               variant="outline"
               className="border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100"
+              onClick={() => openPersonHistory(params.data?.account || "Blank row")}
             >
               <History className="h-3.5 w-3.5" aria-hidden />
               History
@@ -1173,7 +1174,7 @@ export function EnterpriseGridDemo() {
                   {personHistorySummaries.length}
                 </span>
               </Button>
-              <Button
+              {/* <Button
                 type="button"
                 size="lg"
                 variant="outline"
@@ -1187,7 +1188,7 @@ export function EnterpriseGridDemo() {
                   <Maximize2 className="h-4 w-4" aria-hidden />
                 )}
                 {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-              </Button>
+              </Button> */}
               <Button type="button" size="lg" onClick={insertBlankRow}>
                 <Plus className="h-4 w-4" aria-hidden />
                 Blank Row
@@ -1208,7 +1209,7 @@ export function EnterpriseGridDemo() {
             </div>
           </div>
 
-          {!licenseKey ? (
+          {/* {!licenseKey ? (
             <div className="border-border bg-muted text-foreground mx-3 mt-3 flex items-start gap-3 rounded-md border px-3 py-2 text-sm">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
               <span>
@@ -1216,7 +1217,7 @@ export function EnterpriseGridDemo() {
                 evaluation watermark.
               </span>
             </div>
-          ) : null}
+          ) : null} */}
 
           <div className="flex min-h-0 flex-1 gap-2 p-1.5">
             <div className="ag-theme-quartz bg-card h-full min-h-0 flex-1 overflow-hidden rounded-md">
@@ -1274,106 +1275,325 @@ export function EnterpriseGridDemo() {
                   isPlanYInspectorOpen ? "translate-x-0" : "translate-x-full"
                 }`}
               >
-                {activeOutReviewKey !== null ? (
-                  <>
-                    <div className="border-border shrink-0 border-b px-4 py-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-primary text-xs font-semibold tracking-wide uppercase">
-                            PlanY inspector
-                          </p>
-                          <h2 className="text-foreground mt-1 text-base font-semibold">
-                            Review {activeOutReview?.status ?? "IN/OUT"} Evidence
-                          </h2>
-                          <p className="text-muted-foreground mt-1 text-xs">
-                            The selected cell stays visible in PlanY while evidence is checked here.
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setActiveOutReviewKey(null)}
-                          className="border-input bg-card text-muted-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
-                        >
-                          Close
-                        </button>
+                <>
+                  <div className="border-border shrink-0 border-b px-4 py-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-primary text-xs font-semibold tracking-wide uppercase">
+                          PlanY inspector
+                        </p>
+                        <h2 className="text-foreground mt-1 text-base font-semibold">
+                          Review {activeOutReview?.status ?? "IN/OUT"} Evidence
+                        </h2>
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          The selected cell stays visible in PlanY while evidence is checked here.
+                        </p>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => setActiveOutReviewKey(null)}
+                        className="border-input bg-card text-muted-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
+                      >
+                        Close
+                      </button>
                     </div>
+                  </div>
 
-                    {activeOutReview ? (
-                      <>
-                        <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                          <div className="border-border bg-accent rounded-lg border p-3">
-                            <div className="flex items-start justify-between gap-3">
-                              <div>
-                                <p className="text-primary text-xs font-semibold">
-                                  Day {activeOutReview.day}
-                                </p>
-                                <h3 className="text-foreground mt-1 text-sm font-semibold">
-                                  {activeOutReview.account}
-                                </h3>
-                              </div>
-                              <span
-                                className={`rounded px-2 py-1 text-xs font-bold ${
-                                  activeOutReview.status === "IN"
-                                    ? "bg-secondary text-secondary-foreground"
-                                    : "bg-primary text-primary-foreground"
-                                }`}
-                              >
-                                {activeOutReview.status}
+                  {activeOutReview ? (
+                    <>
+                      <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                        <div className="border-border bg-accent rounded-lg border p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-primary text-xs font-semibold">
+                                Day {activeOutReview.day}
+                              </p>
+                              <h3 className="text-foreground mt-1 text-sm font-semibold">
+                                {activeOutReview.account}
+                              </h3>
+                            </div>
+                            <span
+                              className={`rounded px-2 py-1 text-xs font-bold ${
+                                activeOutReview.status === "IN"
+                                  ? "bg-secondary text-secondary-foreground"
+                                  : "bg-primary text-primary-foreground"
+                              }`}
+                            >
+                              {activeOutReview.status}
+                            </span>
+                          </div>
+                          <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <dt className="text-muted-foreground">Supervisor</dt>
+                              <dd className="text-foreground font-semibold">
+                                {activeOutReview.owner}
+                              </dd>
+                            </div>
+                            <div>
+                              <dt className="text-muted-foreground">Location</dt>
+                              <dd className="text-foreground font-semibold">
+                                {activeOutReview.location}
+                              </dd>
+                            </div>
+                            <div className="col-span-2">
+                              <dt className="text-muted-foreground">Area</dt>
+                              <dd className="text-foreground font-semibold">
+                                {activeOutReview.region} / {activeOutReview.country} /{" "}
+                                {activeOutReview.area}
+                              </dd>
+                            </div>
+                          </dl>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-3 gap-2">
+                          <div className="border-border bg-accent rounded-md border p-3">
+                            <p className="text-accent-foreground text-xs font-medium">Check in</p>
+                            <p className="text-foreground mt-1 text-lg font-bold">
+                              {activeOutReview.checkInAt}
+                            </p>
+                          </div>
+                          <div className="border-border bg-secondary rounded-md border p-3">
+                            <p className="text-secondary-foreground text-xs font-medium">
+                              Check out
+                            </p>
+                            <p className="text-foreground mt-1 text-lg font-bold">
+                              {activeOutReview.status === "OUT"
+                                ? activeOutReview.checkOutAt
+                                : "Pending"}
+                            </p>
+                          </div>
+                          <div className="border-border bg-muted rounded-md border p-3">
+                            <p className="text-muted-foreground text-xs font-medium">Distance</p>
+                            <p className="text-foreground mt-1 text-lg font-bold">
+                              {activeOutReview.distanceMeters}m
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          <div className="border-border bg-card overflow-hidden rounded-md border">
+                            <div className="border-border text-foreground flex items-center gap-1.5 border-b px-3 py-2 text-xs font-semibold">
+                              <Camera className="h-3.5 w-3.5" aria-hidden />
+                              In photo
+                            </div>
+                            <div className="bg-muted relative aspect-[4/3]">
+                              <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
+                            </div>
+                          </div>
+                          <div className="border-border bg-card overflow-hidden rounded-md border">
+                            <div className="border-border text-foreground flex items-center gap-1.5 border-b px-3 py-2 text-xs font-semibold">
+                              <Camera className="h-3.5 w-3.5" aria-hidden />
+                              Out photo
+                            </div>
+                            <div className="bg-muted relative aspect-[4/3]">
+                              {activeOutReview.status === "OUT" ? (
+                                <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
+                              ) : (
+                                <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-xs font-semibold">
+                                  Waiting for checkout
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => moveOutReview(-1)}
+                            disabled={outReviewItems.length <= 1}
+                            className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45"
+                          >
+                            Previous
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveOutReview(1)}
+                            disabled={outReviewItems.length <= 1}
+                            className="border-input bg-card text-foreground hover:bg-muted inline-flex h-9 items-center justify-center gap-2 rounded-md border text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45"
+                          >
+                            Next
+                            <ArrowRight className="h-4 w-4" aria-hidden />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="border-border bg-muted shrink-0 space-y-2 border-t p-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={openStatusFromOutReview}
+                            className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border px-3 text-sm font-medium transition"
+                          >
+                            Change
+                          </button>
+                          <button
+                            type="button"
+                            onClick={approveOutReview}
+                            disabled={activeOutReview.status !== "OUT"}
+                            className="bg-primary hover:bg-primary/80 disabled:hover:bg-primary inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45"
+                          >
+                            <CheckCircle2 className="h-4 w-4" aria-hidden />
+                            Approve 1
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-muted-foreground p-5 text-center text-sm">
+                      No IN/OUT records to review.
+                    </div>
+                  )}
+                </>
+              </aside>
+            </div>
+          </div>
+
+          <Dialog
+            open={isPersonHistoryOpen}
+            onOpenChange={(open) => {
+              setIsPersonHistoryOpen(open);
+              if (!open) setActivePersonAccount(null);
+            }}
+          >
+            <DialogContent className="flex max-h-[calc(100vh-2rem)] w-full flex-col gap-0 overflow-hidden p-0 sm:max-w-5xl">
+              <DialogHeader className="border-border border-b px-5 py-4 text-left">
+                <DialogTitle className="text-foreground text-lg font-semibold">
+                  Check-in/out History
+                </DialogTitle>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Evidence records remain available after OUT is approved to 1.
+                </p>
+              </DialogHeader>
+
+              {personHistorySummaries.length > 0 ? (
+                <div className="grid min-h-0 overflow-hidden lg:grid-cols-[260px_1fr]">
+                  <aside className="border-border bg-muted min-h-0 overflow-y-auto border-b p-3 lg:border-r lg:border-b-0">
+                    <div className="space-y-2">
+                      {personHistorySummaries.map((person) => {
+                        const isActive = person.account === selectedPersonAccount;
+
+                        return (
+                          <button
+                            key={person.account}
+                            type="button"
+                            onClick={() => setActivePersonAccount(person.account)}
+                            className={`w-full rounded-lg border px-3 py-3 text-left transition ${
+                              isActive
+                                ? "border-primary/50 bg-card ring-primary/20 shadow-sm ring-2"
+                                : "border-border bg-card hover:bg-muted"
+                            }`}
+                          >
+                            <div className="flex items-start gap-2">
+                              <span className="bg-accent text-primary mt-0.5 rounded-full p-1.5">
+                                <UserRound className="h-4 w-4" aria-hidden />
+                              </span>
+                              <span className="min-w-0 flex-1">
+                                <span className="text-foreground block truncate text-sm font-semibold">
+                                  {person.account}
+                                </span>
+                                <span className="mt-1 flex flex-wrap gap-1 text-xs">
+                                  <span className="bg-secondary text-secondary-foreground rounded px-1.5 py-0.5 font-medium">
+                                    IN/OUT {person.pending}
+                                  </span>
+                                  <span className="bg-accent text-accent-foreground rounded px-1.5 py-0.5 font-medium">
+                                    Approved {person.approved}
+                                  </span>
+                                </span>
                               </span>
                             </div>
-                            <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                              <div>
-                                <dt className="text-muted-foreground">Supervisor</dt>
-                                <dd className="text-foreground font-semibold">
-                                  {activeOutReview.owner}
-                                </dd>
-                              </div>
-                              <div>
-                                <dt className="text-muted-foreground">Location</dt>
-                                <dd className="text-foreground font-semibold">
-                                  {activeOutReview.location}
-                                </dd>
-                              </div>
-                              <div className="col-span-2">
-                                <dt className="text-muted-foreground">Area</dt>
-                                <dd className="text-foreground font-semibold">
-                                  {activeOutReview.region} / {activeOutReview.country} /{" "}
-                                  {activeOutReview.area}
-                                </dd>
-                              </div>
-                            </dl>
-                          </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </aside>
 
-                          <div className="mt-3 grid grid-cols-3 gap-2">
-                            <div className="border-border bg-accent rounded-md border p-3">
-                              <p className="text-accent-foreground text-xs font-medium">Check in</p>
-                              <p className="text-foreground mt-1 text-lg font-bold">
-                                {activeOutReview.checkInAt}
+                  <div className="min-h-0 overflow-y-auto p-4">
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-medium">
+                      <span className="bg-muted text-foreground rounded px-2 py-2 text-center">
+                        Records {selectedPersonHistory.length}
+                      </span>
+                      <span className="bg-secondary text-secondary-foreground rounded px-2 py-2 text-center">
+                        IN/OUT {selectedPersonHistory.filter((item) => item.status !== "1").length}
+                      </span>
+                      <span className="bg-accent text-accent-foreground rounded px-2 py-2 text-center">
+                        1 {selectedPersonHistory.filter((item) => item.status === "1").length}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {selectedPersonHistory.map((item) => (
+                        <div
+                          key={`${item.key}:${item.status}`}
+                          className="border-border bg-card rounded-md border p-3 text-sm"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`rounded px-2 py-0.5 text-xs font-bold ${
+                                    item.status === "IN"
+                                      ? "bg-secondary text-secondary-foreground"
+                                      : item.status === "OUT"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "bg-accent text-accent-foreground"
+                                  }`}
+                                >
+                                  {item.status}
+                                </span>
+                                <span className="text-foreground font-semibold">
+                                  Day {item.day}
+                                </span>
+                              </div>
+                              <p className="text-muted-foreground mt-1 text-xs">
+                                {item.region} / {item.country} - {item.location}
                               </p>
                             </div>
-                            <div className="border-border bg-secondary rounded-md border p-3">
-                              <p className="text-secondary-foreground text-xs font-medium">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (item.status === "IN" || item.status === "OUT") {
+                                  openOutReview(item);
+                                  return;
+                                }
+
+                                focusScheduleCell(item);
+                              }}
+                              className="border-input bg-card text-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
+                            >
+                              {item.status === "1" ? "Focus" : "Review"}
+                            </button>
+                          </div>
+                          <div className="mt-3 grid grid-cols-3 gap-2">
+                            <div className="bg-accent rounded-md px-2 py-2">
+                              <p className="text-accent-foreground text-[10px] font-medium">
+                                Check in
+                              </p>
+                              <p className="text-foreground mt-1 text-sm font-semibold">
+                                {item.checkInAt}
+                              </p>
+                            </div>
+                            <div className="bg-secondary rounded-md px-2 py-2">
+                              <p className="text-secondary-foreground text-[10px] font-medium">
                                 Check out
                               </p>
-                              <p className="text-foreground mt-1 text-lg font-bold">
-                                {activeOutReview.status === "OUT"
-                                  ? activeOutReview.checkOutAt
-                                  : "Pending"}
+                              <p className="text-foreground mt-1 text-sm font-semibold">
+                                {item.status === "IN" ? "Pending" : item.checkOutAt}
                               </p>
                             </div>
-                            <div className="border-border bg-muted rounded-md border p-3">
-                              <p className="text-muted-foreground text-xs font-medium">Distance</p>
-                              <p className="text-foreground mt-1 text-lg font-bold">
-                                {activeOutReview.distanceMeters}m
+                            <div className="bg-muted rounded-md px-2 py-2">
+                              <p className="text-muted-foreground text-[10px] font-medium">
+                                Distance
+                              </p>
+                              <p className="text-foreground mt-1 text-sm font-semibold">
+                                {item.distanceMeters}m
                               </p>
                             </div>
                           </div>
-
                           <div className="mt-3 grid grid-cols-2 gap-2">
                             <div className="border-border bg-card overflow-hidden rounded-md border">
-                              <div className="border-border text-foreground flex items-center gap-1.5 border-b px-3 py-2 text-xs font-semibold">
-                                <Camera className="h-3.5 w-3.5" aria-hidden />
+                              <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
+                                <Camera className="h-3 w-3" aria-hidden />
                                 In photo
                               </div>
                               <div className="bg-muted relative aspect-[4/3]">
@@ -1381,245 +1601,44 @@ export function EnterpriseGridDemo() {
                               </div>
                             </div>
                             <div className="border-border bg-card overflow-hidden rounded-md border">
-                              <div className="border-border text-foreground flex items-center gap-1.5 border-b px-3 py-2 text-xs font-semibold">
-                                <Camera className="h-3.5 w-3.5" aria-hidden />
+                              <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
+                                <Camera className="h-3 w-3" aria-hidden />
                                 Out photo
                               </div>
                               <div className="bg-muted relative aspect-[4/3]">
-                                {activeOutReview.status === "OUT" ? (
-                                  <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
-                                ) : (
-                                  <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-xs font-semibold">
-                                    Waiting for checkout
+                                {item.status === "IN" ? (
+                                  <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-[10px] font-semibold">
+                                    Waiting
                                   </div>
+                                ) : (
+                                  <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
                                 )}
                               </div>
                             </div>
                           </div>
-
-                          <div className="mt-3 grid grid-cols-2 gap-2">
-                            <button
-                              type="button"
-                              onClick={() => moveOutReview(-1)}
-                              disabled={outReviewItems.length <= 1}
-                              className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45"
-                            >
-                              Previous
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => moveOutReview(1)}
-                              disabled={outReviewItems.length <= 1}
-                              className="border-input bg-card text-foreground hover:bg-muted inline-flex h-9 items-center justify-center gap-2 rounded-md border text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-45"
-                            >
-                              Next
-                              <ArrowRight className="h-4 w-4" aria-hidden />
-                            </button>
-                          </div>
+                          {item.status === "1" ? (
+                            <p className="bg-accent text-accent-foreground mt-2 rounded px-2 py-1 text-xs">
+                              Approved by {item.reviewedBy} at {item.reviewedAt}
+                            </p>
+                          ) : (
+                            <p className="bg-secondary text-secondary-foreground mt-2 rounded px-2 py-1 text-xs">
+                              {item.status === "IN"
+                                ? "Waiting for checkout."
+                                : "Waiting for back-office approval."}
+                            </p>
+                          )}
                         </div>
-
-                        <div className="border-border bg-muted shrink-0 space-y-2 border-t p-3">
-                          <div className="grid grid-cols-2 gap-2">
-                            <button
-                              type="button"
-                              onClick={openStatusFromOutReview}
-                              className="border-input bg-card text-foreground hover:bg-muted h-9 rounded-md border px-3 text-sm font-medium transition"
-                            >
-                              Change
-                            </button>
-                            <button
-                              type="button"
-                              onClick={approveOutReview}
-                              disabled={activeOutReview.status !== "OUT"}
-                              className="bg-primary hover:bg-primary/80 disabled:hover:bg-primary inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-45"
-                            >
-                              <CheckCircle2 className="h-4 w-4" aria-hidden />
-                              Approve 1
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="text-muted-foreground p-5 text-center text-sm">
-                        No IN/OUT records to review.
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <div className="border-border shrink-0 border-b px-4 py-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-primary text-xs font-semibold tracking-wide uppercase">
-                            PlanY inspector
-                          </p>
-                          <h2 className="text-foreground mt-1 text-base font-semibold">
-                            Check-in/out History
-                          </h2>
-                          <p className="text-muted-foreground mt-1 text-xs">
-                            Evidence records remain available after OUT is approved to 1.
-                          </p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setIsPersonHistoryOpen(false);
-                            setActivePersonAccount(null);
-                          }}
-                          className="border-input bg-card text-muted-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
-                        >
-                          Close
-                        </button>
-                      </div>
+                      ))}
                     </div>
-
-                    {personHistorySummaries.length > 0 ? (
-                      <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                        <select
-                          value={selectedPersonAccount ?? ""}
-                          onChange={(event) => setActivePersonAccount(event.target.value)}
-                          className="border-input bg-card text-foreground ring-ring focus:border-ring h-10 w-full rounded-md border px-3 text-sm font-medium outline-none focus:ring-2"
-                        >
-                          {personHistorySummaries.map((person) => (
-                            <option key={person.account} value={person.account}>
-                              {person.account}
-                            </option>
-                          ))}
-                        </select>
-
-                        <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-medium">
-                          <span className="bg-muted text-foreground rounded px-2 py-2 text-center">
-                            Records {selectedPersonHistory.length}
-                          </span>
-                          <span className="bg-secondary text-secondary-foreground rounded px-2 py-2 text-center">
-                            IN/OUT{" "}
-                            {selectedPersonHistory.filter((item) => item.status !== "1").length}
-                          </span>
-                          <span className="bg-accent text-accent-foreground rounded px-2 py-2 text-center">
-                            1 {selectedPersonHistory.filter((item) => item.status === "1").length}
-                          </span>
-                        </div>
-
-                        <div className="mt-4 space-y-2">
-                          {selectedPersonHistory.map((item) => (
-                            <div
-                              key={`${item.key}:${item.status}`}
-                              className="border-border bg-card rounded-md border p-3 text-sm"
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <span
-                                      className={`rounded px-2 py-0.5 text-xs font-bold ${
-                                        item.status === "IN"
-                                          ? "bg-secondary text-secondary-foreground"
-                                          : item.status === "OUT"
-                                            ? "bg-primary text-primary-foreground"
-                                            : "bg-accent text-accent-foreground"
-                                      }`}
-                                    >
-                                      {item.status}
-                                    </span>
-                                    <span className="text-foreground font-semibold">
-                                      Day {item.day}
-                                    </span>
-                                  </div>
-                                  <p className="text-muted-foreground mt-1 text-xs">
-                                    {item.region} / {item.country} - {item.location}
-                                  </p>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    if (item.status === "IN" || item.status === "OUT") {
-                                      openOutReview(item);
-                                      return;
-                                    }
-
-                                    focusScheduleCell(item);
-                                  }}
-                                  className="border-input bg-card text-foreground hover:bg-muted h-8 rounded-md border px-2 text-xs font-medium transition"
-                                >
-                                  {item.status === "1" ? "Focus" : "Review"}
-                                </button>
-                              </div>
-                              <div className="mt-3 grid grid-cols-3 gap-2">
-                                <div className="bg-accent rounded-md px-2 py-2">
-                                  <p className="text-accent-foreground text-[10px] font-medium">
-                                    Check in
-                                  </p>
-                                  <p className="text-foreground mt-1 text-sm font-semibold">
-                                    {item.checkInAt}
-                                  </p>
-                                </div>
-                                <div className="bg-secondary rounded-md px-2 py-2">
-                                  <p className="text-secondary-foreground text-[10px] font-medium">
-                                    Check out
-                                  </p>
-                                  <p className="text-foreground mt-1 text-sm font-semibold">
-                                    {item.status === "IN" ? "Pending" : item.checkOutAt}
-                                  </p>
-                                </div>
-                                <div className="bg-muted rounded-md px-2 py-2">
-                                  <p className="text-muted-foreground text-[10px] font-medium">
-                                    Distance
-                                  </p>
-                                  <p className="text-foreground mt-1 text-sm font-semibold">
-                                    {item.distanceMeters}m
-                                  </p>
-                                </div>
-                              </div>
-                              <div className="mt-3 grid grid-cols-2 gap-2">
-                                <div className="border-border bg-card overflow-hidden rounded-md border">
-                                  <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
-                                    <Camera className="h-3 w-3" aria-hidden />
-                                    In photo
-                                  </div>
-                                  <div className="bg-muted relative aspect-[4/3]">
-                                    <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--foreground),var(--muted-foreground)_55%,var(--border))]" />
-                                  </div>
-                                </div>
-                                <div className="border-border bg-card overflow-hidden rounded-md border">
-                                  <div className="border-border text-foreground flex items-center gap-1.5 border-b px-2 py-1.5 text-[10px] font-semibold">
-                                    <Camera className="h-3 w-3" aria-hidden />
-                                    Out photo
-                                  </div>
-                                  <div className="bg-muted relative aspect-[4/3]">
-                                    {item.status === "IN" ? (
-                                      <div className="bg-muted text-muted-foreground absolute inset-0 flex items-center justify-center text-[10px] font-semibold">
-                                        Waiting
-                                      </div>
-                                    ) : (
-                                      <div className="absolute inset-0 bg-[linear-gradient(135deg,var(--muted-foreground),var(--foreground)_55%,var(--border))]" />
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              {item.status === "1" ? (
-                                <p className="bg-accent text-accent-foreground mt-2 rounded px-2 py-1 text-xs">
-                                  Approved by {item.reviewedBy} at {item.reviewedAt}
-                                </p>
-                              ) : (
-                                <p className="bg-secondary text-secondary-foreground mt-2 rounded px-2 py-1 text-xs">
-                                  {item.status === "IN"
-                                    ? "Waiting for checkout."
-                                    : "Waiting for back-office approval."}
-                                </p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-muted-foreground p-5 text-center text-sm">
-                        No person history yet.
-                      </div>
-                    )}
-                  </>
-                )}
-              </aside>
-            </div>
-          </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-muted-foreground p-5 text-center text-sm">
+                  No person history yet.
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
 
           <Dialog
             open={false}
