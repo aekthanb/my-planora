@@ -592,8 +592,7 @@ export function EnterpriseGridDemo() {
           values: owners,
         },
         filter: "agSetColumnFilter",
-        cellClass:
-          "cursor-pointer font-medium text-primary underline decoration-primary/40 underline-offset-2",
+        cellClass: "cursor-pointer font-medium text-blue-600 hover:text-blue-700",
       },
       {
         field: "account",
@@ -605,8 +604,7 @@ export function EnterpriseGridDemo() {
           values: rowData.map((row) => row.account),
         },
         filter: "agMultiColumnFilter",
-        cellClass:
-          "cursor-pointer font-medium text-primary underline decoration-primary/40 underline-offset-2",
+        cellClass: "cursor-pointer font-medium text-blue-600 hover:text-blue-700",
       },
       {
         field: "stage",
