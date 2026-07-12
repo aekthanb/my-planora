@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function NewPlanPage() {
   return (
-    <div className="flex min-h-full flex-1 flex-col">
-      <div className="shrink-0 px-1.5 pt-2 sm:px-2">
+    <div className="flex min-h-full flex-1 flex-col gap-4">
+      <div className="shrink-0 px-4 pt-6 sm:px-6">
         <PlanOverviewHeader />
       </div>
       <EnterpriseGridDemo />
