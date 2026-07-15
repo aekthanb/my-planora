@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { EnterpriseGridDemo } from "@/components/EnterpriseGridDemo";
-// import { PlanOverviewHeader } from "@/components/PlanOverviewHeader";
+import { PlanOverviewHeader } from "@/components/PlanOverviewHeader";
 import "../../../enterprise-grid.css";
 
 export const metadata: Metadata = {
@@ -12,10 +12,10 @@ export default async function NewPlanPage({ searchParams }: PageProps<"/plans/ne
   const selectedProject = typeof project === "string" && project.length > 0;
 
   return (
-    <div className="flex min-h-full flex-1 flex-col gap-4">
-      {/* <div className="shrink-0 px-4 pt-6 sm:px-6">
+    <div className="flex min-h-full flex-1 flex-col bg-zinc-50 font-sans dark:bg-black">
+      <div className="shrink-0 px-2 pt-2">
         <PlanOverviewHeader />
-      </div> */}
+      </div>
       <EnterpriseGridDemo
         key={selectedProject ? project : "blank"}
         showMockData={selectedProject}

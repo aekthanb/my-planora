@@ -1153,7 +1153,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
   }, []);
 
   return (
-    <main className="bg-background text-foreground min-h-screen">
+    <main className="text-foreground min-h-screen bg-transparent">
       <section className="flex h-screen w-full flex-col gap-2 px-1.5 py-2 sm:px-2">
         {/* <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3 shadow-sm">
           <p className="mb-2 text-sm font-medium text-muted-foreground">
