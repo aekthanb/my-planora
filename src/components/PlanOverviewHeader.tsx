@@ -122,32 +122,43 @@ const groups: DetailGroup[] = [
   },
 ];
 
+const sections: DetailGroup[][] = [groups.slice(0, 2), groups.slice(2)];
+
 export function PlanOverviewHeader() {
   return (
     <Card className="gap-0 rounded-t-lg rounded-b-none py-0 shadow-sm">
-      <CardContent className="flex flex-wrap items-start gap-x-10 gap-y-6 p-5 sm:p-6">
-        {groups.map((group) => (
-          <div key={group.number} className="flex flex-col gap-3">
-            <div className="flex flex-wrap items-start gap-x-6 gap-y-4">
-              {group.fields.map((field) => (
-                <div key={field.label} className={`min-w-0 ${field.widthClassName}`}>
-                  <p className="text-foreground/60 text-xs leading-snug font-medium">
-                    {field.label}
-                    {field.required ? (
-                      <span className="text-destructive ml-1" aria-label="จำเป็น">
-                        *
-                      </span>
-                    ) : null}
-                  </p>
-                  <p
-                    className="text-foreground mt-1 text-sm leading-snug font-semibold wrap-break-word"
-                    title={field.value}
-                  >
-                    {field.value}
-                  </p>
+      <CardContent className="flex flex-col gap-6 p-5 sm:p-6">
+        {sections.map((sectionGroups, sectionIndex) => (
+          <div
+            key={sectionIndex}
+            className={`flex flex-wrap items-start gap-x-10 gap-y-6 ${
+              sectionIndex < sections.length - 1 ? "border-border border-b pb-6" : ""
+            }`}
+          >
+            {sectionGroups.map((group) => (
+              <div key={group.number} className="flex flex-col gap-3">
+                <div className="flex flex-wrap items-start gap-x-6 gap-y-4">
+                  {group.fields.map((field) => (
+                    <div key={field.label} className={`min-w-0 ${field.widthClassName}`}>
+                      <p className="text-foreground/60 text-xs leading-snug font-medium">
+                        {field.label}
+                        {field.required ? (
+                          <span className="text-destructive ml-1" aria-label="จำเป็น">
+                            *
+                          </span>
+                        ) : null}
+                      </p>
+                      <p
+                        className="text-foreground mt-1 text-sm leading-snug font-semibold wrap-break-word"
+                        title={field.value}
+                      >
+                        {field.value}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         ))}
       </CardContent>
