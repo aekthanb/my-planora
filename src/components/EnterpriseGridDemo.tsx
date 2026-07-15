@@ -1154,7 +1154,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
   return (
     <main className="text-foreground min-h-screen bg-transparent">
-      <section className="flex h-screen w-full flex-col gap-2 px-1.5 py-2 sm:px-2">
+      <section className="flex h-screen w-full flex-col gap-2 pb-2">
         {/* <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3 shadow-sm">
           <p className="mb-2 text-sm font-medium text-muted-foreground">
             สรุปการใช้ Status ในแผน (Plan Days)
@@ -1181,7 +1181,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
         <div
           ref={gridPanelRef}
-          className="grid-panel-shell border-border bg-card flex min-h-0 flex-1 flex-col rounded-lg border shadow-sm"
+          className="grid-panel-shell border-border bg-card flex min-h-0 flex-1 flex-col rounded-t-none rounded-b-lg border border-t-0 shadow-sm"
         >
           <div className="border-border flex shrink-0 flex-col gap-3 border-b p-2.5 lg:flex-row lg:items-center lg:justify-end">
             <div className="flex flex-wrap items-center gap-2">

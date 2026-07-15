@@ -35,10 +35,10 @@ export default async function NewPlanPage({ searchParams }: PageProps<"/plans/ne
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-zinc-50 font-sans dark:bg-black">
-      <div className="shrink-0 px-2 pt-2">
+      <div className="mx-auto w-full max-w-[1800px] flex-1 px-4 pt-2 sm:px-6">
         <PlanOverviewHeader />
+        <EnterpriseGridDemo key={projectCode ?? prNo} showMockData={Boolean(projectCode)} />
       </div>
-      <EnterpriseGridDemo key={projectCode ?? prNo} showMockData={Boolean(projectCode)} />
     </div>
   );
 }
