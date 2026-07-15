@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PrSelectionDialog } from "@/components/PrSelectionPanel";
 import { cn } from "@/lib/utils";
 
 type DropdownItem = {
@@ -30,7 +31,7 @@ type DropdownItem = {
   title: string;
   description?: string;
   href?: string;
-  action?: "view-plans";
+  action?: "view-plans" | "create-plan";
 };
 
 const employeeItems: DropdownItem[] = [
@@ -59,7 +60,7 @@ const planItems: DropdownItem[] = [
     icon: Plus,
     title: "สร้างแผนงานใหม่",
     description: "เริ่มสร้างแผนงานใหม่",
-    href: "/plans/new",
+    action: "create-plan",
   },
 ];
 
@@ -125,6 +126,7 @@ export function Navbar() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [planModalOpen, setPlanModalOpen] = useState(false);
+  const [prModalOpen, setPrModalOpen] = useState(false);
   const [planSearch, setPlanSearch] = useState("");
   const [planPage, setPlanPage] = useState(1);
   const navRef = useRef<HTMLElement>(null);
@@ -158,6 +160,20 @@ export function Navbar() {
     setOpenMenu(null);
     setMobileOpen(false);
     setPlanModalOpen(true);
+  }
+
+  function openPrModal() {
+    setOpenMenu(null);
+    setMobileOpen(false);
+    setPrModalOpen(true);
+  }
+
+  function handleDropdownAction(action: NonNullable<DropdownItem["action"]>) {
+    if (action === "view-plans") {
+      openPlanModal();
+    } else {
+      openPrModal();
+    }
   }
 
   return (
@@ -226,6 +242,7 @@ export function Navbar() {
                         )}
                       >
                         {link.dropdown.map((item) => {
+                          const action = item.action;
                           const content = (
                             <>
                               <span className="bg-muted group-hover:bg-background flex size-9 shrink-0 items-center justify-center rounded-lg transition-colors">
@@ -245,11 +262,11 @@ export function Navbar() {
                             </>
                           );
 
-                          return item.action === "view-plans" ? (
+                          return action ? (
                             <button
                               key={item.title}
                               type="button"
-                              onClick={openPlanModal}
+                              onClick={() => handleDropdownAction(action)}
                               className="group hover:bg-muted flex items-start gap-2.5 rounded-lg p-2 text-left transition-colors"
                             >
                               {content}
@@ -299,12 +316,14 @@ export function Navbar() {
                 <div key={link.label}>
                   <p className="text-foreground py-2 text-sm font-medium">{link.label}</p>
                   <div className="border-l pl-4">
-                    {link.dropdown.map((item) =>
-                      item.action === "view-plans" ? (
+                    {link.dropdown.map((item) => {
+                      const action = item.action;
+
+                      return action ? (
                         <button
                           key={item.title}
                           type="button"
-                          onClick={openPlanModal}
+                          onClick={() => handleDropdownAction(action)}
                           className="text-muted-foreground hover:text-foreground flex w-full items-center gap-2 py-2 text-left text-sm transition-colors"
                         >
                           <item.icon className="size-4" />
@@ -320,8 +339,8 @@ export function Navbar() {
                           <item.icon className="size-4" />
                           {item.title}
                         </Link>
-                      ),
-                    )}
+                      );
+                    })}
                   </div>
                 </div>
               ) : (
@@ -512,6 +531,8 @@ export function Navbar() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <PrSelectionDialog open={prModalOpen} onOpenChange={setPrModalOpen} />
     </>
   );
 }
