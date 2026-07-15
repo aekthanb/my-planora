@@ -45,7 +45,7 @@ export function PrSelectionDialog({ open, onOpenChange }: PrSelectionDialogProps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         initialFocus={false}
-        className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex h-[min(88vh,900px)] w-[calc(100vw-2rem)] flex-col gap-0 overflow-hidden rounded-xl p-0 shadow-2xl duration-300 sm:max-w-352 [[data-slot=dialog-overlay]:has(~_&)]:duration-300"
+        className="bg-popover data-open:slide-in-from-left-8 data-open:zoom-in-100 data-closed:slide-out-to-left-8 data-closed:zoom-out-100 flex max-h-[min(88vh,900px)] w-[calc(100vw-2rem)] flex-col gap-0 overflow-hidden rounded-xl p-0 shadow-2xl duration-300 sm:max-w-352 [[data-slot=dialog-overlay]:has(~_&)]:duration-300"
       >
         <div className="border-border flex shrink-0 items-center justify-between border-b px-6 py-4">
           <DialogHeader className="gap-1">
