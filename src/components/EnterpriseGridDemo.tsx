@@ -1240,7 +1240,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
             </div>
           ) : null} */}
 
-          <div className="mx-8 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-16 lg:mx-24 xl:mx-32">
+          <div className="mx-2 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-4 lg:mx-6 xl:mx-8">
             <div className="ag-theme-quartz bg-card h-full min-h-0 flex-1 overflow-hidden">
               <AgGridReact<DealRow>
                 theme="legacy"
