@@ -1156,8 +1156,8 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
   }, []);
 
   return (
-    <main className="text-foreground min-h-screen bg-transparent">
-      <section className="flex h-screen w-full flex-col">
+    <main className="text-foreground bg-transparent">
+      <section className="flex h-[calc(100vh-4rem)] w-full flex-col">
         {/* <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3 shadow-sm">
           <p className="mb-2 text-sm font-medium text-muted-foreground">
             สรุปการใช้ Status ในแผน (Plan Days)
@@ -1239,7 +1239,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
             </div>
           ) : null} */}
 
-          <div className="mx-2 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-4 lg:mx-6 xl:mx-8">
+          <div className="mx-8 flex min-h-0 flex-1 gap-2 py-1.5 sm:mx-16 lg:mx-24 xl:mx-32">
             <div className="ag-theme-quartz bg-card flex h-full min-h-0 flex-1 flex-col overflow-hidden">
               <Button
                 type="button"
