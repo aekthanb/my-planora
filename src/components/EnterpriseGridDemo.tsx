@@ -1185,48 +1185,20 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
         <div ref={gridPanelRef} className="grid-panel-shell flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 flex-col gap-3 px-8 py-2.5 sm:px-16 lg:flex-row lg:items-center lg:justify-end lg:px-24 xl:px-32">
-            <div className="flex flex-wrap items-center gap-2">
-              {/* <Button
-                type="button"
-                size="lg"
-                variant="outline"
-                onClick={() => openPersonHistoryModal()}
-                disabled={personHistoryItems.length === 0}
-              >
-                <History className="h-4 w-4" aria-hidden />
-                Person History
-                <span className="bg-muted rounded px-1.5 py-0.5 text-xs">
-                  {personHistorySummaries.length}
-                </span>
-              </Button> */}
-              {/* <Button
-                type="button"
-                size="lg"
-                variant="outline"
-                onClick={() => {
-                  void toggleFullscreen();
-                }}
-              >
-                {isFullscreen ? (
-                  <Minimize2 className="h-4 w-4" aria-hidden />
-                ) : (
-                  <Maximize2 className="h-4 w-4" aria-hidden />
-                )}
-                {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-              </Button> */}
-              {/* <Button
+            <div className="flex flex-wrap items-center gap-2 pr-3">
+              <Button
                 type="button"
                 size="lg"
                 variant="outline"
                 onClick={() =>
                   gridApi.current?.exportDataAsExcel({
-                    fileName: "ag-grid-enterprise-pipeline.xlsx",
+                    fileName: "planora-plan.xlsx",
                   })
                 }
               >
                 <Download className="h-4 w-4" aria-hidden />
                 Excel
-              </Button> */}
+              </Button>
             </div>
           </div>
 
