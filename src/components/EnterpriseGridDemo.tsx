@@ -1183,7 +1183,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         </div> */}
 
         <div ref={gridPanelRef} className="grid-panel-shell flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 flex-col gap-3 border-b px-8 py-2.5 sm:px-16 lg:flex-row lg:items-center lg:justify-end lg:px-24 xl:px-32">
+          <div className="flex shrink-0 flex-col gap-3 px-8 py-2.5 sm:px-16 lg:flex-row lg:items-center lg:justify-end lg:px-24 xl:px-32">
             <div className="flex flex-wrap items-center gap-2">
               {/* <Button
                 type="button"
