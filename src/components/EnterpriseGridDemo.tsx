@@ -319,6 +319,10 @@ const dropdownCellEditor = {
   singleClickEdit: true,
   cellEditorParams: {
     cellHeight: 34,
+    allowTyping: true,
+    filterList: true,
+    searchType: "matchAny",
+    highlightMatch: true,
   },
   cellClass: "cursor-pointer",
 } satisfies Partial<ColDef<DealRow>>;
