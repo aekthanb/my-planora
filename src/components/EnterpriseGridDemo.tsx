@@ -1154,7 +1154,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
   return (
     <main className="text-foreground min-h-screen bg-transparent">
-      <section className="flex h-screen w-full flex-col gap-2 pb-2">
+      <section className="flex h-screen w-full flex-col">
         {/* <div className="shrink-0 rounded-lg border border-border bg-card px-4 py-3 shadow-sm">
           <p className="mb-2 text-sm font-medium text-muted-foreground">
             สรุปการใช้ Status ในแผน (Plan Days)
@@ -1179,11 +1179,8 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           </div>
         </div> */}
 
-        <div
-          ref={gridPanelRef}
-          className="grid-panel-shell border-border bg-card flex min-h-0 flex-1 flex-col rounded-t-none rounded-b-lg border border-t-0 shadow-sm"
-        >
-          <div className="border-border flex shrink-0 flex-col gap-3 border-b p-2.5 lg:flex-row lg:items-center lg:justify-end">
+        <div ref={gridPanelRef} className="grid-panel-shell flex min-h-0 flex-1 flex-col">
+          <div className="flex shrink-0 flex-col gap-3 border-b px-8 py-2.5 sm:px-16 lg:flex-row lg:items-center lg:justify-end lg:px-24 xl:px-32">
             <div className="flex flex-wrap items-center gap-2">
               {/* <Button
                 type="button"
@@ -1243,8 +1240,8 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
             </div>
           ) : null} */}
 
-          <div className="flex min-h-0 flex-1 gap-2 p-1.5">
-            <div className="ag-theme-quartz bg-card h-full min-h-0 flex-1 overflow-hidden rounded-md">
+          <div className="mx-8 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-16 lg:mx-24 xl:mx-32">
+            <div className="ag-theme-quartz bg-card h-full min-h-0 flex-1 overflow-hidden">
               <AgGridReact<DealRow>
                 theme="legacy"
                 rowData={rowData}

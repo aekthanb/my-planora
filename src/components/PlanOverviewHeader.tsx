@@ -1,5 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-
 const project = {
   prNo: "PR-2026-0071",
   projectName: "แผนงานรักษาความปลอดภัยและทำความสะอาด ประจำเดือนกรกฎาคม 2569",
@@ -126,13 +124,13 @@ const sections: DetailGroup[][] = [groups.slice(0, 2), groups.slice(2)];
 
 export function PlanOverviewHeader() {
   return (
-    <Card className="gap-0 rounded-t-lg rounded-b-none py-0 shadow-sm">
-      <CardContent className="flex flex-col gap-6 p-5 sm:p-6">
+    <section className="border-y bg-transparent">
+      <div className="mx-8 flex flex-col sm:mx-16 lg:mx-24 xl:mx-32">
         {sections.map((sectionGroups, sectionIndex) => (
           <div
             key={sectionIndex}
-            className={`flex flex-wrap items-start gap-x-10 gap-y-6 ${
-              sectionIndex < sections.length - 1 ? "border-border border-b pb-6" : ""
+            className={`flex flex-wrap items-start gap-x-10 gap-y-6 p-5 sm:p-6 ${
+              sectionIndex < sections.length - 1 ? "border-b" : ""
             }`}
           >
             {sectionGroups.map((group) => (
@@ -161,7 +159,7 @@ export function PlanOverviewHeader() {
             ))}
           </div>
         ))}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }
