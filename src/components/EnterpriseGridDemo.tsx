@@ -1237,58 +1237,57 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ) : null} */}
 
           <div className="mx-2 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-4 lg:mx-6 xl:mx-8">
-            <div className="ag-theme-quartz bg-card relative h-full min-h-0 flex-1 overflow-hidden">
-              <Button
-                type="button"
-                size="lg"
-                onClick={insertBlankRow}
-                className="fixed bottom-6 left-20 z-20 shadow-md"
-              >
-                <Plus className="h-4 w-4" aria-hidden />
-                Add Row
-              </Button>
-              <AgGridReact<DealRow>
-                theme="legacy"
-                rowData={rowData}
-                getRowId={(params) => params.data.id}
-                columnDefs={columnDefs}
-                defaultColDef={defaultColDef}
-                statusBar={{
-                  statusPanels: [
-                    { statusPanel: "agTotalAndFilteredRowCountComponent" },
-                    { statusPanel: "agAggregationComponent" },
-                  ],
-                }}
-                cellSelection={cellSelection}
-                pinnedBottomRowData={pinnedBottomRowData}
-                undoRedoCellEditing
-                undoRedoCellEditingLimit={20}
-                suppressClickEdit
-                suppressMoveWhenRowDragging={false}
-                rowGroupPanelShow="never"
-                pivotPanelShow="never"
-                groupHeaderHeight={32}
-                headerHeight={46}
-                floatingFiltersHeight={38}
-                getMainMenuItems={(params) =>
-                  params.defaultItems.filter(
-                    (item) => item !== "columnChooser" && item !== "resetColumns",
-                  )
-                }
-                pagination
-                paginationPageSize={25}
-                paginationPageSizeSelector={[25, 50, 100]}
-                suppressAggFuncInHeader
-                onGridReady={onGridReady}
-                onFirstDataRendered={onFirstDataRendered}
-                onGridSizeChanged={onGridSizeChanged}
-                onCellClicked={onCellClicked}
-                onCellDoubleClicked={onCellDoubleClicked}
-                onRowDragEnd={onRowDragEnd}
-                onFilterChanged={updateTotalsRow}
-                onCellValueChanged={updateTotalsRow}
-                onModelUpdated={updateTotalsRow}
-              />
+            <div className="ag-theme-quartz bg-card flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+              <div className="min-h-0 flex-1">
+                <AgGridReact<DealRow>
+                  theme="legacy"
+                  rowData={rowData}
+                  getRowId={(params) => params.data.id}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  statusBar={{
+                    statusPanels: [
+                      { statusPanel: "agTotalAndFilteredRowCountComponent" },
+                      { statusPanel: "agAggregationComponent" },
+                    ],
+                  }}
+                  cellSelection={cellSelection}
+                  pinnedBottomRowData={pinnedBottomRowData}
+                  undoRedoCellEditing
+                  undoRedoCellEditingLimit={20}
+                  suppressClickEdit
+                  suppressMoveWhenRowDragging={false}
+                  rowGroupPanelShow="never"
+                  pivotPanelShow="never"
+                  groupHeaderHeight={32}
+                  headerHeight={46}
+                  floatingFiltersHeight={38}
+                  getMainMenuItems={(params) =>
+                    params.defaultItems.filter(
+                      (item) => item !== "columnChooser" && item !== "resetColumns",
+                    )
+                  }
+                  pagination
+                  paginationPageSize={25}
+                  paginationPageSizeSelector={[25, 50, 100]}
+                  suppressAggFuncInHeader
+                  onGridReady={onGridReady}
+                  onFirstDataRendered={onFirstDataRendered}
+                  onGridSizeChanged={onGridSizeChanged}
+                  onCellClicked={onCellClicked}
+                  onCellDoubleClicked={onCellDoubleClicked}
+                  onRowDragEnd={onRowDragEnd}
+                  onFilterChanged={updateTotalsRow}
+                  onCellValueChanged={updateTotalsRow}
+                  onModelUpdated={updateTotalsRow}
+                />
+              </div>
+              <div className="bg-card flex shrink-0 items-center border-t px-3 py-2">
+                <Button type="button" size="lg" onClick={insertBlankRow}>
+                  <Plus className="h-4 w-4" aria-hidden />
+                  Add Row
+                </Button>
+              </div>
             </div>
 
             <div
