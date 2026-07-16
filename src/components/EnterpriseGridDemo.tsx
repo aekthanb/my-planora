@@ -1210,10 +1210,6 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                 )}
                 {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
               </Button> */}
-              <Button type="button" size="lg" onClick={insertBlankRow}>
-                <Plus className="h-4 w-4" aria-hidden />
-                Blank Row
-              </Button>
               <Button
                 type="button"
                 size="lg"
@@ -1241,7 +1237,16 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
           ) : null} */}
 
           <div className="mx-2 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-4 lg:mx-6 xl:mx-8">
-            <div className="ag-theme-quartz bg-card h-full min-h-0 flex-1 overflow-hidden">
+            <div className="ag-theme-quartz bg-card relative h-full min-h-0 flex-1 overflow-hidden">
+              <Button
+                type="button"
+                size="lg"
+                onClick={insertBlankRow}
+                className="fixed bottom-6 left-20 z-20 shadow-md"
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+                Add Row
+              </Button>
               <AgGridReact<DealRow>
                 theme="legacy"
                 rowData={rowData}
