@@ -1210,7 +1210,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                 )}
                 {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
               </Button> */}
-              <Button
+              {/* <Button
                 type="button"
                 size="lg"
                 variant="outline"
@@ -1222,7 +1222,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
               >
                 <Download className="h-4 w-4" aria-hidden />
                 Excel
-              </Button>
+              </Button> */}
             </div>
           </div>
 
