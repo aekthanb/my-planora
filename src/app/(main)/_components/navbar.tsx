@@ -118,7 +118,7 @@ const navLinks: {
   { label: "แผนงาน", href: "/plans", dropdown: planItems, columns: 2 },
   { label: "ตั้งค่าหลัก", href: "#" },
   { label: "สิทธิ์การใช้งาน", href: "#" },
-  { label: "รายงาน", href: "#" },
+  { label: "รายงาน", href: "/reports" },
 ];
 
 export function Navbar() {
