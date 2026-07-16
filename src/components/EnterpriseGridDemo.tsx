@@ -584,11 +584,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         cellRenderer: (params: { node: { rowPinned?: string | null }; data?: DealRow }) =>
           params.node.rowPinned || !params.data ? null : (
             <div className="flex items-center gap-1.5">
-              <Button
-                type="button"
-                size="xs"
-                className="bg-violet-600 text-white hover:bg-violet-500"
-              >
+              <Button type="button" size="xs" className="bg-blue-700 text-white hover:bg-blue-600">
                 ส่งสัญญา
               </Button>
               <Button
