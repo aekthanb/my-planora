@@ -316,7 +316,6 @@ const checkOutPhotoUrl = "https://images.pexels.com/photos/34516670/pexels-photo
 
 const dropdownCellEditor = {
   cellEditor: "agRichSelectCellEditor",
-  singleClickEdit: true,
   cellEditorParams: {
     cellHeight: 34,
     allowTyping: true,
@@ -881,15 +880,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
     if (colId === "person-history" && event.data) {
       openPersonHistory(event.data.account || "Blank row");
-      return;
     }
-
-    if (!dropdownColumnIds.has(colId) || event.rowIndex == null) return;
-
-    event.api.startEditingCell({
-      rowIndex: event.rowIndex,
-      colKey: colId,
-    });
   };
 
   const focusScheduleCell = (item: Pick<OutReviewItem, "rowId" | "day">) => {
@@ -1013,6 +1004,14 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
   const onCellDoubleClicked = (event: CellDoubleClickedEvent<DealRow>) => {
     const colId = event.column.getColId();
+
+    if (dropdownColumnIds.has(colId) && event.rowIndex != null) {
+      event.api.startEditingCell({
+        rowIndex: event.rowIndex,
+        colKey: colId,
+      });
+      return;
+    }
 
     if (!colId.startsWith("schedule-") || !event.data) return;
 
@@ -1242,6 +1241,15 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
           <div className="mx-2 flex min-h-0 flex-1 gap-2 p-1.5 sm:mx-4 lg:mx-6 xl:mx-8">
             <div className="ag-theme-quartz bg-card flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+              <Button
+                type="button"
+                size="lg"
+                onClick={insertBlankRow}
+                className="fixed bottom-6 left-20 z-20 shadow-md"
+              >
+                <Plus className="h-4 w-4" aria-hidden />
+                Add Row
+              </Button>
               <div className="min-h-0 flex-1">
                 <AgGridReact<DealRow>
                   theme="legacy"
@@ -1285,12 +1293,6 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                   onCellValueChanged={updateTotalsRow}
                   onModelUpdated={updateTotalsRow}
                 />
-              </div>
-              <div className="bg-card flex shrink-0 items-center border-t px-3 py-2">
-                <Button type="button" size="lg" onClick={insertBlankRow}>
-                  <Plus className="h-4 w-4" aria-hidden />
-                  Add Row
-                </Button>
               </div>
             </div>
 
