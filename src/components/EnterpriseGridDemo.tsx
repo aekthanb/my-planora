@@ -268,9 +268,9 @@ const statusOptions: StatusOption[] = [
   { code: "S7", label: "ลากิจ(รับค่าจ้าง)", className: "status-leave-paid" },
   { code: "S10", label: "ลาบวช(รับค่าจ้าง)", className: "status-leave-paid" },
   { code: "S12", label: "ลาทำหมัน(รับค่าจ้าง)", className: "status-leave-paid" },
-  { code: "1", label: "ทำงานคิดเต็มวัน", className: "status-work" },
-  { code: "X", label: "วันหยุดรับค่าจ้าง", className: "status-work" },
-  { code: "0.5", label: "ทำงานคิดครึ่งวัน", className: "status-work" },
+  { code: "1", label: "ทำงานคิดเต็มวัน", className: "status-work-confirmed" },
+  { code: "X", label: "วันหยุดรับค่าจ้าง", className: "status-work-confirmed" },
+  { code: "0.5", label: "ทำงานคิดครึ่งวัน", className: "status-work-confirmed" },
   { code: "SH", label: "หาช่วยภายนอก", className: "status-leave-unpaid" },
   { code: "S14", label: "ขาดงาน", className: "status-leave-unpaid" },
   { code: "X1", label: "ให้หยุด(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
@@ -282,12 +282,17 @@ const statusOptions: StatusOption[] = [
   { code: "S13", label: "ลาทำหมัน(ไม่รับค่าจ้าง)", className: "status-leave-unpaid" },
   { code: "IN", label: "เช็คอินแล้ว รอเช็คเอาท์", className: "status-pending" },
   { code: "OUT", label: "เช็คเอาท์แล้ว รออนุมัติ", className: "status-out" },
-  { code: "T", label: "งานชั่วคราว", className: "status-temp" },
-  { code: "S4", label: "สรรหา", className: "status-temp" },
+  { code: "T", label: "งานชั่วคราว", className: "status-work" },
+  { code: "S4", label: "สรรหา", className: "status-work" },
 ];
 
 const statusButtonStyles: Record<string, { fill: string; text: string; ring: string }> = {
   "status-work": { fill: "bg-primary", text: "text-primary-foreground", ring: "ring-ring" },
+  "status-work-confirmed": {
+    fill: "bg-[oklch(0.42_0.18_290)]",
+    text: "text-white",
+    ring: "ring-[oklch(0.42_0.18_290)]/30",
+  },
   "status-leave-paid": {
     fill: "bg-secondary",
     text: "text-secondary-foreground",

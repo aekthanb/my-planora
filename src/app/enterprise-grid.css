@@ -170,6 +170,12 @@
   --status-fg: var(--primary-foreground);
 }
 
+.status-work-confirmed {
+  --status-bg: oklch(0.42 0.18 290);
+  --status-border: oklch(0.34 0.18 290);
+  --status-fg: white;
+}
+
 .status-leave-paid {
   --status-bg: var(--secondary);
   --status-border: var(--border);
@@ -201,6 +207,7 @@
 }
 
 .ag-theme-quartz .schedule-day-cell-content.status-work,
+.ag-theme-quartz .schedule-day-cell-content.status-work-confirmed,
 .ag-theme-quartz .schedule-day-cell-content.status-leave-paid,
 .ag-theme-quartz .schedule-day-cell-content.status-leave-unpaid,
 .ag-theme-quartz .schedule-day-cell-content.status-pending,
@@ -211,6 +218,7 @@
 }
 
 .person-day-status.status-work,
+.person-day-status.status-work-confirmed,
 .person-day-status.status-leave-paid,
 .person-day-status.status-leave-unpaid,
 .person-day-status.status-pending,
