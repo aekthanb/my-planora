@@ -10,6 +10,7 @@ type CheckInMapProps = {
   checkLat: number;
   checkLng: number;
   distanceMeters: number;
+  mapClassName?: string;
 };
 
 function makeDotIcon(color: string) {
@@ -27,6 +28,7 @@ export function CheckInMap({
   checkLat,
   checkLng,
   distanceMeters,
+  mapClassName = "h-40 w-full",
 }: CheckInMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -45,8 +47,8 @@ export function CheckInMap({
       maxZoom: 19,
     }).addTo(map);
 
-    const siteIcon = makeDotIcon("var(--foreground)");
-    const checkIcon = makeDotIcon("var(--primary)");
+    const siteIcon = makeDotIcon("#f59e0b");
+    const checkIcon = makeDotIcon("#2563eb");
 
     L.marker([siteLat, siteLng], { icon: siteIcon })
       .addTo(map)
@@ -75,7 +77,7 @@ export function CheckInMap({
 
   return (
     <div className="border-border overflow-hidden rounded-md border">
-      <div ref={containerRef} className="h-40 w-full" />
+      <div ref={containerRef} className={mapClassName} />
       <div className="bg-muted flex items-center justify-between px-2 py-1.5 text-[10px]">
         <span className="text-muted-foreground">
           จุดที่กำหนด {siteLat.toFixed(5)}, {siteLng.toFixed(5)}

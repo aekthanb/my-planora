@@ -258,7 +258,6 @@ function quarterLabel(quarter: string): string {
 }
 const allCountries = regions.flatMap((item) => item.countries);
 const scheduleDays = Array.from({ length: 31 }, (_, index) => index + 1);
-const demoMultiOutDaysByRowNumber = new Map<number, number[]>([[4, [4, 5, 8, 12, 16, 20, 24, 28]]]);
 const dropdownColumnIds = new Set(["region", "country", "segment", "owner", "account", "stage"]);
 const statusOptions: StatusOption[] = [
   { code: "Y", label: "Visit ทำงานรอเช็คอิน", className: "status-work" },
@@ -365,30 +364,73 @@ function currencyFormatter(value?: number | null) {
   }).format(value);
 }
 
+function seededIndex(seed: number, salt: number, length: number) {
+  if (length <= 0) return 0;
+
+  let value = Math.imul(seed ^ salt, 0x45d9f3b);
+  value = Math.imul(value ^ (value >>> 16), 0x45d9f3b);
+  value ^= value >>> 16;
+
+  return (value >>> 0) % length;
+}
+
+type MockAttendanceMode = "PLANNED" | "IN" | "OUT" | "MIXED";
+
+function getMockPlanDays(rowNumber: number) {
+  return 3 + seededIndex(rowNumber, 101, 6);
+}
+
+function getMockVisitDays(rowNumber: number) {
+  const total = getMockPlanDays(rowNumber);
+  const start = seededIndex(rowNumber, 211, scheduleDays.length);
+  const stride = 1 + seededIndex(rowNumber, 307, scheduleDays.length - 1);
+
+  return Array.from(
+    { length: total },
+    (_, index) => ((start + index * stride) % scheduleDays.length) + 1,
+  ).sort((a, b) => a - b);
+}
+
+function getMockAttendanceMode(rowNumber: number): MockAttendanceMode {
+  const bucket = seededIndex(rowNumber, 401, 10);
+
+  if (bucket < 4) return "PLANNED";
+  if (bucket < 6) return "IN";
+  if (bucket < 9) return "OUT";
+
+  return "MIXED";
+}
+
 function makeRows(): DealRow[] {
   return Array.from({ length: 120 }, (_, index) => {
-    const regionConfig = regions[index % regions.length]!;
-    const country = regionConfig.countries[(index * 2) % regionConfig.countries.length]!;
-    const stage = stages[(index + Math.floor(index / 7)) % stages.length]!;
-    const revenue = 42000 + ((index * 13791) % 420000);
-    const margin = Math.round(revenue * (0.18 + (index % 9) / 100));
-    const closeMonth = (index % 12) + 1;
-    const closeDay = ((index * 3) % 24) + 3;
+    const rowNumber = index + 1;
+    const regionConfig = regions[seededIndex(rowNumber, 11, regions.length)]!;
+    const country =
+      regionConfig.countries[seededIndex(rowNumber, 23, regionConfig.countries.length)]!;
+    const segmentIndex = seededIndex(rowNumber, 37, segments.length);
+    const stage = seededIndex(rowNumber, 43, 7) === 0 ? stages[4]! : stages[segmentIndex]!;
+    const revenue = 42000 + seededIndex(rowNumber, 59, 420001);
+    const margin = Math.round(revenue * (0.18 + seededIndex(rowNumber, 61, 10) / 100));
+    const closeMonth = 1 + seededIndex(rowNumber, 71, 12);
+    const closeDay = 3 + seededIndex(rowNumber, 73, 24);
+    const attendanceMode = getMockAttendanceMode(rowNumber);
 
     return {
-      id: `D-${String(index + 1).padStart(4, "0")}`,
+      id: `D-${String(rowNumber).padStart(4, "0")}`,
       region: regionConfig.region,
       country,
-      segment: segments[index % segments.length]!,
-      account: workerNames[index % workerNames.length]!,
-      owner: owners[index % owners.length]!,
+      segment: segments[segmentIndex]!,
+      account: workerNames[seededIndex(rowNumber, 79, workerNames.length)]!,
+      owner: owners[seededIndex(rowNumber, 83, owners.length)]!,
       stage,
       quarter: quarters[Math.floor((closeMonth - 1) / 3)]!,
       revenue,
       margin,
-      probability: Math.min(95, 25 + ((index * 11) % 70)),
+      probability: 25 + seededIndex(rowNumber, 89, 71),
       closeDate: `2026-${String(closeMonth).padStart(2, "0")}-${String(closeDay).padStart(2, "0")}`,
       useMockSchedule: true,
+      planDaysTotal: getMockPlanDays(rowNumber),
+      contractSent: attendanceMode !== "PLANNED" && seededIndex(rowNumber, 97, 100) < 55,
     };
   });
 }
@@ -400,16 +442,23 @@ function getScheduleValue(row: DealRow, day: number): ScheduleStatusCode {
   if (!row.useMockSchedule) return "";
 
   const rowNumber = Number(row.id.replace("D-", ""));
+  const visitDays = getMockVisitDays(rowNumber);
+  const visitIndex = visitDays.indexOf(day);
 
-  const attendanceDay = (rowNumber % 12) + 1;
-  const demoOutDays = demoMultiOutDaysByRowNumber.get(rowNumber);
+  if (visitIndex < 0) return "";
 
-  if (demoOutDays?.includes(day)) return "OUT";
-  if (day === attendanceDay) return rowNumber % 4 === 0 ? "OUT" : "IN";
-  if (day <= 5 && row.stage !== "หัวหน้าทีมภาคสนาม") return "Y";
-  if (day >= 3 && day <= 6 && row.stage === "หัวหน้าทีมภาคสนาม") return "T";
+  const attendanceMode = getMockAttendanceMode(rowNumber);
+  const primaryIndex = seededIndex(rowNumber, 503, visitDays.length);
+  const secondaryIndex =
+    (primaryIndex + 1 + seededIndex(rowNumber, 509, visitDays.length - 1)) % visitDays.length;
 
-  return "";
+  if (visitIndex === primaryIndex && attendanceMode === "IN") return "IN";
+  if (visitIndex === primaryIndex && (attendanceMode === "OUT" || attendanceMode === "MIXED")) {
+    return "OUT";
+  }
+  if (visitIndex === secondaryIndex && attendanceMode === "MIXED") return "IN";
+
+  return "Y";
 }
 
 function createReviewItem(row: DealRow, day: number, status: "IN" | "OUT" = "OUT"): OutReviewItem {
@@ -491,6 +540,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
   const [isPersonHistoryModalOpen, setIsPersonHistoryModalOpen] = useState(false);
   const [activePersonAccount, setActivePersonAccount] = useState<string | null>(null);
   const [pendingContractRow, setPendingContractRow] = useState<DealRow | null>(null);
+  const [expandedMapItem, setExpandedMapItem] = useState<PersonHistoryItem | null>(null);
   const statusUsage = useMemo(() => {
     const counts = new Map<Exclude<ScheduleStatusCode, "">, number>();
 
@@ -713,7 +763,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
             ? (params.data?.planDaysTotal ?? null)
             : params.data?.isDraft
               ? null
-              : 5,
+              : (params.data?.planDaysTotal ?? 5),
         filter: "agNumberColumnFilter",
       },
       {
@@ -829,7 +879,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
     api.forEachNodeAfterFilter((node) => {
       if (!node.data) return;
       revenueTotal += node.data.revenue ?? 0;
-      planDaysTotal += node.data.isDraft ? 0 : 5;
+      planDaysTotal += node.data.isDraft ? 0 : (node.data.planDaysTotal ?? 5);
     });
 
     setPinnedBottomRowData([
@@ -1344,11 +1394,9 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                               </h3>
                             </div>
                             <span
-                              className={`rounded px-2 py-1 text-xs font-bold ${
-                                activeOutReview.status === "IN"
-                                  ? "bg-secondary text-secondary-foreground"
-                                  : "bg-primary text-primary-foreground"
-                              }`}
+                              className={`person-day-status rounded px-2 py-1 text-xs font-bold ${getScheduleStatusClass(
+                                activeOutReview.status,
+                              )}`}
                             >
                               {activeOutReview.status}
                             </span>
@@ -1535,13 +1583,9 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                             <div>
                               <div className="flex items-center gap-2">
                                 <span
-                                  className={`rounded px-2 py-0.5 text-xs font-bold ${
-                                    item.status === "IN"
-                                      ? "bg-secondary text-secondary-foreground"
-                                      : item.status === "OUT"
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-accent text-accent-foreground"
-                                  }`}
+                                  className={`person-day-status rounded px-2 py-0.5 text-xs font-bold ${getScheduleStatusClass(
+                                    item.status,
+                                  )}`}
                                 >
                                   {item.status}
                                 </span>
@@ -1581,7 +1625,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                             </div>
                           </div>
 
-                          <div className="mt-3">
+                          <div className="relative mt-3">
                             <CheckInMap
                               siteLat={item.siteLat}
                               siteLng={item.siteLng}
@@ -1589,6 +1633,14 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                               checkLng={item.checkLng}
                               distanceMeters={item.distanceMeters}
                             />
+                            <button
+                              type="button"
+                              onClick={() => setExpandedMapItem(item)}
+                              className="border-border bg-card text-foreground hover:bg-muted absolute top-2 right-2 z-[1000] flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold shadow-sm transition"
+                            >
+                              <Maximize2 className="h-3 w-3" aria-hidden />
+                              ดู Map แบบใหญ่
+                            </button>
                           </div>
 
                           <div className="mt-3 grid grid-cols-2 gap-2">
@@ -2005,13 +2057,9 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                             <div className="min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span
-                                  className={`rounded px-2 py-1 text-xs font-bold ${
-                                    item.status === "IN"
-                                      ? "bg-secondary text-secondary-foreground"
-                                      : item.status === "OUT"
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-accent text-accent-foreground"
-                                  }`}
+                                  className={`person-day-status rounded px-2 py-1 text-xs font-bold ${getScheduleStatusClass(
+                                    item.status,
+                                  )}`}
                                 >
                                   {item.status}
                                 </span>
@@ -2200,6 +2248,30 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                   ส่งสัญญา
                 </Button>
               </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={expandedMapItem !== null}
+            onOpenChange={(open) => {
+              if (!open) setExpandedMapItem(null);
+            }}
+          >
+            <DialogContent className="max-h-[calc(100vh-2rem)] w-full gap-0 overflow-hidden p-0 sm:max-w-6xl [&_[data-slot=dialog-close]]:z-[1000] [&_[data-slot=dialog-close]]:bg-white/90 [&_[data-slot=dialog-close]]:shadow-sm [&_[data-slot=dialog-close]]:hover:bg-white">
+              <DialogTitle className="sr-only">แผนที่เช็คอิน/เช็คเอาท์</DialogTitle>
+
+              {expandedMapItem && (
+                <div className="p-4">
+                  <CheckInMap
+                    siteLat={expandedMapItem.siteLat}
+                    siteLng={expandedMapItem.siteLng}
+                    checkLat={expandedMapItem.checkLat}
+                    checkLng={expandedMapItem.checkLng}
+                    distanceMeters={expandedMapItem.distanceMeters}
+                    mapClassName="h-[80vh] w-full"
+                  />
+                </div>
+              )}
             </DialogContent>
           </Dialog>
         </div>
