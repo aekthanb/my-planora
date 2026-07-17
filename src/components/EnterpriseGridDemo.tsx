@@ -317,6 +317,10 @@ const statusButtonStyles: Record<string, { fill: string; text: string; ring: str
   "status-temp": { fill: "bg-muted", text: "text-muted-foreground", ring: "ring-border" },
 };
 const thaiWeekdays = ["พ.", "พฤ.", "ศ.", "ส.", "อา.", "จ.", "อ."];
+
+function formatScheduleDayLabel(day: number) {
+  return `${day} ${thaiWeekdays[(day - 1) % thaiWeekdays.length]}`;
+}
 const checkInPhotoUrl = "https://images.pexels.com/photos/7388699/pexels-photo-7388699.jpeg";
 const checkOutPhotoUrl = "https://images.pexels.com/photos/34516670/pexels-photo-34516670.jpeg";
 
@@ -1333,7 +1337,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="text-primary text-xs font-semibold">
-                                Day {activeOutReview.day}
+                                {formatScheduleDayLabel(activeOutReview.day)}
                               </p>
                               <h3 className="text-foreground mt-1 text-sm font-semibold">
                                 {activeOutReview.account}
@@ -1542,7 +1546,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                                   {item.status}
                                 </span>
                                 <span className="text-foreground font-semibold">
-                                  Day {item.day}
+                                  {formatScheduleDayLabel(item.day)}
                                 </span>
                               </div>
                               <p className="text-muted-foreground mt-1 text-xs">
@@ -1681,7 +1685,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                       <div className="flex items-center justify-between gap-3">
                         <div>
                           <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-                            Day {activeOutReview.day}
+                            {formatScheduleDayLabel(activeOutReview.day)}
                           </p>
                           <h3 className="text-foreground mt-1 text-base font-semibold">
                             {activeOutReview.account}
@@ -2012,7 +2016,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                                   {item.status}
                                 </span>
                                 <span className="text-foreground text-sm font-semibold">
-                                  Day {item.day}
+                                  {formatScheduleDayLabel(item.day)}
                                 </span>
                                 <span className="text-muted-foreground text-sm">
                                   {item.region} / {item.country}
