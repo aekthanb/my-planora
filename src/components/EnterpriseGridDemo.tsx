@@ -71,6 +71,7 @@ type DealRow = {
   isDraft?: boolean;
   useMockSchedule?: boolean;
   planDaysTotal?: number;
+  contractSent?: boolean;
 };
 
 type DealStage =
@@ -485,6 +486,7 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
   const [isPersonHistoryOpen, setIsPersonHistoryOpen] = useState(false);
   const [isPersonHistoryModalOpen, setIsPersonHistoryModalOpen] = useState(false);
   const [activePersonAccount, setActivePersonAccount] = useState<string | null>(null);
+  const [pendingContractRow, setPendingContractRow] = useState<DealRow | null>(null);
   const statusUsage = useMemo(() => {
     const counts = new Map<Exclude<ScheduleStatusCode, "">, number>();
 
@@ -584,8 +586,18 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
         cellRenderer: (params: { node: { rowPinned?: string | null }; data?: DealRow }) =>
           params.node.rowPinned || !params.data ? null : (
             <div className="flex items-center gap-1.5">
-              <Button type="button" size="xs" className="bg-blue-700 text-white hover:bg-blue-600">
-                ส่งสัญญา
+              <Button
+                type="button"
+                size="xs"
+                disabled={params.data.contractSent}
+                className={
+                  params.data.contractSent
+                    ? "w-20 justify-center bg-green-600 text-white hover:bg-green-600 disabled:opacity-100"
+                    : "w-20 justify-center bg-blue-700 text-white hover:bg-blue-600"
+                }
+                onClick={() => setPendingContractRow(params.data ?? null)}
+              >
+                {params.data.contractSent ? "ส่งแล้ว" : "ส่งสัญญา"}
               </Button>
               <Button
                 type="button"
@@ -1132,6 +1144,17 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
 
   const deleteRow = (id: string) => {
     setRowData((currentRows) => currentRows.filter((row) => row.id !== id));
+  };
+
+  const confirmSendContract = () => {
+    if (!pendingContractRow) return;
+
+    setRowData((currentRows) =>
+      currentRows.map((row) =>
+        row.id === pendingContractRow.id ? { ...row, contractSent: true } : row,
+      ),
+    );
+    setPendingContractRow(null);
   };
 
   const toggleFullscreen = async () => {
@@ -2127,6 +2150,50 @@ export function EnterpriseGridDemo({ showMockData = true }: { showMockData?: boo
                   onClick={() => setScheduleStatus("")}
                 >
                   Clear Status
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={pendingContractRow !== null}
+            onOpenChange={(open) => {
+              if (!open) setPendingContractRow(null);
+            }}
+          >
+            <DialogContent className="w-full max-w-md gap-0 overflow-hidden p-0">
+              <DialogHeader className="border-border border-b px-5 py-4 text-left">
+                <DialogTitle className="text-foreground text-lg font-semibold">
+                  ยืนยันการส่งสัญญา
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="px-5 py-4">
+                <p className="text-muted-foreground text-sm">
+                  ต้องการส่งสัญญาสำหรับ{" "}
+                  <span className="text-foreground font-medium">
+                    {pendingContractRow?.account || "รายการนี้"}
+                  </span>{" "}
+                  ใช่หรือไม่?
+                </p>
+              </div>
+
+              <DialogFooter className="border-border bg-card mx-0 mb-0 border-t px-5 py-4">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  onClick={() => setPendingContractRow(null)}
+                >
+                  ยกเลิก
+                </Button>
+                <Button
+                  type="button"
+                  size="lg"
+                  className="bg-blue-700 text-white hover:bg-blue-600"
+                  onClick={confirmSendContract}
+                >
+                  ส่งสัญญา
                 </Button>
               </DialogFooter>
             </DialogContent>
